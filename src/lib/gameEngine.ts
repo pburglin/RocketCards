@@ -146,16 +146,56 @@ export function initializeMatch(options: {
   }
 }
 
-export function startPhase(): void {
-  // Draw phase happens here
-  // For MVP, we'll just move to main phase
-  // In real implementation, would draw card and handle reshuffle penalties
+export function startPhase(
+  matchState: MatchState,
+  playerState: PlayerState,
+  opponentState: PlayerState
+): {
+  matchState: MatchState
+  playerState: PlayerState
+  opponentState: PlayerState
+} {
+  // Draw a card for the active player
+  if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
+    const drawnCard = playerState.deck.pop()
+    if (drawnCard) {
+      playerState.hand.push(drawnCard)
+    }
+  } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
+    const drawnCard = opponentState.deck.pop()
+    if (drawnCard) {
+      opponentState.hand.push(drawnCard)
+    }
+  }
+  
+  // Move to main phase
+  matchState.phase = 'main'
+  
+  return { matchState, playerState, opponentState }
 }
 
-export function upkeepPhase(): void {
-  // Restore MP
-  // Remove temporary effects
-  // For MVP, we'll just move to main phase
+export function upkeepPhase(
+  matchState: MatchState,
+  playerState: PlayerState,
+  opponentState: PlayerState
+): {
+  matchState: MatchState
+  playerState: PlayerState
+  opponentState: PlayerState
+} {
+  // Restore MP for active player based on their strategy
+  if (matchState.activePlayer === 'player') {
+    // MP regen would be calculated based on player's strategy
+    playerState.mp = Math.min(playerState.mp + 3, 10) // Simplified regen
+  } else {
+    // For opponent, same simplified regen
+    opponentState.mp = Math.min(opponentState.mp + 3, 10)
+  }
+  
+  // Move to main phase
+  matchState.phase = 'main'
+  
+  return { matchState, playerState, opponentState }
 }
 
 export function playCard(
@@ -347,6 +387,15 @@ function getCardById(cardId: string): Card | undefined {
     flavor: 'Mock flavor text',
     collection: 'mock'
   };
+}
+
+function generateRandomSeed(): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let seed = '';
+  for (let i = 0; i < 16; i++) {
+    seed += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return seed;
 }
 
 export function initializeGame() {

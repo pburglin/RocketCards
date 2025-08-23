@@ -58,6 +58,8 @@ interface GameStore {
   endTurn: () => void
   resolveLLM: () => Promise<{ log: string[] }>
   concede: () => void
+  startPhase: () => void
+  upkeepPhase: () => void
   
   // Persistence
   loadGameState: () => void
@@ -322,6 +324,28 @@ export const useGameStore = create<GameStore>()(
           opponentState: result.opponentState
         })
         
+      },
+      startPhase: () => {
+        const { matchState, playerState, opponentState } = get()
+        if (!matchState || !playerState || !opponentState) return
+        
+        const result = startPhase(matchState, playerState, opponentState)
+        set({
+          matchState: result.matchState,
+          playerState: result.playerState,
+          opponentState: result.opponentState
+        })
+      },
+      upkeepPhase: () => {
+        const { matchState, playerState, opponentState } = get()
+        if (!matchState || !playerState || !opponentState) return
+        
+        const result = upkeepPhase(matchState, playerState, opponentState)
+        set({
+          matchState: result.matchState,
+          playerState: result.playerState,
+          opponentState: result.opponentState
+        })
       },
       // Persistence
       loadGameState: () => {

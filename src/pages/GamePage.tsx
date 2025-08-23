@@ -2,14 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { 
-  startPhase, 
-  upkeepPhase, 
-  playCard, 
-  resolveEffects, 
-  endTurn, 
-  concedeMatch 
-} from '../lib/gameEngine'
-import { 
   Card, 
   CardHeader, 
   CardTitle, 
@@ -40,6 +32,8 @@ export default function GamePage() {
     endTurn: endTurnAction,
     resolveLLM,
     concede,
+    startPhase: startPhaseAction,
+    upkeepPhase: upkeepPhaseAction,
     collections,
     selectedDeck
   } = useGameStore()
@@ -58,10 +52,8 @@ export default function GamePage() {
       return
     }
     
-    // Initialize game state
-    if (matchState?.phase === 'start') {
-      startPhase()
-    }
+    // Initialize game state - but don't auto-trigger phase transitions
+    // Let the user click the button to proceed
   }, [matchState, navigate])
   
   const handlePlayCard = (cardId: string) => {
@@ -118,7 +110,7 @@ export default function GamePage() {
             <p className="text-text-secondary mb-6">
               Drawing card and restoring mana
             </p>
-            <Button onClick={upkeepPhase}>
+            <Button onClick={startPhaseAction}>
               Continue to Main Phase
             </Button>
           </div>
@@ -139,15 +131,38 @@ export default function GamePage() {
                   {playerState?.hand?.map((cardId, index) => {
                     // Find the actual card object from the selected deck or collections
                     let card = null;
-                    if (selectedDeck?.collection && typeof selectedDeck.collection !== 'string' && selectedDeck.collection.cards) {
-                      card = selectedDeck.collection.cards.find((c: any) => c.id === cardId);
+                    if (selectedDeck?.collection) {
+                      if (typeof selectedDeck.collection === 'string') {
+                        // If collection is stored as ID, find it in collections
+                        const collection = collections.find(c => c.id === selectedDeck.collection);
+                        if (collection) {
+                          card = collection.cards.find((c: any) => c.id === cardId);
+                        }
+                      } else if (selectedDeck.collection.cards) {
+                        // If collection is stored as object
+                        card = selectedDeck.collection.cards.find((c: any) => c.id === cardId);
+                      }
                     }
                     if (!card) {
                       // Fallback: search through all collections
                       for (const collection of collections) {
-                        card = collection.cards.find(c => c.id === cardId);
+                        card = collection.cards.find((c: any) => c.id === cardId);
                         if (card) break;
                       }
+                    }
+                    
+                    // If still no card found, create a mock card
+                    if (!card) {
+                      card = {
+                        id: cardId,
+                        title: cardId,
+                        description: 'Unknown card',
+                        type: 'unknown',
+                        rarity: 'common',
+                        effect: 'Unknown effect',
+                        cost: { HP: 0, MP: 0, fatigue: 0 },
+                        tags: []
+                      };
                     }
                     
                     return (
@@ -170,7 +185,10 @@ export default function GamePage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity">
                           <div className="absolute bottom-2 left-2 right-2">
                             <Button
-                              onClick={() => handlePlayCard(cardId)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlayCard(cardId);
+                              }}
                               className="w-full"
                             >
                               <Play className="w-4 h-4 mr-2" />
@@ -391,10 +409,10 @@ export default function GamePage() {
         <div className="bg-surface-light p-4 rounded-lg">
           <h3 className="text-sm text-text-secondary mb-2">Opponent MP</h3>
           <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
+            <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
                 className="h-4 rounded-full bg-secondary"
-                style={{ width: `${((opponentState?.mp || 0) / 10) * 100}%` }}
+                style={{ width: `${Math.min(100, Math.max(0, ((opponentState?.mp || 0) / 10) * 100))}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{opponentState?.mp}</span>
@@ -512,10 +530,10 @@ export default function GamePage() {
         <div className="bg-surface-light p-4 rounded-lg">
           <h3 className="text-sm text-text-secondary mb-2">Your MP</h3>
           <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
+            <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
                 className="h-4 rounded-full bg-secondary"
-                style={{ width: `${((playerState?.mp || 0) / 10) * 100}%` }}
+                style={{ width: `${Math.min(100, Math.max(0, ((playerState?.mp || 0) / 10) * 100))}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{playerState?.mp}</span>

@@ -7,6 +7,7 @@ const navItems = [
   { path: '/collections', icon: BookOpen, label: 'Collections' },
   { path: '/deck-builder', icon: Layout, label: 'Deck Builder' },
   { path: '/play', icon: Gamepad2, label: 'Play' },
+  { path: '/profile', icon: User, label: 'Profile' },
   { path: '/settings', icon: Settings, label: 'Settings' },
 ]
 
