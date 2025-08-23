@@ -49,7 +49,7 @@ export default function DeckBuilderPage() {
     } else {
       setShowNoDecksMessage(false)
     }
-  }, [decks.length, selectedCollection, collections, setSelectedCollection])
+  }, [decks, selectedCollection, collections, setSelectedCollection])
 
   useEffect(() => {
     if (selectedDeck) {
@@ -356,13 +356,16 @@ export default function DeckBuilderPage() {
                 onClick={() => {
                   autoBuildDeck()
                   // Refresh the deckCards state to reflect the auto-built deck
-                  if (selectedDeck) {
-                    const cardCounts: {[key: string]: number} = {}
-                    selectedDeck.cards.forEach(cardId => {
-                      cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
-                    })
-                    setDeckCards(cardCounts)
-                  }
+                  setTimeout(() => {
+                    const { selectedDeck: updatedSelectedDeck } = useGameStore.getState()
+                    if (updatedSelectedDeck) {
+                      const cardCounts: {[key: string]: number} = {}
+                      updatedSelectedDeck.cards.forEach(cardId => {
+                        cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
+                      })
+                      setDeckCards(cardCounts)
+                    }
+                  }, 200)
                 }}
                 disabled={!selectedCollection}
               >

@@ -41,7 +41,7 @@ export default function LandingPage() {
           gradient: gradients[index % gradients.length]
         }
       })
-      setCollections(displayCollections)
+      setCollections(displayCollections.slice(0, 4))
     }
     loadCollections()
   }, [])

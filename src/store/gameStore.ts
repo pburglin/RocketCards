@@ -154,8 +154,20 @@ export const useGameStore = create<GameStore>()(
         })
       },
       autoBuildDeck: () => {
-        const { selectedCollection, selectedDeck } = get()
-        if (!selectedCollection || !selectedDeck) return
+        const { selectedCollection, selectedDeck, setSelectedDeck } = get()
+        
+        if (!selectedCollection) {
+          return
+        }
+        
+        // If no selected deck, create a new one
+        if (!selectedDeck) {
+          const newDeck: Deck = {
+            name: 'Auto-Built Deck',
+            cards: []
+          }
+          setSelectedDeck(newDeck)
+        }
         
         set(state => {
           if (state.selectedDeck && state.selectedCollection) {
@@ -172,29 +184,42 @@ export const useGameStore = create<GameStore>()(
             rares.sort(() => Math.random() - 0.5)
             uniques.sort(() => Math.random() - 0.5)
             
-            // Add up to 2 uniques if available (max 1 copy each)
-            const uniquesToAdd = Math.min(2, uniques.length)
-            for (let i = 0; i < uniquesToAdd; i++) {
-              state.selectedDeck.cards.push(uniques[i].id)
-            }
+            // Add all uniques first (max 1 copy each)
+            uniques.forEach(unique => {
+              if (state.selectedDeck && state.selectedDeck.cards.length < 30) {
+                state.selectedDeck.cards.push(unique.id)
+              }
+            })
             
-            // Add up to 8 rares (2 copies each of up to 4 different rares) if available
-            const raresToAdd = Math.min(4, rares.length)
-            for (let i = 0; i < raresToAdd; i++) {
-              state.selectedDeck.cards.push(rares[i].id)
-              state.selectedDeck.cards.push(rares[i].id)
-            }
+            // Add rares (max 2 copies each) but respect the 30 card limit
+            rares.forEach(rare => {
+              if (state.selectedDeck && state.selectedDeck.cards.length < 30) {
+                state.selectedDeck.cards.push(rare.id)
+                if (state.selectedDeck.cards.length < 30) {
+                  state.selectedDeck.cards.push(rare.id)
+                }
+              }
+            })
             
             // Fill with commons (unlimited copies, aiming for 30 total cards)
             const targetDeckSize = 30
-            const remainingSlots = targetDeckSize - state.selectedDeck.cards.length
-            
-            // Add commons to fill the deck with balanced distribution
-            if (commons.length > 0 && remainingSlots > 0) {
-              // Distribute commons evenly with some randomness
-              for (let i = 0; i < remainingSlots; i++) {
-                const commonIndex = i % commons.length
-                state.selectedDeck.cards.push(commons[commonIndex].id)
+            if (state.selectedDeck) {
+              const remainingSlots = targetDeckSize - state.selectedDeck.cards.length
+              
+              // Add commons to fill the deck with balanced distribution
+              if (commons.length > 0 && remainingSlots > 0) {
+                // Distribute commons evenly with some randomness
+                for (let i = 0; i < remainingSlots; i++) {
+                  const commonIndex = i % commons.length
+                  if (state.selectedDeck) {
+                    state.selectedDeck.cards.push(commons[commonIndex].id)
+                  }
+                }
+              }
+              
+              // If we have more than 30 cards, trim to 30
+              if (state.selectedDeck.cards.length > 30) {
+                state.selectedDeck.cards = state.selectedDeck.cards.slice(0, 30)
               }
             }
           }
