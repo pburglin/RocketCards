@@ -139,8 +139,8 @@ export default function GamePage() {
                   {playerState?.hand?.map((cardId, index) => {
                     // Find the actual card object from the selected deck or collections
                     let card = null;
-                    if (selectedDeck?.collection?.cards) {
-                      card = selectedDeck.collection.cards.find(c => c.id === cardId);
+                    if (selectedDeck?.collection && typeof selectedDeck.collection !== 'string' && selectedDeck.collection.cards) {
+                      card = selectedDeck.collection.cards.find((c: any) => c.id === cardId);
                     }
                     if (!card) {
                       // Fallback: search through all collections

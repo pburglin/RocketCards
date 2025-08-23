@@ -31,7 +31,7 @@ export interface CardCollection {
 export interface Deck {
   name: string;
   cards: string[];
-  collection?: CardCollection;
+  collection?: CardCollection | string; // Can be either the full collection object or just the ID
 }
 
 export interface Profile {

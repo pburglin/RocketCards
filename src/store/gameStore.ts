@@ -133,7 +133,7 @@ export const useGameStore = create<GameStore>()(
             const deck = {
               ...state.selectedDeck,
               name,
-              collection: state.selectedCollection
+              collection: state.selectedCollection.id // Store collection ID instead of full object
             }
             
             const existingIndex = state.decks.findIndex(d => d.name === name)
@@ -142,6 +142,9 @@ export const useGameStore = create<GameStore>()(
             } else {
               state.decks.push(deck)
             }
+            
+            // Also update the selectedDeck to reflect the saved version
+            state.selectedDeck = deck
           }
         })
       },
@@ -159,18 +162,24 @@ export const useGameStore = create<GameStore>()(
             // Clear current deck
             state.selectedDeck.cards = []
             
-            // Add cards based on rarity
-            const commons = state.selectedCollection.cards.filter(c => c.rarity === 'common')
-            const rares = state.selectedCollection.cards.filter(c => c.rarity === 'rare')
-            const uniques = state.selectedCollection.cards.filter(c => c.rarity === 'unique')
+            // Add cards based on rarity with balanced distribution
+            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common')]
+            const rares = [...state.selectedCollection.cards.filter(c => c.rarity === 'rare')]
+            const uniques = [...state.selectedCollection.cards.filter(c => c.rarity === 'unique')]
             
-            // Add up to 1 unique if available
-            if (uniques.length > 0) {
-              state.selectedDeck.cards.push(uniques[0].id)
+            // Shuffle arrays to randomize selection
+            commons.sort(() => Math.random() - 0.5)
+            rares.sort(() => Math.random() - 0.5)
+            uniques.sort(() => Math.random() - 0.5)
+            
+            // Add up to 2 uniques if available (max 1 copy each)
+            const uniquesToAdd = Math.min(2, uniques.length)
+            for (let i = 0; i < uniquesToAdd; i++) {
+              state.selectedDeck.cards.push(uniques[i].id)
             }
             
-            // Add up to 4 rares (2 copies each of up to 2 different rares) if available
-            const raresToAdd = Math.min(2, rares.length)
+            // Add up to 8 rares (2 copies each of up to 4 different rares) if available
+            const raresToAdd = Math.min(4, rares.length)
             for (let i = 0; i < raresToAdd; i++) {
               state.selectedDeck.cards.push(rares[i].id)
               state.selectedDeck.cards.push(rares[i].id)
@@ -180,14 +189,12 @@ export const useGameStore = create<GameStore>()(
             const targetDeckSize = 30
             const remainingSlots = targetDeckSize - state.selectedDeck.cards.length
             
-            // Add commons to fill the deck
-            if (commons.length > 0) {
-              let commonsAdded = 0
-              while (commonsAdded < remainingSlots) {
-                // Cycle through commons to distribute them evenly
-                const commonIndex = commonsAdded % commons.length
+            // Add commons to fill the deck with balanced distribution
+            if (commons.length > 0 && remainingSlots > 0) {
+              // Distribute commons evenly with some randomness
+              for (let i = 0; i < remainingSlots; i++) {
+                const commonIndex = i % commons.length
                 state.selectedDeck.cards.push(commons[commonIndex].id)
-                commonsAdded++
               }
             }
           }

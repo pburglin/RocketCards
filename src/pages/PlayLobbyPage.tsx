@@ -31,8 +31,14 @@ export default function PlayLobbyPage() {
       return
     }
     
+    // Ensure the deck has the proper collection reference
+    const deckToStart = {
+      ...selectedDeck,
+      collection: selectedDeck.collection || decks.find(d => d.name === selectedDeck.name)?.collection
+    };
+    
     startMatch({
-      deck: selectedDeck,
+      deck: deckToStart,
       opponentType: opponent,
       aiDifficulty,
       timedMatch,
@@ -68,7 +74,7 @@ export default function PlayLobbyPage() {
             >
               {decks.map(deck => (
                 <option key={deck.name} value={deck.name}>
-                  {deck.name} ({deck.collection?.name || 'Unknown Collection'} - {deck.cards.length}/30)
+                  {deck.name} ({(typeof deck.collection === 'string' ? deck.collection : deck.collection?.name) || 'Unknown Collection'} - {deck.cards.length}/30)
                 </option>
               ))}
             </select>

@@ -18,11 +18,12 @@ import Footer from './components/Footer'
 
 function App() {
   const location = useLocation()
-  const { loadGameState } = useGameStore()
+  const { loadGameState, initializeCollections } = useGameStore()
 
   useEffect(() => {
     // Initialize game state on app load
     initializeGame()
+    initializeCollections()
     // loadGameState() - no longer needed, persistence is handled automatically
   }, [])
 

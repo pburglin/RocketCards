@@ -140,7 +140,7 @@ export default function PlaySetupPage() {
                   )}
                 </div>
                 <p className="text-sm text-text-secondary mb-3">
-                  {deck.collection?.name || 'Unknown Collection'}
+                  {(typeof deck.collection === 'string' ? deck.collection : deck.collection?.name) || 'Unknown Collection'}
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Cards:</span>

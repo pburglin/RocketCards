@@ -38,12 +38,16 @@ export default function DeckBuilderPage() {
   useEffect(() => {
     // Check if user came from Play Lobby (no decks exist)
     const searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.get('from') === 'play-lobby' || decks.length === 0) {
+    if (searchParams.get('from') === 'play-lobby' && decks.length === 0) {
       setShowNoDecksMessage(true)
       // Auto-select the first collection if none selected
       if (!selectedCollection && collections.length > 0) {
         setSelectedCollection(collections[0])
       }
+    } else if (decks.length === 0) {
+      setShowNoDecksMessage(true)
+    } else {
+      setShowNoDecksMessage(false)
     }
   }, [decks.length, selectedCollection, collections, setSelectedCollection])
 
@@ -131,7 +135,7 @@ export default function DeckBuilderPage() {
 
   const handleSelectExistingDeck = (deck: any) => {
     // Find the collection for this deck
-    const collection = collections.find(c => c.id === deck.collection?.id)
+    const collection = collections.find(c => c.id === (deck.collection?.id || deck.collection))
     if (collection) {
       setSelectedCollection(collection)
       setSelectedDeck(deck)
@@ -253,16 +257,14 @@ export default function DeckBuilderPage() {
           <Card className="p-4 h-full">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Collections</h2>
-              {decks.length > 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowExistingDecks(!showExistingDecks)}
-                  className="text-xs"
-                >
-                  {showExistingDecks ? 'Hide' : 'Show'} Decks
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowExistingDecks(!showExistingDecks)}
+                className="text-xs"
+              >
+                {showExistingDecks ? 'Hide' : 'Show'} Decks ({decks.length})
+              </Button>
             </div>
             
             {showExistingDecks ? (
@@ -278,7 +280,7 @@ export default function DeckBuilderPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{deck.name}</p>
                         <p className="text-xs text-text-secondary truncate">
-                          {deck.collection?.name || 'Unknown Collection'} • {deck.cards.length} cards
+                          {(typeof deck.collection === 'string' ? deck.collection : deck.collection?.name) || 'Unknown Collection'} • {deck.cards.length} cards
                         </p>
                       </div>
                       <div className="flex space-x-1 ml-2">
@@ -353,6 +355,14 @@ export default function DeckBuilderPage() {
               <Button
                 onClick={() => {
                   autoBuildDeck()
+                  // Refresh the deckCards state to reflect the auto-built deck
+                  if (selectedDeck) {
+                    const cardCounts: {[key: string]: number} = {}
+                    selectedDeck.cards.forEach(cardId => {
+                      cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
+                    })
+                    setDeckCards(cardCounts)
+                  }
                 }}
                 disabled={!selectedCollection}
               >
