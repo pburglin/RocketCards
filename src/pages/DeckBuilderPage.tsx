@@ -7,22 +7,24 @@ import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles } from 'lu
 
 export default function DeckBuilderPage() {
   const navigate = useNavigate()
-  const { 
-    collections, 
-    decks, 
-    selectedDeck, 
-    selectedCollection, 
-    setSelectedCollection, 
-    addToDeck, 
-    removeFromDeck, 
-    saveDeck, 
-    autoBuildDeck 
+  const {
+    collections,
+    decks,
+    selectedDeck,
+    selectedCollection,
+    setSelectedCollection,
+    setSelectedDeck,
+    addToDeck,
+    removeFromDeck,
+    saveDeck,
+    autoBuildDeck
   } = useGameStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [rarityFilter, setRarityFilter] = useState('')
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [importData, setImportData] = useState('')
   const [deckName, setDeckName] = useState(selectedDeck?.name || 'My Deck')
   const [deckCards, setDeckCards] = useState<{[key: string]: number}>({})
   
@@ -215,11 +217,15 @@ export default function DeckBuilderPage() {
                   </select>
                   
                   <div className="flex space-x-2">
-                    <Button 
+                    <Button
                       onClick={() => {
                         // Clear deck logic
                         setDeckCards({})
-                      }} 
+                        // Also clear the selected deck in store
+                        if (selectedDeck) {
+                          setSelectedDeck({ ...selectedDeck, cards: [] })
+                        }
+                      }}
                       variant="outline"
                       disabled={!selectedCollection}
                       className="flex-1 md:flex-none"
@@ -228,13 +234,13 @@ export default function DeckBuilderPage() {
                       Clear Deck
                     </Button>
                     
-                    <Button 
+                    <Button
                       onClick={() => {
                         if (isDeckValid) {
                           saveDeck(deckName)
-                          navigate('/play')
+                          navigate('/play-setup')
                         }
-                      }} 
+                      }}
                       disabled={!isDeckValid}
                       className="flex-1 md:flex-none"
                     >
@@ -470,19 +476,59 @@ export default function DeckBuilderPage() {
             </p>
             
             <textarea
+              value={importData}
+              onChange={(e) => setImportData(e.target.value)}
               className="w-full h-40 px-3 py-2 bg-surface border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Deck JSON..."
+              placeholder='{"name": "My Deck", "collection": "fantasy", "cards": ["card1", "card2", ...]}'
             />
             
             <div className="flex justify-end mt-6">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowImportModal(false)}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowImportModal(false)
+                  setImportData('')
+                }}
                 className="mr-2"
               >
                 Cancel
               </Button>
-              <Button>
+              <Button onClick={() => {
+                try {
+                  const deckData = JSON.parse(importData)
+                  if (deckData.name && deckData.collection && Array.isArray(deckData.cards)) {
+                    // Find the collection
+                    const collection = collections.find(c => c.id === deckData.collection)
+                    if (collection) {
+                      setSelectedCollection(collection)
+                      setDeckName(deckData.name)
+                      
+                      // Clear current deck and add imported cards
+                      setDeckCards({})
+                      const newDeckCards: {[key: string]: number} = {}
+                      
+                      deckData.cards.forEach((cardId: string) => {
+                        const count = newDeckCards[cardId] || 0
+                        const card = collection.cards.find(c => c.id === cardId)
+                        if (card) {
+                          const maxAllowed = card.rarity === 'common' ? 4 : card.rarity === 'rare' ? 2 : 1
+                          if (count < maxAllowed) {
+                            newDeckCards[cardId] = count + 1
+                            addToDeck(cardId)
+                          }
+                        }
+                      })
+                      
+                      setDeckCards(newDeckCards)
+                      setShowImportModal(false)
+                      setImportData('')
+                    }
+                  }
+                } catch (e) {
+                  console.error('Invalid JSON', e)
+                  // Show error to user
+                }
+              }}>
                 Import
               </Button>
             </div>

@@ -164,16 +164,36 @@ export const useGameStore = create<GameStore>()(
               state.selectedDeck.cards.push(uniques[0].id)
             }
             
-            // Add 4 rares if available
-            for (let i = 0; i < Math.min(4, rares.length); i++) {
+            // Add 4 rares (2 copies each of 2 different rares) if available
+            for (let i = 0; i < Math.min(2, rares.length); i++) {
               state.selectedDeck.cards.push(rares[i].id)
               state.selectedDeck.cards.push(rares[i].id)
             }
             
-            // Fill with commons
-            while (state.selectedDeck.cards.length < 30 && commons.length > 0) {
-              const randomIndex = Math.floor(Math.random() * commons.length)
-              state.selectedDeck.cards.push(commons[randomIndex].id)
+            // Fill with commons (up to 4 copies each, aiming for 30 total cards)
+            const targetDeckSize = 30
+            const remainingSlots = targetDeckSize - state.selectedDeck.cards.length
+            
+            // Distribute remaining slots among commons
+            let commonsAdded = 0
+            while (commonsAdded < remainingSlots && commons.length > 0) {
+              for (let i = 0; i < commons.length && commonsAdded < remainingSlots; i++) {
+                const card = commons[i]
+                const currentCount = state.selectedDeck.cards.filter(id => id === card.id).length
+                if (currentCount < 4) { // Max 4 copies per card
+                  state.selectedDeck.cards.push(card.id)
+                  commonsAdded++
+                }
+              }
+            }
+            
+            // If we still need more cards, add more commons (cycling through)
+            while (state.selectedDeck.cards.length < targetDeckSize && commons.length > 0) {
+              const randomCommon = commons[Math.floor(Math.random() * commons.length)]
+              const currentCount = state.selectedDeck.cards.filter(id => id === randomCommon.id).length
+              if (currentCount < 4) {
+                state.selectedDeck.cards.push(randomCommon.id)
+              }
             }
           }
         })

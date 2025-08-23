@@ -9,6 +9,7 @@ import CollectionDetailPage from './pages/CollectionDetailPage'
 import ProfileSetupPage from './pages/ProfileSetupPage'
 import DeckBuilderPage from './pages/DeckBuilderPage'
 import PlayLobbyPage from './pages/PlayLobbyPage'
+import PlaySetupPage from './pages/PlaySetupPage'
 import GamePage from './pages/GamePage'
 import ResultsPage from './pages/ResultsPage'
 import SettingsPage from './pages/SettingsPage'
@@ -36,6 +37,7 @@ function App() {
           <Route path="/profile" element={<ProfileSetupPage />} />
           <Route path="/deck-builder" element={<DeckBuilderPage />} />
           <Route path="/play" element={<PlayLobbyPage />} />
+          <Route path="/play-setup" element={<PlaySetupPage />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/results" element={<ResultsPage />} />
           <Route path="/settings" element={<SettingsPage />} />

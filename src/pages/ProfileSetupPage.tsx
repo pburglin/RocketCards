@@ -17,6 +17,9 @@ export default function ProfileSetupPage() {
   const [errors, setErrors] = useState<{displayName?: string}>({})
   
   const stats = calculatePlayerStats(strategy, keyStat)
+  
+  // Calculate MP regen based on strategy
+  const mpRegen = strategy === 'aggressive' ? 4 : strategy === 'balanced' ? 3 : 2
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,7 +42,8 @@ export default function ProfileSetupPage() {
       mp: stats.mp
     })
     
-    navigate('/deck-builder')
+    // Navigate back to play setup instead of deck builder
+    navigate('/play-setup')
   }
 
   return (
@@ -70,7 +74,7 @@ export default function ProfileSetupPage() {
           
           <div className="mb-6">
             <Label className="mb-2 block">Strategy</Label>
-            <RadioGroup value={strategy} onValueChange={setStrategy} className="grid grid-cols-3 gap-4">
+            <RadioGroup value={strategy} onValueChange={(value: any) => setStrategy(value)} className="grid grid-cols-3 gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="aggressive" id="aggressive" />
                 <Label htmlFor="aggressive" className="flex items-center">
@@ -93,11 +97,20 @@ export default function ProfileSetupPage() {
                 </Label>
               </div>
             </RadioGroup>
+            
+            <div className="mt-4 bg-surface-light p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Strategy Effects:</h4>
+              <ul className="text-sm text-text-secondary space-y-1">
+                <li>• Aggressive: +4 MP, MP Regen: 4</li>
+                <li>• Balanced: +2 HP, +2 MP, MP Regen: 3</li>
+                <li>• Defensive: +4 HP, MP Regen: 2</li>
+              </ul>
+            </div>
           </div>
           
           <div className="mb-8">
             <Label className="mb-2 block">Key Stat</Label>
-            <RadioGroup value={keyStat} onValueChange={setKeyStat} className="grid grid-cols-3 gap-4">
+            <RadioGroup value={keyStat} onValueChange={(value: any) => setKeyStat(value)} className="grid grid-cols-3 gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="strength" id="strength" />
                 <Label htmlFor="strength">Strength</Label>
@@ -111,8 +124,17 @@ export default function ProfileSetupPage() {
                 <Label htmlFor="charisma">Charisma</Label>
               </div>
             </RadioGroup>
+            
+            <div className="mt-4 bg-surface-light p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Key Stat Effects:</h4>
+              <ul className="text-sm text-text-secondary space-y-1">
+                <li>• Strength: +8 HP, +2 MP</li>
+                <li>• Intelligence: +2 HP, +6 MP</li>
+                <li>• Charisma: +2 HP, +2 MP</li>
+              </ul>
+            </div>
           </div>
-          
+
           <div className="mb-8 bg-surface-light p-4 rounded-lg">
             <h3 className="text-lg font-semibold mb-4">Calculated Stats</h3>
             <div className="grid grid-cols-2 gap-4">

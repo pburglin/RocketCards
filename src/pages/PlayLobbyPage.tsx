@@ -65,7 +65,7 @@ export default function PlayLobbyPage() {
             >
               {decks.map(deck => (
                 <option key={deck.name} value={deck.name}>
-                  {deck.name} ({deck.collection.name} - {deck.cards.length}/30)
+                  {deck.name} ({deck.collection?.name || 'Unknown Collection'} - {deck.cards.length}/30)
                 </option>
               ))}
             </select>
@@ -190,13 +190,13 @@ export default function PlayLobbyPage() {
         </div>
         
         <div className="flex justify-between mt-8">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/deck-builder')}
+          <Button
+            variant="outline"
+            onClick={() => navigate('/play-setup')}
           >
-            Back to Deck Builder
+            Back to Setup
           </Button>
-          <Button 
+          <Button
             onClick={handleStartMatch}
             disabled={!selectedDeck}
             className="px-8 py-3"

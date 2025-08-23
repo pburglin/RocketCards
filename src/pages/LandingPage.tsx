@@ -87,11 +87,11 @@ export default function LandingPage() {
                 Explore Collections
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/play-setup"
                 className="btn btn-outline border-2 text-lg font-semibold py-4 px-8"
               >
-                Create Profile
+                Start Playing
               </Link>
             </div>
           </div>
@@ -250,11 +250,11 @@ export default function LandingPage() {
                 Explore Collections
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/play-setup"
                 className="btn btn-outline border-2 text-lg font-semibold py-4 px-8"
               >
-                Create Profile
+                Start Playing
               </Link>
             </div>
           </div>
