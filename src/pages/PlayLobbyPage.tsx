@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
+import { Label } from '../components/ui/Label'
 import { useGameStore } from '../store/gameStore'
 import { Gamepad2, User, Settings, Clock, Shuffle } from 'lucide-react'
 
