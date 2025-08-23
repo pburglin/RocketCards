@@ -1,49 +1,49 @@
 import { Link } from 'react-router-dom'
 import { Gamepad2, Sparkles, Crown, Zap, ArrowRight, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { loadAllCollections } from '../lib/collectionLoader'
+import { CardCollection } from '../types/game'
 
-const collections = [
-  {
-    id: 'fantasy',
-    title: 'Fantasy Realms',
-    description: 'Epic battles in magical worlds with dragons, wizards, and ancient artifacts',
-    image: 'https://image.pollinations.ai/prompt/Epic%20battles%20in%20magical%20worlds%20with%20dragons%2C%20wizards%2C%20and%20ancient%20artifacts?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
-    cards: 42,
-    gradient: 'from-indigo-500 to-purple-600'
-  },
-  {
-    id: 'politics',
-    title: 'Political Arena',
-    description: 'Strategic maneuvering in the halls of power with campaigns, debates, and policy battles',
-    image: 'https://image.pollinations.ai/prompt/Strategic%20maneuvering%20in%20the%20halls%20of%20power%20with%20campaigns%2C%20debates%2C%20and%20policy%20battles?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
-    cards: 38,
-    gradient: 'from-blue-500 to-cyan-600'
-  },
-  {
-    id: 'monsters',
-    title: 'Monster Mayhem',
-    description: 'Collect and battle terrifying creatures from myth and legend',
-    image: 'https://image.pollinations.ai/prompt/Collect%20and%20battle%20terrifying%20creatures%20from%20myth%20and%20legend?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
-    cards: 45,
-    gradient: 'from-red-500 to-orange-600'
-  },
-  {
-    id: 'anime',
-    title: 'Anime All-Stars',
-    description: 'Iconic characters and moments from beloved anime series',
-    image: 'https://image.pollinations.ai/prompt/Iconic%20characters%20and%20moments%20from%20beloved%20anime%20series?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
-    cards: 50,
-    gradient: 'from-pink-500 to-rose-600'
-  }
-]
+interface CollectionDisplay {
+  id: string
+  name: string
+  description: string
+  cards: number
+  gradient: string
+}
 
 export default function LandingPage() {
   const [animateIn, setAnimateIn] = useState(false)
+  const [collections, setCollections] = useState<CollectionDisplay[]>([])
 
   useEffect(() => {
     // Trigger animations after component mounts
     const timer = setTimeout(() => setAnimateIn(true), 100)
     return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    const loadCollections = async () => {
+      const loadedCollections = await loadAllCollections()
+      const displayCollections: CollectionDisplay[] = loadedCollections.map((collection, index) => {
+        const gradients = [
+          'from-indigo-500 to-purple-600',
+          'from-blue-500 to-cyan-600',
+          'from-red-500 to-orange-600',
+          'from-pink-500 to-rose-600',
+          'from-green-500 to-emerald-600'
+        ]
+        return {
+          id: collection.id,
+          name: collection.name,
+          description: collection.description,
+          cards: collection.cards.length,
+          gradient: gradients[index % gradients.length]
+        }
+      })
+      setCollections(displayCollections)
+    }
+    loadCollections()
   }, [])
 
   return (
@@ -135,8 +135,8 @@ export default function LandingPage() {
                 <div className="relative p-6">
                   <div className="relative h-48 rounded-xl overflow-hidden mb-6">
                     <img 
-                      src={collection.image} 
-                      alt={collection.title}
+                      src={`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                      alt={collection.name}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
@@ -148,7 +148,7 @@ export default function LandingPage() {
                   </div>
                   
                   <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                    {collection.title}
+                    {collection.name}
                   </h3>
                   <p className="text-text-secondary mb-4 line-clamp-2">
                     {collection.description}

@@ -57,7 +57,8 @@ export default function DeckBuilderPage() {
     
     if (!card) return;
     
-    const maxAllowed = card.rarity === 'common' ? 4 : card.rarity === 'rare' ? 2 : 1
+    // Common cards can be included unlimited times
+    const maxAllowed = card.rarity === 'common' ? Infinity : card.rarity === 'rare' ? 2 : 1
     
     if (count >= maxAllowed) {
       // Show error modal
@@ -308,8 +309,37 @@ export default function DeckBuilderPage() {
                           
                           <Button
                             onClick={() => handleAddToDeck(card.id)}
-                            disabled={isDeckFull && !deckCards[card.id]}
+                            disabled={(() => {
+                              // Find the card to get its rarity
+                              const cardInCollection = selectedCollection?.cards.find(c => c.id === card.id);
+                              if (!cardInCollection) return true;
+                              
+                              // Check if we can add more of this card
+                              const count = getCardCount(card.id);
+                              // Common cards can be included unlimited times
+                              const maxAllowed = cardInCollection.rarity === 'common' ? Infinity : cardInCollection.rarity === 'rare' ? 2 : 1;
+                              const isAtMax = count >= maxAllowed;
+                              
+                              // Disable if deck is full and we don't already have this card, or if we're at max copies
+                              return (isDeckFull && !deckCards[card.id]) || isAtMax;
+                            })()}
                             size="sm"
+                            className={(() => {
+                              // Find the card to get its rarity
+                              const cardInCollection = selectedCollection?.cards.find(c => c.id === card.id);
+                              if (!cardInCollection) return '';
+                              
+                              // Check if we can add more of this card
+                              const count = getCardCount(card.id);
+                              // Common cards can be included unlimited times
+                              const maxAllowed = cardInCollection.rarity === 'common' ? Infinity : cardInCollection.rarity === 'rare' ? 2 : 1;
+                              const isAtMax = count >= maxAllowed;
+                              
+                              // Visibly disable if at max copies or deck is full
+                              const isDisabled = (isDeckFull && !deckCards[card.id]) || isAtMax;
+                              
+                              return isDisabled ? 'opacity-50 cursor-not-allowed' : '';
+                            })()}
                           >
                             <Plus className="w-4 h-4 mr-1" />
                             {deckCards[card.id] ? `Add ${getCardCount(card.id) + 1}` : 'Add'}
@@ -419,8 +449,8 @@ export default function DeckBuilderPage() {
                       <div className="bg-surface-light p-6 rounded-lg text-center">
                         <p className="text-text-secondary mb-4">Your deck is empty</p>
                         <p className="text-sm text-text-secondary/70 max-w-md mx-auto">
-                          Select cards from the collection to build your 30-card deck. 
-                          Common cards can be included up to 4 times, Rare cards up to 2 times, 
+                          Select cards from the collection to build your 30-card deck.
+                          Common cards can be included unlimited times, Rare cards up to 2 times,
                           and Unique cards only once.
                         </p>
                       </div>
@@ -511,7 +541,8 @@ export default function DeckBuilderPage() {
                         const count = newDeckCards[cardId] || 0
                         const card = collection.cards.find(c => c.id === cardId)
                         if (card) {
-                          const maxAllowed = card.rarity === 'common' ? 4 : card.rarity === 'rare' ? 2 : 1
+                          // Common cards can be included unlimited times
+                          const maxAllowed = card.rarity === 'common' ? Infinity : card.rarity === 'rare' ? 2 : 1
                           if (count < maxAllowed) {
                             newDeckCards[cardId] = count + 1
                             addToDeck(cardId)

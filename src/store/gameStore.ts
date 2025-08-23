@@ -100,7 +100,8 @@ export const useGameStore = create<GameStore>()(
         
         // Check copy limits
         const currentCount = selectedDeck.cards.filter(id => id === cardId).length
-        let maxAllowed = 4
+        // Common cards can be included unlimited times
+        let maxAllowed = Infinity
         if (card.rarity === 'rare') maxAllowed = 2
         if (card.rarity === 'unique') maxAllowed = 1
         
@@ -170,7 +171,7 @@ export const useGameStore = create<GameStore>()(
               state.selectedDeck.cards.push(rares[i].id)
             }
             
-            // Fill with commons (up to 4 copies each, aiming for 30 total cards)
+            // Fill with commons (unlimited copies, aiming for 30 total cards)
             const targetDeckSize = 30
             const remainingSlots = targetDeckSize - state.selectedDeck.cards.length
             
@@ -179,21 +180,16 @@ export const useGameStore = create<GameStore>()(
             while (commonsAdded < remainingSlots && commons.length > 0) {
               for (let i = 0; i < commons.length && commonsAdded < remainingSlots; i++) {
                 const card = commons[i]
-                const currentCount = state.selectedDeck.cards.filter(id => id === card.id).length
-                if (currentCount < 4) { // Max 4 copies per card
-                  state.selectedDeck.cards.push(card.id)
-                  commonsAdded++
-                }
+                // Common cards can be included unlimited times
+                state.selectedDeck.cards.push(card.id)
+                commonsAdded++
               }
             }
             
             // If we still need more cards, add more commons (cycling through)
             while (state.selectedDeck.cards.length < targetDeckSize && commons.length > 0) {
               const randomCommon = commons[Math.floor(Math.random() * commons.length)]
-              const currentCount = state.selectedDeck.cards.filter(id => id === randomCommon.id).length
-              if (currentCount < 4) {
-                state.selectedDeck.cards.push(randomCommon.id)
-              }
+              state.selectedDeck.cards.push(randomCommon.id)
             }
           }
         })
