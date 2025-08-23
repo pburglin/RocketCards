@@ -123,7 +123,8 @@ export function initializeMatch(options: {
     discard: [],
     champions: [],
     extraPlaysRemaining: 1,
-    flags: []
+    flags: [],
+    creaturesInPlay: []
   }
   
   const opponentState: PlayerState = {
@@ -136,7 +137,8 @@ export function initializeMatch(options: {
     discard: [],
     champions: [],
     extraPlaysRemaining: 1,
-    flags: []
+    flags: [],
+    creaturesInPlay: []
   }
   
   return {
@@ -212,44 +214,123 @@ export function playCard(
   playerState.mp += card.cost.MP
   playerState.fatigue += card.cost.fatigue
   
-  // Move card from hand to discard
-  playerState.hand.splice(cardIndex, 1)
-  playerState.discard.push(cardId)
-  
-  // Apply card effects (simplified for MVP)
-  if (card.effect.includes('+3 MP')) {
-    playerState.mp = Math.min(playerState.mp + 3, calculatePlayerStats(
-      'balanced', // would use actual strategy
-      'intelligence' // would use actual key stat
-    ).mp)
-  }
-  
-  if (card.tags.includes('extra_play:+1')) {
-    playerState.extraPlaysRemaining += 1
-  }
-  
-  // Parse and apply damage effects
-  if (card.effect.includes('damage')) {
-    const damageMatch = card.effect.match(/deal (\d+) damage/i);
-    if (damageMatch) {
-      const damage = parseInt(damageMatch[1]);
-      if (matchState.activePlayer === 'player') {
-        opponentState.hp -= damage;
-        matchState.log.push({ message: `Player's ${card.title} dealt ${damage} damage to opponent`, turn: matchState.turn });
-      } else {
-        playerState.hp -= damage;
-        matchState.log.push({ message: `Opponent's ${card.title} dealt ${damage} damage to player`, turn: matchState.turn });
+  // Check if card has duration (creature card)
+  if (card.duration !== undefined || card.creatureStats !== undefined) {
+    // This is a creature card that stays in play
+    const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    if (!playerState.creaturesInPlay) {
+      playerState.creaturesInPlay = [];
+    }
+    
+    playerState.creaturesInPlay.push({
+      cardId: cardId,
+      instanceId: instanceId,
+      currentHp: card.creatureStats?.hp || 1,
+      currentMp: card.creatureStats?.mp || 0,
+      maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
+      maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0)
+    });
+    
+    // Remove card from hand
+    playerState.hand.splice(cardIndex, 1);
+    
+    // Add to log
+    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
+  } else {
+    // Move card from hand to discard (instant effect cards)
+    playerState.hand.splice(cardIndex, 1)
+    playerState.discard.push(cardId)
+    
+    // Apply card effects (simplified for MVP)
+    if (card.effect.includes('+3 MP')) {
+      playerState.mp = Math.min(playerState.mp + 3, calculatePlayerStats(
+        'balanced', // would use actual strategy
+        'intelligence' // would use actual key stat
+      ).mp)
+    }
+    
+    if (card.tags.includes('extra_play:+1')) {
+      playerState.extraPlaysRemaining += 1
+    }
+    
+    // Parse and apply damage effects
+    if (card.effect.includes('damage')) {
+      const damageMatch = card.effect.match(/deal (\d+) damage/i);
+      if (damageMatch) {
+        const damage = parseInt(damageMatch[1]);
+        if (matchState.activePlayer === 'player') {
+          dealDamage(matchState, playerState, opponentState, damage, collections, cardId);
+        } else {
+          dealDamage(matchState, opponentState, playerState, damage, collections, cardId);
+        }
       }
     }
+    
+    // Add to log
+    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played ${card.title}`, turn: matchState.turn });
   }
   
   // Decrement extra plays
   playerState.extraPlaysRemaining -= 1
   
-  // Add to log
-  matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played ${card.title}`, turn: matchState.turn })
-  
   return { success: true, matchState, playerState, opponentState }
+}
+
+// Function to deal damage, targeting creatures first
+export function dealDamage(
+  matchState: MatchState,
+  attackerState: PlayerState,
+  defenderState: PlayerState,
+  damage: number,
+  collections: any[],
+  attackSourceCardId?: string
+): void {
+  let attackSourceTitle = "Attack";
+  if (attackSourceCardId) {
+    // Find the card title
+    for (const collection of collections) {
+      const card = collection.cards.find((c: any) => c.id === attackSourceCardId);
+      if (card) {
+        attackSourceTitle = card.title;
+        break;
+      }
+    }
+  }
+  
+  // Check if defender has creatures in play
+  if (defenderState.creaturesInPlay && defenderState.creaturesInPlay.length > 0) {
+    // Target a random creature
+    const randomIndex = Math.floor(Math.random() * defenderState.creaturesInPlay.length);
+    const targetCreature = defenderState.creaturesInPlay[randomIndex];
+    
+    // Find the creature card to get the title
+    let creatureTitle = "Creature";
+    for (const collection of collections) {
+      const card = collection.cards.find((c: any) => c.id === targetCreature.cardId);
+      if (card) {
+        creatureTitle = card.title;
+        break;
+      }
+    }
+    
+    // Deal damage to creature
+    targetCreature.currentHp -= damage;
+    
+    matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to ${creatureTitle}`, turn: matchState.turn });
+    
+    // Check if creature is destroyed
+    if (targetCreature.currentHp <= 0) {
+      // Remove creature from play and add to discard
+      const removedCreature = defenderState.creaturesInPlay.splice(randomIndex, 1)[0];
+      defenderState.discard.push(removedCreature.cardId);
+      matchState.log.push({ message: `${creatureTitle} was destroyed`, turn: matchState.turn });
+    }
+  } else {
+    // No creatures, damage player directly
+    defenderState.hp -= damage;
+    matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to player`, turn: matchState.turn });
+  }
 }
 
 export function resolveEffects(): void {
@@ -260,12 +341,17 @@ export function resolveEffects(): void {
 export function endTurn(
   matchState: MatchState,
   playerState: PlayerState,
-  opponentState: PlayerState
+  opponentState: PlayerState,
+  collections: any[]
 ): {
   matchState: MatchState
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Check duration-based card expiration for both players
+  checkDurationExpiration(matchState, playerState, collections);
+  checkDurationExpiration(matchState, opponentState, collections);
+  
   // Cleanup phase
   // Discard down to hand limit
   while (playerState.hand.length > GAME_HAND_LIMIT) {
@@ -347,6 +433,63 @@ export function endTurn(
     matchState,
     playerState,
     opponentState
+  }
+}
+
+// Function to check and remove expired duration-based cards
+function checkDurationExpiration(
+  matchState: MatchState,
+  playerState: PlayerState,
+  collections: any[]
+): void {
+  if (!playerState.creaturesInPlay || playerState.creaturesInPlay.length === 0) {
+    return;
+  }
+  
+  // Check each creature for duration-based expiration
+  for (let i = playerState.creaturesInPlay.length - 1; i >= 0; i--) {
+    const creature = playerState.creaturesInPlay[i];
+    
+    // Find the card to check duration
+    let card: any = null;
+    for (const collection of collections) {
+      card = collection.cards.find((c: any) => c.id === creature.cardId);
+      if (card) break;
+    }
+    
+    if (card && card.duration !== undefined) {
+      if (typeof card.duration === 'number') {
+        // Numeric duration - check if expired
+        // For simplicity, we'll assume cards with numeric duration expire after that many turns
+        // This would need more sophisticated tracking in a real implementation
+      } else if (card.duration === 'HP') {
+        // HP-based duration - remove when HP reaches 0
+        if (creature.currentHp <= 0) {
+          const removedCreature = playerState.creaturesInPlay.splice(i, 1)[0];
+          playerState.discard.push(removedCreature.cardId);
+          
+          // Find card title for log
+          let cardTitle = "Creature";
+          if (card) {
+            cardTitle = card.title;
+          }
+          matchState.log.push({ message: `${cardTitle} expired (HP reached 0)`, turn: matchState.turn });
+        }
+      } else if (card.duration === 'MP') {
+        // MP-based duration - remove when MP reaches 0
+        if (creature.currentMp <= 0) {
+          const removedCreature = playerState.creaturesInPlay.splice(i, 1)[0];
+          playerState.discard.push(removedCreature.cardId);
+          
+          // Find card title for log
+          let cardTitle = "Creature";
+          if (card) {
+            cardTitle = card.title;
+          }
+          matchState.log.push({ message: `${cardTitle} expired (MP reached 0)`, turn: matchState.turn });
+        }
+      }
+    }
   }
 }
 

@@ -278,7 +278,7 @@ export const useGameStore = create<GameStore>()(
         const { matchState, playerState, opponentState, collections } = get()
         if (!matchState || !playerState || !opponentState) return
         
-        const result = endTurn(matchState, playerState, opponentState)
+        const result = endTurn(matchState, playerState, opponentState, collections)
         
         set({
           matchState: result.matchState,

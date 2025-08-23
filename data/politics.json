@@ -104,6 +104,54 @@
       "tags": ["target:opponent", "effect:reveal"],
       "flavor": "Knowledge is power, especially in the political arena.",
       "collection": "politics"
+    },
+    {
+      "id": "creature_lobbyist",
+      "title": "Corporate Lobbyist",
+      "description": "A well-connected influencer who can sway opinions and votes",
+      "imageDescription": "Well-dressed person in expensive suit, shaking hands with politicians, briefcase full of money",
+      "type": "champions",
+      "rarity": "rare",
+      "effect": "When attacking: Opponent discards 1 card; On summon: Gain 2 MP",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Money talks, and this one speaks very loudly.",
+      "collection": "politics",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 4,
+        "maxHp": 3,
+        "maxMp": 4
+      }
+    },
+    {
+      "id": "creature_grassroots_activist",
+      "title": "Grassroots Activist",
+      "description": "A passionate advocate with the power to mobilize the masses",
+      "imageDescription": "Energetic person with megaphone, leading a crowd of supporters with signs",
+      "type": "champions",
+      "rarity": "common",
+      "effect": "On summon: Draw 1 card; When attacking: +1 damage for each card in your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The voice of the people can move mountains.",
+      "collection": "politics",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3
+      }
     }
   ]
 }

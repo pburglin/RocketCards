@@ -104,6 +104,54 @@
       "tags": ["target:champion", "heal:3"],
       "flavor": "The power of light can mend even the deepest wounds.",
       "collection": "fantasy"
+    },
+    {
+      "id": "creature_goblin_warrior",
+      "title": "Goblin Warrior",
+      "description": "A fierce goblin warrior with crude armor and a sharp blade",
+      "imageDescription": "Small green goblin with leather armor wielding a rusty sword, fierce expression",
+      "type": "champions",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Small in stature, big in attitude.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 1,
+        "maxHp": 2,
+        "maxMp": 1
+      }
+    },
+    {
+      "id": "creature_ancient_golem",
+      "title": "Ancient Golem",
+      "description": "A massive stone construct animated by ancient magic",
+      "imageDescription": "Huge stone golem with glowing runes, standing guard over ancient ruins",
+      "type": "champions",
+      "rarity": "rare",
+      "effect": "Passive: Cannot be targeted by damage effects; On summon: Gain 3 armor",
+      "cost": {
+        "HP": -3,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Built to last an eternity.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 6,
+        "mp": 0,
+        "maxHp": 6,
+        "maxMp": 0
+      }
     }
   ]
 }

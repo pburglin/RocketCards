@@ -104,6 +104,54 @@
       "tags": ["target:champion", "damage:1"],
       "flavor": "Nature's weapons are often the most effective.",
       "collection": "monsters"
+    },
+    {
+      "id": "creature_wolf_pack",
+      "title": "Wolf Pack",
+      "description": "A pack of hungry wolves that hunt together",
+      "imageDescription": "Three wolves with glowing eyes, surrounding prey in a forest clearing",
+      "type": "champions",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target, +1 damage if played during night phase",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "There's strength in numbers, especially when those numbers have sharp teeth.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2
+      }
+    },
+    {
+      "id": "creature_ancient_wyrm",
+      "title": "Ancient Wyrm",
+      "description": "A massive dragon-like creature with scales that shimmer like oil",
+      "imageDescription": "Huge serpentine dragon with iridescent scales, coiled around a mountain peak",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 2 damage to all enemy creatures; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": -2,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Older than memory, hungrier than time.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 8,
+        "mp": 3,
+        "maxHp": 8,
+        "maxMp": 3
+      }
     }
   ]
 }

@@ -19,6 +19,13 @@ export interface Card {
   tags: string[];
   flavor?: string;
   collection: string;
+  duration?: number | 'HP' | 'MP'; // New field for card duration
+  creatureStats?: {
+    hp: number;
+    mp: number;
+    maxHp: number;
+    maxMp: number;
+  }; // Stats for creature cards
 }
 
 export interface CardCollection {
@@ -60,6 +67,15 @@ export interface PlayerState {
   champions: ChampionSlot[];
   extraPlaysRemaining: number;
   flags: string[];
+  // Add field to track active creatures in play
+  creaturesInPlay?: {
+    cardId: string;
+    instanceId: string; // Unique identifier for each creature instance
+    currentHp: number;
+    currentMp: number;
+    maxHp: number;
+    maxMp: number;
+  }[];
 }
 
 export interface MatchRules {

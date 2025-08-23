@@ -17,4 +17,11 @@ export interface Card {
   tags: string[];
   flavor?: string;
   collection: string;
+  duration?: number | 'HP' | 'MP'; // New field for card duration
+  creatureStats?: {
+    hp: number;
+    mp: number;
+    maxHp: number;
+    maxMp: number;
+  }; // Stats for creature cards
 }

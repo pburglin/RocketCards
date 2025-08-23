@@ -104,6 +104,54 @@
       "tags": ["area:opponent", "damage:1"],
       "flavor": "Speed and precision are the hallmarks of a true ninja.",
       "collection": "anime"
+    },
+    {
+      "id": "creature_mecha_pilot",
+      "title": "Mecha Pilot",
+      "description": "A skilled pilot who can summon a powerful robotic companion",
+      "imageDescription": "Young pilot in cockpit of futuristic mecha robot, ready for battle",
+      "type": "champions",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 2 damage to target; On summon: Gain 1 MP each turn",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The fusion of human skill and mechanical power.",
+      "collection": "anime",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 2,
+        "maxHp": 4,
+        "maxMp": 2
+      }
+    },
+    {
+      "id": "creature_spirit_fox",
+      "title": "Nine-Tailed Fox Spirit",
+      "description": "A mystical fox spirit with incredible magical abilities",
+      "imageDescription": "Elegant fox with nine tails, surrounded by mystical energy and cherry blossoms",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Draw 2 cards; Passive: Skills cost 1 less MP",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Ancient wisdom and power beyond measure.",
+      "collection": "anime",
+      "duration": "MP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 6,
+        "maxHp": 3,
+        "maxMp": 6
+      }
     }
   ]
 }

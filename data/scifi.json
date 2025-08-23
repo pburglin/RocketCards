@@ -104,6 +104,54 @@
       "tags": ["target:any", "effect:heal_or_damage"],
       "flavor": "The future is so small you can't even see it.",
       "collection": "scifi"
+    },
+    {
+      "id": "creature_security_drone",
+      "title": "Security Drone",
+      "description": "An autonomous defense unit programmed for protection",
+      "imageDescription": "Futuristic flying drone with glowing red sensors, weapons mounted on articulated arms",
+      "type": "champions",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Programmed to protect, authorized to destroy.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 1,
+        "maxHp": 3,
+        "maxMp": 1
+      }
+    },
+    {
+      "id": "creature_psionic_entity",
+      "title": "Psionic Entity",
+      "description": "A being of pure mental energy with telepathic and telekinetic powers",
+      "imageDescription": "Translucent humanoid figure made of swirling psychic energy, brain visible and glowing",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Look at opponent's hand and choose 1 card to discard; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 0,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The mind is the most powerful weapon in the universe.",
+      "collection": "scifi",
+      "duration": "MP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 8,
+        "maxHp": 2,
+        "maxMp": 8
+      }
     }
   ]
 }
