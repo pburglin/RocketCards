@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/C
 import { Button } from '../components/ui/Button'
 import { useGameStore } from '../store/gameStore'
 import { Card as CardType } from '../types/card'
-import { Plus, Minus, Info, Image as ImageIcon } from 'lucide-react'
+import { Plus, Minus, Info, Image as ImageIcon, Filter } from 'lucide-react'
 
 export default function CollectionDetailPage() {
   const { collectionId } = useParams()
