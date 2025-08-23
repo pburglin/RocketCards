@@ -152,6 +152,30 @@
         "maxHp": 8,
         "maxMp": 3
       }
+    },
+    {
+      "id": "creature_haunted_spirit",
+      "title": "Haunted Spirit",
+      "description": "A vengeful spirit bound to the mortal realm for a limited time",
+      "imageDescription": "Ghostly figure with glowing eyes, chained to an ancient tomb",
+      "type": "champions",
+      "rarity": "rare",
+      "effect": "On summon: Deal 1 damage to all opponent champions; When attacking: Deal 2 damage to target",
+      "cost": {
+        "HP": -1,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Time is my prison, vengeance is my freedom.",
+      "collection": "monsters",
+      "duration": 2,
+      "creatureStats": {
+        "hp": 3,
+        "mp": 4,
+        "maxHp": 3,
+        "maxMp": 4
+      }
     }
   ]
 }

@@ -152,6 +152,30 @@
         "maxHp": 6,
         "maxMp": 0
       }
+    },
+    {
+      "id": "creature_knight_defender",
+      "title": "Knight Defender",
+      "description": "A noble knight sworn to protect the realm for a limited time",
+      "imageDescription": "Armored knight with shield and sword, standing guard at a castle gate",
+      "type": "champions",
+      "rarity": "rare",
+      "effect": "Passive: Reduce damage to player by 1; When attacking: Deal 2 damage to target",
+      "cost": {
+        "HP": -2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Honor binds me, duty drives me, time limits me.",
+      "collection": "fantasy",
+      "duration": 3,
+      "creatureStats": {
+        "hp": 4,
+        "mp": 2,
+        "maxHp": 4,
+        "maxMp": 2
+      }
     }
   ]
 }

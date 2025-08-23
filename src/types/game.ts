@@ -75,6 +75,7 @@ export interface PlayerState {
     currentMp: number;
     maxHp: number;
     maxMp: number;
+    remainingDuration?: number; // For cards with numeric duration
   }[];
 }
 

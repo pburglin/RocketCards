@@ -223,14 +223,17 @@ export function playCard(
       playerState.creaturesInPlay = [];
     }
     
-    playerState.creaturesInPlay.push({
+    const creatureEntry = {
       cardId: cardId,
       instanceId: instanceId,
       currentHp: card.creatureStats?.hp || 1,
       currentMp: card.creatureStats?.mp || 0,
       maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
-      maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0)
-    });
+      maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
+      remainingDuration: typeof card.duration === 'number' ? card.duration : undefined
+    };
+    
+    playerState.creaturesInPlay.push(creatureEntry);
     
     // Remove card from hand
     playerState.hand.splice(cardIndex, 1);
@@ -459,9 +462,24 @@ function checkDurationExpiration(
     
     if (card && card.duration !== undefined) {
       if (typeof card.duration === 'number') {
-        // Numeric duration - check if expired
-        // For simplicity, we'll assume cards with numeric duration expire after that many turns
-        // This would need more sophisticated tracking in a real implementation
+        // Numeric duration - decrement and check if expired
+        if (creature.remainingDuration !== undefined) {
+          creature.remainingDuration -= 1;
+          
+          // Find card title for log
+          let cardTitle = "Creature";
+          if (card) {
+            cardTitle = card.title;
+          }
+          
+          matchState.log.push({ message: `${cardTitle} duration: ${creature.remainingDuration} turns remaining`, turn: matchState.turn });
+          
+          if (creature.remainingDuration <= 0) {
+            const removedCreature = playerState.creaturesInPlay.splice(i, 1)[0];
+            playerState.discard.push(removedCreature.cardId);
+            matchState.log.push({ message: `${cardTitle} expired (duration reached 0)`, turn: matchState.turn });
+          }
+        }
       } else if (card.duration === 'HP') {
         // HP-based duration - remove when HP reaches 0
         if (creature.currentHp <= 0) {

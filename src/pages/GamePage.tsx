@@ -198,6 +198,15 @@ export default function GamePage() {
                                 F: {card?.cost?.fatigue}
                               </span>
                             )}
+                            {card?.duration !== undefined && card?.duration !== null && (
+                              <span className="px-1 py-0.5 bg-primary/20 text-primary text-xs rounded">
+                                {typeof card.duration === 'number'
+                                  ? `${card.duration} turns`
+                                  : card.duration === 'HP'
+                                    ? 'HP-based'
+                                    : 'MP-based'}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
@@ -431,8 +440,8 @@ export default function GamePage() {
             <h3 className="text-lg font-bold mb-4">Your Champions</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {playerState?.champions?.map((champion, index) => (
-                <Card 
-                  key={index} 
+                <Card
+                  key={index}
                   className={`p-4 ${
                     champion?.status?.includes('exhausted') ? 'opacity-50' : ''
                   }`}
@@ -447,7 +456,7 @@ export default function GamePage() {
                     {champion?.attachedSkills?.length} attached skills
                   </CardDescription>
                   <div className="mt-4 flex space-x-2">
-                    <Button 
+                    <Button
                       disabled={champion?.status?.includes('exhausted')}
                       onClick={() => {
                         // Handle champion action
@@ -455,7 +464,7 @@ export default function GamePage() {
                     >
                       Attack
                     </Button>
-                    <Button 
+                    <Button
                       disabled={champion?.status?.includes('silenced')}
                       onClick={() => {
                         // Handle skill activation
@@ -473,6 +482,46 @@ export default function GamePage() {
                 </div>
               )}
             </div>
+            
+            {/* Player Creatures */}
+            {playerState?.creaturesInPlay && playerState.creaturesInPlay.length > 0 && (
+              <div className="mt-6">
+                <h4 className="text-md font-bold mb-3">Your Creatures</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {playerState.creaturesInPlay.map((creature, index) => {
+                    // Find the card to get title and details
+                    let card = null;
+                    for (const collection of collections) {
+                      card = collection.cards.find((c: any) => c.id === creature.cardId);
+                      if (card) break;
+                    }
+                    
+                    return (
+                      <Card key={index} className="p-3 bg-surface">
+                        <div className="flex justify-between items-start mb-2">
+                          <CardTitle className="text-sm">{card?.title || creature.cardId}</CardTitle>
+                          {creature.remainingDuration !== undefined && (
+                            <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded">
+                              {creature.remainingDuration} turns
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex space-x-4 text-xs">
+                          <div>
+                            <span className="text-error">HP: </span>
+                            <span>{creature.currentHp}/{creature.maxHp}</span>
+                          </div>
+                          <div>
+                            <span className="text-secondary">MP: </span>
+                            <span>{creature.currentMp}/{creature.maxMp}</span>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
           
           <div>
@@ -497,6 +546,46 @@ export default function GamePage() {
                 </div>
               )}
             </div>
+            
+            {/* Opponent Creatures */}
+            {opponentState?.creaturesInPlay && opponentState.creaturesInPlay.length > 0 && (
+              <div className="mt-6">
+                <h4 className="text-md font-bold mb-3">Opponent Creatures</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {opponentState.creaturesInPlay.map((creature, index) => {
+                    // Find the card to get title and details
+                    let card = null;
+                    for (const collection of collections) {
+                      card = collection.cards.find((c: any) => c.id === creature.cardId);
+                      if (card) break;
+                    }
+                    
+                    return (
+                      <Card key={index} className="p-3 bg-surface">
+                        <div className="flex justify-between items-start mb-2">
+                          <CardTitle className="text-sm">{card?.title || creature.cardId}</CardTitle>
+                          {creature.remainingDuration !== undefined && (
+                            <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded">
+                              {creature.remainingDuration} turns
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex space-x-4 text-xs">
+                          <div>
+                            <span className="text-error">HP: </span>
+                            <span>{creature.currentHp}/{creature.maxHp}</span>
+                          </div>
+                          <div>
+                            <span className="text-secondary">MP: </span>
+                            <span>{creature.currentMp}/{creature.maxMp}</span>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -648,6 +737,15 @@ export default function GamePage() {
                   {selectedCard?.cost?.fatigue !== 0 && (
                     <div className="px-3 py-1 bg-surface rounded text-sm">
                       Fatigue: {selectedCard?.cost?.fatigue}
+                    </div>
+                  )}
+                  {selectedCard?.duration !== undefined && selectedCard?.duration !== null && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Duration: {typeof selectedCard.duration === 'number'
+                        ? `${selectedCard.duration} turns`
+                        : selectedCard.duration === 'HP'
+                          ? 'HP-based'
+                          : 'MP-based'}
                     </div>
                   )}
                 </div>
