@@ -32,23 +32,25 @@ import {
 
 export default function GamePage() {
   const navigate = useNavigate()
-  const { 
-    matchState, 
-    playerState, 
-    opponentState, 
-    playCard: playCardAction, 
+  const {
+    matchState,
+    playerState,
+    opponentState,
+    playCard: playCardAction,
     endTurn: endTurnAction,
     resolveLLM,
-    concede
+    concede,
+    collections,
+    selectedDeck
   } = useGameStore()
   
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<any>(null)
   const [showSettings, setShowSettings] = useState(false)
-  const [showPenalty, setShowPenalty] = useState('')
+  const [showPenalty, setShowPenalty] = useState(false)
   const [penaltyMessage, setPenaltyMessage] = useState('')
   const [isResolving, setIsResolving] = useState(false)
-  const [actionLog, setActionLog] = useState([])
+  const [actionLog, setActionLog] = useState<string[]>([])
   
   useEffect(() => {
     if (!matchState) {
@@ -62,11 +64,8 @@ export default function GamePage() {
     }
   }, [matchState, navigate])
   
-  const handlePlayCard = (cardId) => {
+  const handlePlayCard = (cardId: string) => {
     if (matchState?.phase !== 'main') return
-    
-    const card = playerState?.hand.find(c => c.id === cardId)
-    if (!card) return
     
     // Check if card can be played
     const canPlay = playCardAction(cardId)
@@ -137,33 +136,51 @@ export default function GamePage() {
               <div>
                 <h3 className="font-bold mb-4">Your Hand</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                  {playerState?.hand?.map(card => (
-                    <div 
-                      key={card?.id} 
-                      className="relative card-hover-effect cursor-pointer"
-                      onClick={() => {
-                        setSelectedCard(card)
-                        setShowCardModal(true)
-                      }}
-                    >
-                      <img 
-                        src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
-                        alt={card?.title}
-                        className="w-full h-32 object-cover rounded-lg shadow-lg"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity">
-                        <div className="absolute bottom-2 left-2 right-2">
-                          <Button 
-                            onClick={() => handlePlayCard(card?.id)}
-                            className="w-full"
-                          >
-                            <Play className="w-4 h-4 mr-2" />
-                            Play
-                          </Button>
+                  {playerState?.hand?.map((cardId, index) => {
+                    // Find the actual card object from the selected deck or collections
+                    let card = null;
+                    if (selectedDeck?.collection?.cards) {
+                      card = selectedDeck.collection.cards.find(c => c.id === cardId);
+                    }
+                    if (!card) {
+                      // Fallback: search through all collections
+                      for (const collection of collections) {
+                        card = collection.cards.find(c => c.id === cardId);
+                        if (card) break;
+                      }
+                    }
+                    
+                    return (
+                      <div
+                        key={cardId}
+                        className="relative card-hover-effect cursor-pointer"
+                        onClick={() => {
+                          setSelectedCard(card)
+                          setShowCardModal(true)
+                        }}
+                      >
+                        <img
+                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                          alt={card?.title || cardId}
+                          className="w-full h-32 object-cover rounded-lg shadow-lg"
+                          onError={(e) => {
+                            e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || cardId || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity">
+                          <div className="absolute bottom-2 left-2 right-2">
+                            <Button
+                              onClick={() => handlePlayCard(cardId)}
+                              className="w-full"
+                            >
+                              <Play className="w-4 h-4 mr-2" />
+                              Play
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               
@@ -362,9 +379,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Opponent HP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-error" 
-                style={{ width: `${(opponentState?.hp / 30) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-error"
+                style={{ width: `${((opponentState?.hp || 0) / 30) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{opponentState?.hp}</span>
@@ -375,9 +392,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Opponent MP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-secondary" 
-                style={{ width: `${(opponentState?.mp / 10) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-secondary"
+                style={{ width: `${((opponentState?.mp || 0) / 10) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{opponentState?.mp}</span>
@@ -388,9 +405,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Opponent Fatigue</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-warning" 
-                style={{ width: `${(opponentState?.fatigue / 10) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-warning"
+                style={{ width: `${((opponentState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{opponentState?.fatigue}</span>
@@ -442,7 +459,7 @@ export default function GamePage() {
                   </div>
                 </Card>
               ))}
-              {playerState?.champions?.length < 3 && (
+              {(playerState?.champions?.length || 0) < 3 && (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
                   <Plus className="w-8 h-8 text-text-secondary mb-2" />
                   <p className="text-text-secondary">Empty Slot</p>
@@ -467,7 +484,7 @@ export default function GamePage() {
                   </CardDescription>
                 </Card>
               ))}
-              {opponentState?.champions?.length < 3 && (
+              {(opponentState?.champions?.length || 0) < 3 && (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
                   <p className="text-text-secondary">Empty Slot</p>
                 </div>
@@ -483,9 +500,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Your HP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-error" 
-                style={{ width: `${(playerState?.hp / 30) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-error"
+                style={{ width: `${((playerState?.hp || 0) / 30) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{playerState?.hp}</span>
@@ -496,9 +513,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Your MP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-secondary" 
-                style={{ width: `${(playerState?.mp / 10) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-secondary"
+                style={{ width: `${((playerState?.mp || 0) / 10) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{playerState?.mp}</span>
@@ -509,9 +526,9 @@ export default function GamePage() {
           <h3 className="text-sm text-text-secondary mb-2">Your Fatigue</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
-              <div 
-                className="h-4 rounded-full bg-warning" 
-                style={{ width: `${(playerState?.fatigue / 10) * 100}%` }}
+              <div
+                className="h-4 rounded-full bg-warning"
+                style={{ width: `${((playerState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>
             <span className="ml-3 font-bold">{playerState?.fatigue}</span>
@@ -553,7 +570,7 @@ export default function GamePage() {
               Turn {matchState?.turn}
             </div>
             <div className="text-sm text-text-secondary">
-              {matchState?.phase?.charAt(0).toUpperCase() + matchState?.phase?.slice(1)} Phase
+              {matchState?.phase ? matchState.phase.charAt(0).toUpperCase() + matchState.phase.slice(1) : ''} Phase
             </div>
           </div>
           

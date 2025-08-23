@@ -46,6 +46,15 @@ export default function DeckBuilderPage() {
 
   const handleAddToDeck = (cardId: string) => {
     const count = getCardCount(cardId)
+    
+    // Find the card to get its rarity
+    let card = null;
+    if (selectedCollection) {
+      card = selectedCollection.cards.find(c => c.id === cardId);
+    }
+    
+    if (!card) return;
+    
     const maxAllowed = card.rarity === 'common' ? 4 : card.rarity === 'rare' ? 2 : 1
     
     if (count >= maxAllowed) {
@@ -243,19 +252,33 @@ export default function DeckBuilderPage() {
                   <h2 className="text-xl font-bold mb-4">Available Cards</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                     {filteredCards.map(card => (
-                      <Card 
-                        key={card.id} 
+                      <Card
+                        key={card.id}
                         className="p-3 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-lg">{card.title}</h3>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            card.rarity === 'common' ? 'bg-surface-light text-text-secondary' : 
-                            card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' : 
-                            'bg-accent/20 text-accent'
-                          }`}>
-                            {card.rarity}
-                          </span>
+                          <div className="flex items-start space-x-3">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                              <img
+                                src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                                alt={card.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-lg">{card.title}</h3>
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                card.rarity === 'common' ? 'bg-surface-light text-text-secondary' :
+                                card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                                'bg-accent/20 text-accent'
+                              }`}>
+                                {card.rarity}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                         
                         <div className="flex items-center justify-between mb-3">
@@ -277,7 +300,7 @@ export default function DeckBuilderPage() {
                             )}
                           </div>
                           
-                          <Button 
+                          <Button
                             onClick={() => handleAddToDeck(card.id)}
                             disabled={isDeckFull && !deckCards[card.id]}
                             size="sm"
@@ -310,17 +333,38 @@ export default function DeckBuilderPage() {
                           if (!card) return null
                           
                           return (
-                            <Card 
-                              key={cardId} 
+                            <Card
+                              key={cardId}
                               className="p-3 bg-surface-light border border-border"
                             >
                               <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-bold">{card.title}</h3>
+                                <div className="flex items-start space-x-3">
+                                  <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                                    <img
+                                      src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                                      alt={card.title}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
+                                      }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <h3 className="font-bold">{card.title}</h3>
+                                    <span className={`px-2 py-1 rounded-full text-xs ${
+                                      card.rarity === 'common' ? 'bg-surface-light text-text-secondary' :
+                                      card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                                      'bg-accent/20 text-accent'
+                                    }`}>
+                                      {card.rarity}
+                                    </span>
+                                  </div>
+                                </div>
                                 <div className="flex items-center space-x-2">
                                   <span className="px-2 py-1 bg-surface rounded text-xs">
                                     x{count}
                                   </span>
-                                  <Button 
+                                  <Button
                                     onClick={() => handleRemoveFromDeck(cardId)}
                                     variant="outline"
                                     size="sm"
@@ -349,13 +393,6 @@ export default function DeckBuilderPage() {
                                     </div>
                                   )}
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                  card.rarity === 'common' ? 'bg-surface-light text-text-secondary' : 
-                                  card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' : 
-                                  'bg-accent/20 text-accent'
-                                }`}>
-                                  {card.rarity}
-                                </span>
                               </div>
                               
                               <p className="text-sm text-text-secondary mb-3 line-clamp-2">

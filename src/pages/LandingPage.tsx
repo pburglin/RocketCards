@@ -7,7 +7,7 @@ const collections = [
     id: 'fantasy',
     title: 'Fantasy Realms',
     description: 'Epic battles in magical worlds with dragons, wizards, and ancient artifacts',
-    image: 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: 'https://image.pollinations.ai/prompt/Epic%20battles%20in%20magical%20worlds%20with%20dragons%2C%20wizards%2C%20and%20ancient%20artifacts?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
     cards: 42,
     gradient: 'from-indigo-500 to-purple-600'
   },
@@ -15,7 +15,7 @@ const collections = [
     id: 'politics',
     title: 'Political Arena',
     description: 'Strategic maneuvering in the halls of power with campaigns, debates, and policy battles',
-    image: 'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: 'https://image.pollinations.ai/prompt/Strategic%20maneuvering%20in%20the%20halls%20of%20power%20with%20campaigns%2C%20debates%2C%20and%20policy%20battles?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
     cards: 38,
     gradient: 'from-blue-500 to-cyan-600'
   },
@@ -23,7 +23,7 @@ const collections = [
     id: 'monsters',
     title: 'Monster Mayhem',
     description: 'Collect and battle terrifying creatures from myth and legend',
-    image: 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: 'https://image.pollinations.ai/prompt/Collect%20and%20battle%20terrifying%20creatures%20from%20myth%20and%20legend?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
     cards: 45,
     gradient: 'from-red-500 to-orange-600'
   },
@@ -31,7 +31,7 @@ const collections = [
     id: 'anime',
     title: 'Anime All-Stars',
     description: 'Iconic characters and moments from beloved anime series',
-    image: 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: 'https://image.pollinations.ai/prompt/Iconic%20characters%20and%20moments%20from%20beloved%20anime%20series?width=128&height=128&nologo=true&private=true&safe=true&seed=1',
     cards: 50,
     gradient: 'from-pink-500 to-rose-600'
   }

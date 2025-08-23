@@ -20,17 +20,7 @@ export default function CollectionsPage() {
     name: collection.name,
     description: collection.description,
     cards: collection.cards.length,
-    image: collection.id === 'fantasy'
-      ? 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-      : collection.id === 'politics'
-      ? 'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-      : collection.id === 'monsters'
-      ? 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-      : collection.id === 'anime'
-      ? 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-      : collection.id === 'scifi'
-      ? 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-      : 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+    image: `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
   }))
 
   useEffect(() => {

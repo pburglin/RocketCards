@@ -111,10 +111,13 @@ export default function CollectionDetailPage() {
                 className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
-                  <img 
+                  <img
                     src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                     alt={card.title}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
                 </div>
