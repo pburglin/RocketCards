@@ -1,46 +1,49 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Search, Filter, BookOpen, LayoutGrid, List, Sliders } from 'lucide-react'
+import { useGameStore } from '../store/gameStore'
+import { loadCollection } from '../lib/collectionLoader'
 
 export default function CollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [rarityFilter, setRarityFilter] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const { collections } = useGameStore()
   const navigate = useNavigate()
 
-  const collections = [
-    {
-      id: 'fantasy',
-      name: 'Fantasy Realms',
-      description: 'Epic battles in magical worlds with dragons, wizards, and ancient artifacts',
-      cards: 42,
-      image: 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-    },
-    {
-      id: 'politics',
-      name: 'Political Arena',
-      description: 'Strategic maneuvering in the halls of power with campaigns, debates, and policy battles',
-      cards: 38,
-      image: 'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-    },
-    {
-      id: 'monsters',
-      name: 'Monster Mayhem',
-      description: 'Collect and battle terrifying creatures from myth and legend',
-      cards: 45,
-      image: 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-    },
-    {
-      id: 'anime',
-      name: 'Anime All-Stars',
-      description: 'Iconic characters and moments from beloved anime series',
-      cards: 50,
-      image: 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+  // Transform collections for display (add card counts and images)
+  const collectionDisplayData = collections.map(collection => ({
+    id: collection.id,
+    name: collection.name,
+    description: collection.description,
+    cards: collection.cards.length,
+    image: collection.id === 'fantasy'
+      ? 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+      : collection.id === 'politics'
+      ? 'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+      : collection.id === 'monsters'
+      ? 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+      : collection.id === 'anime'
+      ? 'https://images.pexels.com/photos/10239830/pexels-photo-10239830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+      : collection.id === 'scifi'
+      ? 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+      : 'https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+  }))
+
+  useEffect(() => {
+    // Initialize collections in the store
+    const initialize = async () => {
+      const { useGameStore } = await import('../store/gameStore')
+      const store = useGameStore.getState()
+      if (store.initializeCollections) {
+        await store.initializeCollections()
+      }
     }
-  ]
+    initialize()
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -79,19 +82,19 @@ export default function CollectionsPage() {
       </div>
 
       <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
-        {collections
-          .filter(collection => 
+        {collectionDisplayData
+          .filter(collection =>
             collection.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             collection.description.toLowerCase().includes(searchTerm.toLowerCase())
           )
           .map(collection => (
-            <Card 
-              key={collection.id} 
+            <Card
+              key={collection.id}
               className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
             >
               <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <img 
-                  src={collection.image} 
+                <img
+                  src={collection.image}
                   alt={collection.name}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                 />
@@ -110,7 +113,7 @@ export default function CollectionsPage() {
                 </CardDescription>
                 
                 <div className="mt-6 flex justify-end">
-                  <Button 
+                  <Button
                     onClick={() => navigate(`/collections/${collection.id}`)}
                     className="w-full md:w-auto"
                   >

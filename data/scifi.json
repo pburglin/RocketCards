@@ -1,0 +1,109 @@
+{
+  "id": "scifi",
+  "name": "Sci-Fi Universe",
+  "description": "Futuristic technology, space battles, and intergalactic adventures",
+  "cards": [
+    {
+      "id": "champion_cyborg_commander",
+      "title": "Cyborg Commander",
+      "description": "Enhanced human leader with cybernetic implants",
+      "imageDescription": "Futuristic soldier with visible cybernetic enhancements, armor plating, and glowing HUD",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +2 MP; Passive: +1 damage for each technology card in play",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Human ingenuity enhanced by technological evolution.",
+      "collection": "scifi"
+    },
+    {
+      "id": "tactics_force_field",
+      "title": "Energy Force Field",
+      "description": "Project a protective barrier of pure energy",
+      "imageDescription": "Transparent blue energy shield surrounding a spaceship or character",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Prevent all damage to your champions this turn, +2 HP to all champions",
+      "cost": {
+        "HP": 2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "The best defense is an energy-based offense.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_laser_blast",
+      "title": "Laser Blast",
+      "description": "Fire a concentrated beam of energy",
+      "imageDescription": "Character firing a bright red or blue laser beam from a futuristic weapon",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you have a technology card in play",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Precision targeting systems ensure maximum efficiency.",
+      "collection": "scifi"
+    },
+    {
+      "id": "event_solar_flare",
+      "title": "Solar Flare",
+      "description": "Intense burst of energy from a nearby star",
+      "imageDescription": "Massive solar flare erupting from a sun, with space ships in the foreground",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All champions lose 2 MP regeneration this turn, draw 1 card",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 3
+      },
+      "tags": ["area:all", "effect:mp_regen"],
+      "flavor": "Even the stars can be weapons in the right hands.",
+      "collection": "scifi"
+    },
+    {
+      "id": "champion_alien_overlord",
+      "title": "Alien Overlord",
+      "description": "Ancient extraterrestrial ruler with psychic powers",
+      "imageDescription": "Tall alien figure with multiple eyes, floating, surrounded by psychic energy",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: +1 card per turn",
+      "cost": {
+        "HP": -2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "The cosmos holds intelligences beyond human comprehension.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_nanobots",
+      "title": "Nanobot Swarm",
+      "description": "Deploy microscopic machines to repair or attack",
+      "imageDescription": "Swarm of tiny robotic insects surrounding a character or object",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 2 HP to target champion, or deal 2 damage to opponent champion",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:any", "effect:heal_or_damage"],
+      "flavor": "The future is so small you can't even see it.",
+      "collection": "scifi"
+    }
+  ]
+}

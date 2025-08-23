@@ -5,51 +5,36 @@ import { Button } from '../components/ui/Button'
 import { useGameStore } from '../store/gameStore'
 import { Card as CardType } from '../types/card'
 import { Plus, Minus, Info, Image as ImageIcon, Filter } from 'lucide-react'
+import { loadCollection } from '../lib/collectionLoader'
 
 export default function CollectionDetailPage() {
-  const { collectionId } = useParams()
+  const { collectionId } = useParams<{collectionId: string}>()
   const [cards, setCards] = useState<CardType[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [rarityFilter, setRarityFilter] = useState('')
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
-  const { addToDeck, deck } = useGameStore()
+  const { addToDeck, selectedDeck, collections } = useGameStore()
 
   useEffect(() => {
-    // In a real app, this would fetch from public/cards/{collectionId}.json
-    // For MVP, using mock data
-    const mockCards: CardType[] = [
-      {
-        id: 'champion_dragon_unbound',
-        title: 'Dragon Unbound',
-        description: 'Ancient dragon breaks its chains and takes flight over a burning citadel',
-        imageDescription: 'Ancient red dragon breaking chains above a burning citadel, smoke and fire, dramatic sky',
-        type: 'champions',
-        rarity: 'unique',
-        effect: 'On summon: deal 3 damage to all enemy champions; When attacking: +2 damage if MP >= 5',
-        cost: { HP: 0, MP: -5, fatigue: 0 },
-        tags: ['reaction:false', 'duration:persistent'],
-        flavor: 'Freedom paid in fire.',
-        collection: 'fantasy'
-      },
-      {
-        id: 'tactics_counter',
-        title: 'Counter Maneuver',
-        description: 'Anticipate and negate an opponent\'s move',
-        imageDescription: 'Shield shattering an incoming sword strike, sparks flying',
-        type: 'tactics',
-        rarity: 'rare',
-        effect: 'Negate the next action, +1 MP regeneration this turn',
-        cost: { HP: -1, MP: -2, fatigue: 0 },
-        tags: ['reaction:true', 'duration:1'],
-        flavor: 'Timing is everything.',
-        collection: 'fantasy'
-      }
-    ]
+    if (!collectionId) return
     
-    setCards(mockCards)
-  }, [collectionId])
+    const loadCollectionCards = async () => {
+      const collection = await loadCollection(collectionId)
+      if (collection) {
+        setCards(collection.cards)
+      } else {
+        // Fallback to existing collections in store
+        const storeCollection = collections.find(c => c.id === collectionId)
+        if (storeCollection) {
+          setCards(storeCollection.cards)
+        }
+      }
+    }
+    
+    loadCollectionCards()
+  }, [collectionId, collections])
 
   const filteredCards = cards.filter(card => 
     card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -63,7 +48,7 @@ export default function CollectionDetailPage() {
         <Link to="/collections" className="text-primary hover:text-primary-dark mr-4">
           ← Back to Collections
         </Link>
-        <h1 className="text-3xl font-bold">{collectionId?.charAt(0).toUpperCase() + collectionId?.slice(1)} Collection</h1>
+        <h1 className="text-3xl font-bold">{collectionId ? collectionId.charAt(0).toUpperCase() + collectionId.slice(1) : 'Collection'} Collection</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

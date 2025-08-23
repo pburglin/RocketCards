@@ -1,0 +1,109 @@
+{
+  "id": "politics",
+  "name": "Political Arena",
+  "description": "Strategic maneuvering in the halls of power with campaigns, debates, and policy battles",
+  "cards": [
+    {
+      "id": "champion_senator",
+      "title": "Seasoned Senator",
+      "description": "Master of political maneuvering and legislative prowess",
+      "imageDescription": "Elderly politician in a suit, holding a gavel, standing behind a podium with microphones",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: draw 2 cards; Passive: +1 card per turn",
+      "cost": {
+        "HP": -2,
+        "MP": -3,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Experience counts for everything in politics.",
+      "collection": "politics"
+    },
+    {
+      "id": "tactics_debate",
+      "title": "Brilliant Debate",
+      "description": "Outmaneuver your opponent with superior rhetoric",
+      "imageDescription": "Two politicians engaged in heated debate on a stage with an audience",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Negate the next opponent action, gain 2 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Words can be sharper than any blade.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_campaign",
+      "title": "Grassroots Campaign",
+      "description": "Mobilize supporters to strengthen your position",
+      "imageDescription": "Crowd of people holding campaign signs and cheering at a rally",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Add 1 common card from your collection to your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:hand", "card:common"],
+      "flavor": "Every vote counts, and every supporter matters.",
+      "collection": "politics"
+    },
+    {
+      "id": "event_scandal",
+      "title": "Breaking Scandal",
+      "description": "A damaging revelation rocks the political landscape",
+      "imageDescription": "Newspapers with bold headlines, politicians looking shocked or defensive",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "Opponent discards 2 cards at random",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 2
+      },
+      "tags": ["target:opponent", "effect:discard"],
+      "flavor": "In politics, your past can become your present's greatest enemy.",
+      "collection": "politics"
+    },
+    {
+      "id": "champion_media_mogul",
+      "title": "Media Mogul",
+      "description": "Control the narrative through media influence",
+      "imageDescription": "Businessperson in an expensive suit, holding a tablet showing news headlines",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +3 MP; Passive: All your events cost 1 less MP",
+      "cost": {
+        "HP": -1,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Control the message, control the game.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_polls",
+      "title": "Polling Data",
+      "description": "Gather intelligence on your opponent's strategy",
+      "imageDescription": "Person analyzing charts and graphs on a computer screen",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, then draw 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:reveal"],
+      "flavor": "Knowledge is power, especially in the political arena.",
+      "collection": "politics"
+    }
+  ]
+}

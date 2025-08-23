@@ -1,0 +1,109 @@
+{
+  "id": "fantasy",
+  "name": "Fantasy Realms",
+  "description": "Epic battles in magical worlds with dragons, wizards, and ancient artifacts",
+  "cards": [
+    {
+      "id": "champion_dragon_unbound",
+      "title": "Dragon Unbound",
+      "description": "Ancient dragon breaks its chains and takes flight over a burning citadel",
+      "imageDescription": "Ancient red dragon breaking chains above a burning citadel, smoke and fire, dramatic sky",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: deal 3 damage to all enemy champions; When attacking: +2 damage if MP >= 5",
+      "cost": {
+        "HP": 0,
+        "MP": -5,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Freedom paid in fire.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "tactics_counter",
+      "title": "Counter Maneuver",
+      "description": "Anticipate and negate an opponent's move",
+      "imageDescription": "Shield shattering an incoming sword strike, sparks flying",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Negate the next action, +1 MP regeneration this turn",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Timing is everything.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_fireball",
+      "title": "Fireball",
+      "description": "Hurl a ball of fire at your enemies",
+      "imageDescription": "Wizard casting a glowing fireball with intense flames",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "The classic spell of choice for aspiring mages.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "event_storm",
+      "title": "Magical Storm",
+      "description": "A sudden storm disrupts the battlefield",
+      "imageDescription": "Dark clouds gathering with lightning bolts striking the ground",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All champions lose 1 MP regeneration this turn",
+      "cost": {
+        "HP": -2,
+        "MP": 0,
+        "fatigue": 0
+      },
+      "tags": ["area:all", "effect:mp_regen"],
+      "flavor": "Even the weather conspires against the combatants.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "champion_lich_king",
+      "title": "Lich King",
+      "description": "Undead monarch wielding necromantic powers",
+      "imageDescription": "Skeleton king in ornate armor wielding a scepter, surrounded by swirling mist",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: return 2 cards from your discard to your deck; Passive: +1 MP regeneration",
+      "cost": {
+        "HP": -3,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Death is not the end, but merely a beginning.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_heal",
+      "title": "Healing Light",
+      "description": "Restore health to yourself or an ally",
+      "imageDescription": "Golden light emanating from a cleric's hands, healing wounds",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 3 HP to target champion",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "heal:3"],
+      "flavor": "The power of light can mend even the deepest wounds.",
+      "collection": "fantasy"
+    }
+  ]
+}

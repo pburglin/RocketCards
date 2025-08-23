@@ -1,0 +1,109 @@
+{
+  "id": "anime",
+  "name": "Anime All-Stars",
+  "description": "Iconic characters and moments from beloved anime series",
+  "cards": [
+    {
+      "id": "champion_saiyan",
+      "title": "Legendary Super Saiyan",
+      "description": "Warrior with incredible power and fighting spirit",
+      "imageDescription": "Muscular warrior with spiky hair, glowing aura, fists clenched in fighting stance",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +3 damage to all champions this turn; Passive: Gain 1 MP when you play a skill",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "The power of a warrior knows no bounds.",
+      "collection": "anime"
+    },
+    {
+      "id": "tactics_henshin",
+      "title": "Transformation Sequence",
+      "description": "Unlock your true potential in a flash of light",
+      "imageDescription": "Character surrounded by glowing light, transforming into a more powerful form",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Double the effect of your next card this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "When push comes to shove, heroes always have one more trick up their sleeve.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_kamehameha",
+      "title": "Kamehameha Wave",
+      "description": "Channel your energy into a devastating energy blast",
+      "imageDescription": "Character cupping hands together, blue energy beam shooting forward",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 3 damage to target champion",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:3"],
+      "flavor": "The signature move of many legendary fighters.",
+      "collection": "anime"
+    },
+    {
+      "id": "event_flashback",
+      "title": "Power of Friendship Flashback",
+      "description": "Remember the bonds that give you strength",
+      "imageDescription": "Group of friends standing together, warm light surrounding them",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "Restore 4 HP to all your champions, draw 2 cards",
+      "cost": {
+        "HP": 3,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:heal"],
+      "flavor": "In the end, it's always the power of friendship that saves the day.",
+      "collection": "anime"
+    },
+    {
+      "id": "champion_mage_apprentice",
+      "title": "Prodigy Mage Apprentice",
+      "description": "Young spellcaster with incredible magical potential",
+      "imageDescription": "Young person in wizard robes, casting multiple colorful spells simultaneously",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random skills to your hand; Passive: Skills cost 1 less MP",
+      "cost": {
+        "HP": -1,
+        "MP": -4,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Age is no barrier to magical mastery.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_shuriken",
+      "title": "Throwing Star Barrage",
+      "description": "Unleash a flurry of razor-sharp throwing stars",
+      "imageDescription": "Ninja throwing multiple shiny shurikens in rapid succession",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to all opponent champions",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:opponent", "damage:1"],
+      "flavor": "Speed and precision are the hallmarks of a true ninja.",
+      "collection": "anime"
+    }
+  ]
+}

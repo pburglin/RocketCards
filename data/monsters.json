@@ -1,0 +1,109 @@
+{
+  "id": "monsters",
+  "name": "Monster Mayhem",
+  "description": "Collect and battle terrifying creatures from myth and legend",
+  "cards": [
+    {
+      "id": "champion_kraken",
+      "title": "Ancient Kraken",
+      "description": "Massive cephalopod terrorizing the seas",
+      "imageDescription": "Giant tentacled sea monster emerging from ocean waves, ships in the background",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +2 HP to all champions; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": 3,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "From the depths, it rises.",
+      "collection": "monsters"
+    },
+    {
+      "id": "tactics_ambush",
+      "title": "Sudden Ambush",
+      "description": "Strike when your enemy least expects it",
+      "imageDescription": "Monster leaping from shadows to attack an unsuspecting victim",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Deal 4 damage to target champion, then draw 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "The best offense is a good surprise.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_roar",
+      "title": "Terrifying Roar",
+      "description": "Unleash a fearsome roar that shakes the ground",
+      "imageDescription": "Large monster with mouth open wide, sound waves visible, smaller creatures fleeing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All opponent champions lose 1 MP regeneration this turn",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:opponent", "effect:mp_regen"],
+      "flavor": "Some monsters don't need weapons - their presence is weapon enough.",
+      "collection": "monsters"
+    },
+    {
+      "id": "event_full_moon",
+      "title": "Full Moon",
+      "description": "The moon's power strengthens supernatural creatures",
+      "imageDescription": "Large full moon in a night sky, casting silver light over a landscape",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All monster champions gain +2 damage this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 2
+      },
+      "tags": ["area:all", "effect:damage"],
+      "flavor": "When the moon is full, the darkness grows stronger.",
+      "collection": "monsters"
+    },
+    {
+      "id": "champion_basilisk",
+      "title": "Basilisk",
+      "description": "Serpentine creature whose gaze turns flesh to stone",
+      "imageDescription": "Large snake-like creature with glowing eyes, stone statues in the background",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: opponent discards 1 card; Passive: Opponent champions cost 1 more HP to play",
+      "cost": {
+        "HP": -2,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "One look is all it takes.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_claw_swipe",
+      "title": "Claw Swipe",
+      "description": "Rake your enemies with razor-sharp claws",
+      "imageDescription": "Monster with large claws swiping at an opponent, claws glowing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to target champion, +1 damage if you have a monster champion in play",
+      "cost": {
+        "HP": 0,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:1"],
+      "flavor": "Nature's weapons are often the most effective.",
+      "collection": "monsters"
+    }
+  ]
+}

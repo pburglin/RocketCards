@@ -1,29 +1,32 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { persist } from 'zustand/middleware'
-import { 
-  PlayerState, 
-  MatchState, 
-  CardCollection, 
-  Deck, 
-  Profile 
+import {
+  PlayerState,
+  MatchState,
+  CardCollection,
+  Deck,
+  Profile,
+  Card
 } from '../types/game'
-import { 
-  calculatePlayerStats, 
-  initializeMatch, 
-  startPhase, 
-  upkeepPhase, 
-  playCard, 
-  resolveEffects, 
-  endTurn, 
-  concedeMatch 
+import {
+  calculatePlayerStats,
+  initializeMatch,
+  startPhase,
+  upkeepPhase,
+  playCard,
+  resolveEffects,
+  endTurn,
+  concedeMatch
 } from '../lib/gameEngine'
+import { loadAllCollections, loadCollection } from '../lib/collectionLoader'
 
 interface GameStore {
   // Collections
   collections: CardCollection[]
   selectedCollection: CardCollection | null
   setSelectedCollection: (collection: CardCollection) => void
+  initializeCollections: () => Promise<void>
   
   // Decks
   decks: Deck[]
@@ -64,70 +67,35 @@ export const useGameStore = create<GameStore>()(
   persist(
     immer((set, get) => ({
       // Collections
-      collections: [
-        {
-          id: 'fantasy',
-          name: 'Fantasy Realms',
-          description: 'Epic battles in magical worlds with dragons, wizards, and ancient artifacts',
-          cards: [
-            {
-              id: 'champion_dragon_unbound',
-              title: 'Dragon Unbound',
-              description: 'Ancient dragon breaks its chains and takes flight over a burning citadel',
-              imageDescription: 'Ancient red dragon breaking chains above a burning citadel, smoke and fire, dramatic sky',
-              type: 'champions',
-              rarity: 'unique',
-              effect: 'On summon: deal 3 damage to all enemy champions; When attacking: +2 damage if MP >= 5',
-              cost: { HP: 0, MP: -5, fatigue: 0 },
-              tags: ['reaction:false', 'duration:persistent'],
-              flavor: 'Freedom paid in fire.',
-              collection: 'fantasy'
-            },
-            {
-              id: 'tactics_counter',
-              title: 'Counter Maneuver',
-              description: 'Anticipate and negate an opponent\'s move',
-              imageDescription: 'Shield shattering an incoming sword strike, sparks flying',
-              type: 'tactics',
-              rarity: 'rare',
-              effect: 'Negate the next action, +1 MP regeneration this turn',
-              cost: { HP: -1, MP: -2, fatigue: 0 },
-              tags: ['reaction:true', 'duration:1'],
-              flavor: 'Timing is everything.',
-              collection: 'fantasy'
-            }
-          ]
-        },
-        {
-          id: 'politics',
-          name: 'Political Arena',
-          description: 'Strategic maneuvering in the halls of power with campaigns, debates, and policy battles',
-          cards: []
-        },
-        {
-          id: 'monsters',
-          name: 'Monster Mayhem',
-          description: 'Collect and battle terrifying creatures from myth and legend',
-          cards: []
-        },
-        {
-          id: 'anime',
-          name: 'Anime All-Stars',
-          description: 'Iconic characters and moments from beloved anime series',
-          cards: []
-        }
-      ],
+      collections: [],
       selectedCollection: null,
       setSelectedCollection: (collection) => set({ selectedCollection: collection }),
+      
+      // Initialize collections asynchronously
+      initializeCollections: async () => {
+        const collections = await loadAllCollections()
+        set({ collections })
+      },
       
       // Decks
       decks: [],
       selectedDeck: null,
       addToDeck: (cardId) => {
-        const { selectedDeck } = get()
+        const { selectedDeck, collections, selectedCollection } = get()
         if (!selectedDeck) return
         
-        const card = selectedDeck.collection.cards.find(c => c.id === cardId)
+        // Find the card in the selected collection or any available collection
+        let card: Card | undefined
+        if (selectedCollection) {
+          card = selectedCollection.cards.find(c => c.id === cardId)
+        } else {
+          // Search through all collections
+          for (const collection of collections) {
+            card = collection.cards.find(c => c.id === cardId)
+            if (card) break
+          }
+        }
+        
         if (!card) return
         
         // Check copy limits
