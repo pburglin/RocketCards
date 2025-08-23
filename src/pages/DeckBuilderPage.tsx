@@ -27,7 +27,7 @@ export default function DeckBuilderPage() {
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [importData, setImportData] = useState('')
-  const [deckName, setDeckName] = useState(selectedDeck?.name || 'My Deck')
+  const [deckName, setDeckName] = useState(selectedDeck?.name || '')
   const [deckCards, setDeckCards] = useState<{[key: string]: number}>({})
   const [showExistingDecks, setShowExistingDecks] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{show: boolean, deckName: string}>({show: false, deckName: ''})
@@ -58,9 +58,17 @@ export default function DeckBuilderPage() {
         cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
       })
       setDeckCards(cardCounts)
-      setDeckName(selectedDeck.name || 'My Deck')
+      // Only set the deck name if it's not the default "Auto-Built Deck"
+      if (selectedDeck.name && selectedDeck.name !== 'Auto-Built Deck') {
+        setDeckName(selectedDeck.name)
+      } else if (selectedCollection && selectedDeck.name === 'Auto-Built Deck') {
+        // If it's an auto-built deck, use the collection name
+        setDeckName(`${selectedCollection.name} Deck`)
+      } else {
+        setDeckName(selectedDeck.name || '')
+      }
     }
-  }, [selectedDeck])
+  }, [selectedDeck, selectedCollection])
 
   // Sync local deckCards state when selectedDeck.cards changes from external sources
   useEffect(() => {
@@ -357,13 +365,17 @@ export default function DeckBuilderPage() {
                   autoBuildDeck()
                   // Refresh the deckCards state to reflect the auto-built deck
                   setTimeout(() => {
-                    const { selectedDeck: updatedSelectedDeck } = useGameStore.getState()
+                    const { selectedDeck: updatedSelectedDeck, selectedCollection: currentCollection } = useGameStore.getState()
                     if (updatedSelectedDeck) {
                       const cardCounts: {[key: string]: number} = {}
                       updatedSelectedDeck.cards.forEach(cardId => {
                         cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
                       })
                       setDeckCards(cardCounts)
+                      // Set the deck name to use collection name
+                      if (currentCollection) {
+                        setDeckName(`${currentCollection.name} Deck`)
+                      }
                     }
                   }, 200)
                 }}

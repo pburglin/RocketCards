@@ -160,10 +160,10 @@ export const useGameStore = create<GameStore>()(
           return
         }
         
-        // If no selected deck, create a new one
+        // If no selected deck, create a new one with collection name
         if (!selectedDeck) {
           const newDeck: Deck = {
-            name: 'Auto-Built Deck',
+            name: `${selectedCollection.name} Deck`,
             cards: []
           }
           setSelectedDeck(newDeck)
