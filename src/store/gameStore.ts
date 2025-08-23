@@ -17,7 +17,8 @@ import {
   playCard,
   resolveEffects,
   endTurn,
-  concedeMatch
+  concedeMatch,
+  playOpponentAI
 } from '../lib/gameEngine'
 import { loadAllCollections, loadCollection } from '../lib/collectionLoader'
 
@@ -261,14 +262,15 @@ export const useGameStore = create<GameStore>()(
         
       },
       playCard: (cardId) => {
-        const { matchState, playerState, collections } = get()
-        if (!matchState || !playerState) return false
+        const { matchState, playerState, opponentState, collections } = get()
+        if (!matchState || !playerState || !opponentState) return false
         
-        const result = playCard(matchState, playerState, cardId, collections)
+        const result = playCard(matchState, playerState, opponentState, cardId, collections)
         if (result.success) {
           set({
             matchState: result.matchState,
-            playerState: result.playerState
+            playerState: result.playerState,
+            opponentState: result.opponentState
           })
           
           
@@ -277,15 +279,32 @@ export const useGameStore = create<GameStore>()(
         return false
       },
       endTurn: () => {
-        const { matchState, playerState, opponentState } = get()
+        const { matchState, playerState, opponentState, collections } = get()
         if (!matchState || !playerState || !opponentState) return
         
         const result = endTurn(matchState, playerState, opponentState)
+        
         set({
           matchState: result.matchState,
           playerState: result.playerState,
           opponentState: result.opponentState
         })
+        
+        // After ending turn, if it's now the opponent's turn, trigger AI after a short delay
+        if (result.matchState.activePlayer === 'opponent') {
+          setTimeout(() => {
+            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
+            if (currentMatchState && currentPlayerState && currentOpponentState && currentMatchState.phase === 'start') {
+              // Call startPhase to trigger opponent's start phase, which will then call AI
+              const startResult = startPhase(currentMatchState, currentPlayerState, currentOpponentState)
+              set({
+                matchState: startResult.matchState,
+                playerState: startResult.playerState,
+                opponentState: startResult.opponentState
+              })
+            }
+          }, 500)
+        }
         
       },
       resolveLLM: async () => {
@@ -307,7 +326,7 @@ export const useGameStore = create<GameStore>()(
         set(state => {
           if (state.matchState) {
             state.matchState.phase = 'end'
-            state.matchState.log = [...state.matchState.log, ...log]
+            state.matchState.log = [...state.matchState.log, ...log.map(message => ({ message, turn: state.matchState!.turn }))]
           }
         })
         
@@ -326,15 +345,31 @@ export const useGameStore = create<GameStore>()(
         
       },
       startPhase: () => {
-        const { matchState, playerState, opponentState } = get()
+        const { matchState, playerState, opponentState, collections } = get()
         if (!matchState || !playerState || !opponentState) return
         
         const result = startPhase(matchState, playerState, opponentState)
+        
         set({
           matchState: result.matchState,
           playerState: result.playerState,
           opponentState: result.opponentState
         })
+        
+        // If it's the opponent's turn, trigger AI after a short delay to allow UI to update
+        if (result.matchState.activePlayer === 'opponent') {
+          setTimeout(() => {
+            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
+            if (currentMatchState && currentPlayerState && currentOpponentState && currentMatchState.phase === 'main') {
+              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
+              set({
+                matchState: aiResult.matchState,
+                playerState: aiResult.playerState,
+                opponentState: aiResult.opponentState
+              })
+            }
+          }, 500)
+        }
       },
       upkeepPhase: () => {
         const { matchState, playerState, opponentState } = get()

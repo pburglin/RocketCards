@@ -68,12 +68,24 @@ export interface MatchRules {
   playLimitPerTurn: number;
 }
 
+export interface LogEntry {
+  message: string;
+  turn: number;
+}
+
+export interface StartPhaseDetails {
+  mpRestored: number;
+  cardDrawn?: string;
+  hand: string[];
+}
+
 export interface MatchState {
   turn: number;
   phase: 'start' | 'main' | 'battle' | 'resolve' | 'end';
   activePlayer: 'player' | 'opponent';
-  log: string[];
+  log: LogEntry[];
   lastLLMResult?: any;
   rngSeed: string;
   rules: MatchRules;
+  startPhaseDetails?: StartPhaseDetails;
 }
