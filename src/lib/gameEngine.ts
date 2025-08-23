@@ -168,6 +168,13 @@ export function startPhase(
     }
   }
   
+  // Reset play limit for active player
+  if (matchState.activePlayer === 'player') {
+    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+  } else {
+    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+  }
+  
   // Move to main phase
   matchState.phase = 'main'
   
@@ -190,6 +197,13 @@ export function upkeepPhase(
   } else {
     // For opponent, same simplified regen
     opponentState.mp = Math.min(opponentState.mp + 3, 10)
+  }
+  
+  // Reset play limit for active player
+  if (matchState.activePlayer === 'player') {
+    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+  } else {
+    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
   }
   
   // Move to main phase

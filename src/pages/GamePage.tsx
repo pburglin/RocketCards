@@ -167,7 +167,7 @@ export default function GamePage() {
                     
                     return (
                       <div
-                        key={cardId}
+                        key={`${cardId}-${index}`}
                         className="relative card-hover-effect cursor-pointer bg-surface rounded-lg shadow-lg overflow-hidden"
                         onClick={() => {
                           setSelectedCard(card)
@@ -246,20 +246,13 @@ export default function GamePage() {
               </div>
             </div>
             
-            <div className="flex justify-end space-x-4">
-              <Button 
+            <div className="flex justify-end">
+              <Button
                 onClick={handleEndTurn}
-                disabled={matchState?.turn > 1}
+                disabled={!matchState || (matchState.phase !== 'main' && matchState.phase !== 'battle')}
               >
                 <Flag className="w-4 h-4 mr-2" />
-                End Turn
-              </Button>
-              <Button 
-                onClick={handleResolve}
-                disabled={matchState?.turn === 0}
-              >
-                <RotateCw className="w-4 h-4 mr-2" />
-                Resolve Effects
+                End Phase
               </Button>
             </div>
           </div>
@@ -337,8 +330,8 @@ export default function GamePage() {
             </div>
             
             <div className="flex justify-end mt-6">
-              <Button onClick={handleResolve}>
-                Resolve Effects
+              <Button onClick={handleEndTurn}>
+                End Battle Phase
               </Button>
             </div>
           </div>
