@@ -1,0 +1,791 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGameStore } from '../store/gameStore'
+import { 
+  startPhase, 
+  upkeepPhase, 
+  playCard, 
+  resolveEffects, 
+  endTurn, 
+  concedeMatch 
+} from '../lib/gameEngine'
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
+} from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { 
+  Play, 
+  Info, 
+  Settings, 
+  LogIn, 
+  RotateCw,
+  Gamepad,
+  Plus,
+  AlertTriangle,
+  X,
+  Flag,
+  Hand
+} from 'lucide-react'
+
+export default function GamePage() {
+  const navigate = useNavigate()
+  const { 
+    matchState, 
+    playerState, 
+    opponentState, 
+    playCard: playCardAction, 
+    endTurn: endTurnAction,
+    resolveLLM,
+    concede
+  } = useGameStore()
+  
+  const [showCardModal, setShowCardModal] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<any>(null)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showPenalty, setShowPenalty] = useState('')
+  const [penaltyMessage, setPenaltyMessage] = useState('')
+  const [isResolving, setIsResolving] = useState(false)
+  const [actionLog, setActionLog] = useState([])
+  
+  useEffect(() => {
+    if (!matchState) {
+      navigate('/play')
+      return
+    }
+    
+    // Initialize game state
+    if (matchState?.phase === 'start') {
+      startPhase()
+    }
+  }, [matchState, navigate])
+  
+  const handlePlayCard = (cardId) => {
+    if (matchState?.phase !== 'main') return
+    
+    const card = playerState?.hand.find(c => c.id === cardId)
+    if (!card) return
+    
+    // Check if card can be played
+    const canPlay = playCardAction(cardId)
+    if (!canPlay) {
+      setPenaltyMessage('Invalid play - check costs and phase')
+      setShowPenalty(true)
+    }
+  }
+  
+  const handleEndTurn = () => {
+    if (matchState?.phase !== 'main' && matchState?.phase !== 'battle') return
+    
+    // End current phase
+    if (matchState?.phase === 'main') {
+      endTurnAction()
+      return
+    }
+    
+    // End battle phase
+    if (matchState?.phase === 'battle') {
+      endTurnAction()
+    }
+  }
+  
+  const handleConcede = () => {
+    concede()
+    navigate('/results')
+  }
+  
+  const handleResolve = async () => {
+    if (matchState?.phase !== 'resolve') return
+    
+    setIsResolving(true)
+    try {
+      const result = await resolveLLM()
+      setActionLog([...actionLog, ...result.log])
+    } finally {
+      setIsResolving(false)
+    }
+  }
+  
+  const renderPhase = () => {
+    if (!matchState) return null
+    
+    switch (matchState.phase) {
+      case 'start':
+        return (
+          <div className="bg-surface-light p-6 rounded-lg mb-6">
+            <h2 className="text-2xl font-bold mb-4">Start Phase</h2>
+            <p className="text-text-secondary mb-6">
+              Drawing card and restoring mana
+            </p>
+            <Button onClick={upkeepPhase}>
+              Continue to Main Phase
+            </Button>
+          </div>
+        )
+        
+      case 'main':
+        return (
+          <div className="bg-surface-light p-6 rounded-lg mb-6">
+            <h2 className="text-2xl font-bold mb-4">Main Phase</h2>
+            <p className="text-text-secondary mb-6">
+              You can play {playerState?.extraPlaysRemaining || 1} card{playerState?.extraPlaysRemaining !== 1 ? 's' : ''} this turn
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 className="font-bold mb-4">Your Hand</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {playerState?.hand?.map(card => (
+                    <div 
+                      key={card?.id} 
+                      className="relative card-hover-effect cursor-pointer"
+                      onClick={() => {
+                        setSelectedCard(card)
+                        setShowCardModal(true)
+                      }}
+                    >
+                      <img 
+                        src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                        alt={card?.title}
+                        className="w-full h-32 object-cover rounded-lg shadow-lg"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity">
+                        <div className="absolute bottom-2 left-2 right-2">
+                          <Button 
+                            onClick={() => handlePlayCard(card?.id)}
+                            className="w-full"
+                          >
+                            <Play className="w-4 h-4 mr-2" />
+                            Play
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold mb-4">Campaign Board</h3>
+                <div className="space-y-4">
+                  {matchState.log.map((log, index) => (
+                    <div key={index} className="bg-surface p-3 rounded-lg">
+                      <p className="text-sm">{log}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-4">
+              <Button 
+                onClick={handleEndTurn}
+                disabled={matchState?.turn > 1}
+              >
+                <Flag className="w-4 h-4 mr-2" />
+                End Turn
+              </Button>
+              <Button 
+                onClick={handleResolve}
+                disabled={matchState?.turn === 0}
+              >
+                <RotateCw className="w-4 h-4 mr-2" />
+                Resolve Effects
+              </Button>
+            </div>
+          </div>
+        )
+        
+      case 'battle':
+        return (
+          <div className="bg-surface-light p-6 rounded-lg mb-6">
+            <h2 className="text-2xl font-bold mb-4">Battle Phase</h2>
+            <p className="text-text-secondary mb-6">
+              Declare champion actions and skill activations
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-bold mb-4">Your Champions</h3>
+                <div className="space-y-4">
+                  {playerState?.champions?.map((champion, index) => (
+                    <Card 
+                      key={index} 
+                      className="p-4 border ${
+                        champion.status.includes('exhausted') ? 'opacity-50' : ''
+                      }"
+                    >
+                      <div className="flex justify-between items-start">
+                        <CardTitle>{champion.cardId}</CardTitle>
+                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                          Slot {champion.slot}
+                        </span>
+                      </div>
+                      <CardDescription className="mt-2">
+                        {champion.attachedSkills.length} attached skills
+                      </CardDescription>
+                      <div className="mt-4 flex space-x-2">
+                        <Button 
+                          disabled={champion.status.includes('exhausted')}
+                          onClick={() => {
+                            // Handle champion action
+                          }}
+                        >
+                          Attack
+                        </Button>
+                        <Button 
+                          disabled={champion.status.includes('silenced')}
+                          onClick={() => {
+                            // Handle skill activation
+                          }}
+                        >
+                          Activate Skill
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold mb-4">Opponent Champions</h3>
+                <div className="space-y-4">
+                  {opponentState?.champions?.map((champion, index) => (
+                    <Card key={index} className="p-4">
+                      <div className="flex justify-between items-start">
+                        <CardTitle>{champion.cardId}</CardTitle>
+                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                          Slot {champion.slot}
+                        </span>
+                      </div>
+                      <CardDescription className="mt-2">
+                        {champion.attachedSkills.length} attached skills
+                      </CardDescription>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end mt-6">
+              <Button onClick={handleResolve}>
+                Resolve Effects
+              </Button>
+            </div>
+          </div>
+        )
+        
+      case 'resolve':
+        return (
+          <div className="bg-surface-light p-6 rounded-lg mb-6">
+            <h2 className="text-2xl font-bold mb-4">Resolving Effects</h2>
+            <div className="bg-surface p-4 rounded-lg min-h-40 flex items-center justify-center">
+              {isResolving ? (
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4">
+                    <div className="absolute inset-0 animate-spin rounded-full border-4 border-surface-light border-t-primary h-full w-full" />
+                  </div>
+                  <p className="text-lg">Resolving effects with LLM...</p>
+                  <p className="text-sm text-text-secondary mt-2">
+                    This may take a few seconds
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-lg mb-4">Effects ready to resolve</p>
+                  <Button onClick={handleResolve}>
+                    Resolve Effects
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+        
+      case 'end':
+        return (
+          <div className="bg-surface-light p-6 rounded-lg mb-6">
+            <h2 className="text-2xl font-bold mb-4">End Phase</h2>
+            <p className="text-text-secondary mb-6">
+              Discarding down to {matchState?.rules.handLimit} cards
+            </p>
+            
+            <div className="flex justify-end">
+              <Button onClick={endTurnAction}>
+                Start Next Turn
+              </Button>
+            </div>
+          </div>
+        )
+        
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-4">
+            <Gamepad className="w-5 h-5 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold">Game</h1>
+        </div>
+        
+        <div className="flex space-x-2">
+          <Button 
+            onClick={() => setShowSettings(true)}
+            variant="outline"
+            size="sm"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
+          </Button>
+          <Button 
+            onClick={handleConcede}
+            variant="outline"
+            size="sm"
+            className="text-error border-error hover:bg-error/10"
+          >
+            <Concede className="w-4 h-4 mr-2" />
+            Concede
+          </Button>
+        </div>
+      </div>
+      
+      {/* Opponent Resources */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Opponent HP</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-error" 
+                style={{ width: `${(opponentState?.hp / 30) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{opponentState?.hp}</span>
+          </div>
+        </div>
+        
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Opponent MP</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-secondary" 
+                style={{ width: `${(opponentState?.mp / 10) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{opponentState?.mp}</span>
+          </div>
+        </div>
+        
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Opponent Fatigue</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-warning" 
+                style={{ width: `${(opponentState?.fatigue / 10) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{opponentState?.fatigue}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Campaign Board */}
+      <div className="bg-surface-light p-6 rounded-lg mb-8">
+        <h2 className="text-2xl font-bold mb-6">Campaign Board</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-lg font-bold mb-4">Your Champions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {playerState?.champions?.map((champion, index) => (
+                <Card 
+                  key={index} 
+                  className={`p-4 ${
+                    champion?.status?.includes('exhausted') ? 'opacity-50' : ''
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <CardTitle>{champion?.cardId}</CardTitle>
+                    <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                      Slot {champion?.slot}
+                    </span>
+                  </div>
+                  <CardDescription className="mt-2">
+                    {champion?.attachedSkills?.length} attached skills
+                  </CardDescription>
+                  <div className="mt-4 flex space-x-2">
+                    <Button 
+                      disabled={champion?.status?.includes('exhausted')}
+                      onClick={() => {
+                        // Handle champion action
+                      }}
+                    >
+                      Attack
+                    </Button>
+                    <Button 
+                      disabled={champion?.status?.includes('silenced')}
+                      onClick={() => {
+                        // Handle skill activation
+                      }}
+                    >
+                      Activate Skill
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+              {playerState?.champions?.length < 3 && (
+                <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
+                  <Plus className="w-8 h-8 text-text-secondary mb-2" />
+                  <p className="text-text-secondary">Empty Slot</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-bold mb-4">Opponent Champions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {opponentState?.champions?.map((champion, index) => (
+                <Card key={index} className="p-4">
+                  <div className="flex justify-between items-start">
+                    <CardTitle>{champion?.cardId}</CardTitle>
+                    <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                      Slot {champion?.slot}
+                    </span>
+                  </div>
+                  <CardDescription className="mt-2">
+                    {champion?.attachedSkills?.length} attached skills
+                  </CardDescription>
+                </Card>
+              ))}
+              {opponentState?.champions?.length < 3 && (
+                <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
+                  <p className="text-text-secondary">Empty Slot</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Player Resources */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Your HP</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-error" 
+                style={{ width: `${(playerState?.hp / 30) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{playerState?.hp}</span>
+          </div>
+        </div>
+        
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Your MP</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-secondary" 
+                style={{ width: `${(playerState?.mp / 10) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{playerState?.mp}</span>
+          </div>
+        </div>
+        
+        <div className="bg-surface-light p-4 rounded-lg">
+          <h3 className="text-sm text-text-secondary mb-2">Your Fatigue</h3>
+          <div className="flex items-center">
+            <div className="w-full bg-surface rounded-full h-4">
+              <div 
+                className="h-4 rounded-full bg-warning" 
+                style={{ width: `${(playerState?.fatigue / 10) * 100}%` }}
+              />
+            </div>
+            <span className="ml-3 font-bold">{playerState?.fatigue}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Game Phase Content */}
+      {renderPhase()}
+      
+      {/* Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-surface border-t border-border p-4">
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={() => {
+                // Handle mulligan
+              }}
+              disabled={matchState?.turn !== 0}
+            >
+              <RotateCw className="w-5 h-5 mr-2" />
+              Mulligan
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={handleEndTurn}
+            >
+              <Flag className="w-5 h-5 mr-2" />
+              End Turn
+            </Button>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-2xl font-bold mb-1">
+              Turn {matchState?.turn}
+            </div>
+            <div className="text-sm text-text-secondary">
+              {matchState?.phase?.charAt(0).toUpperCase() + matchState?.phase?.slice(1)} Phase
+            </div>
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={handleConcede}
+              className="text-error border-error hover:bg-error/10"
+            >
+              <Concede className="w-5 h-5 mr-2" />
+              Concede
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={() => setShowSettings(true)}
+            >
+              <Settings className="w-5 h-5 mr-2" />
+              Settings
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Card Details Modal */}
+      {showCardModal && selectedCard && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+            <button 
+              onClick={() => setShowCardModal(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="relative h-64 mb-4">
+                  <img 
+                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    alt={selectedCard?.title}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      selectedCard?.rarity === 'common' ? 'bg-surface text-text-secondary' : 
+                      selectedCard?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' : 
+                      'bg-accent/20 text-accent'
+                    }`}>
+                      {selectedCard?.rarity?.charAt(0).toUpperCase() + selectedCard?.rarity?.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2 mb-4">
+                  {selectedCard?.cost?.HP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      HP: {selectedCard?.cost?.HP}
+                    </div>
+                  )}
+                  {selectedCard?.cost?.MP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      MP: {selectedCard?.cost?.MP}
+                    </div>
+                  )}
+                  {selectedCard?.cost?.fatigue !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Fatigue: {selectedCard?.cost?.fatigue}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-bold mb-2">{selectedCard?.title}</h2>
+                <p className="text-text-secondary mb-4 capitalize">
+                  {selectedCard?.type} Card
+                </p>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Effect</h3>
+                  <p className="text-text-secondary">{selectedCard?.effect}</p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-text-secondary">{selectedCard?.description}</p>
+                </div>
+                
+                {selectedCard?.flavor && (
+                  <div className="italic text-text-secondary border-l-2 border-primary pl-4 py-2">
+                    "{selectedCard?.flavor}"
+                  </div>
+                )}
+                
+                <div className="mt-8 flex space-x-4">
+                  <Button 
+                    className="flex-1"
+                    onClick={() => {
+                      handlePlayCard(selectedCard?.id)
+                      setShowCardModal(false)
+                    }}
+                    disabled={matchState?.phase !== 'main'}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Play Card
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => setShowCardModal(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative">
+            <button 
+              onClick={() => setShowSettings(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h2 className="text-2xl font-bold mb-6">Game Settings</h2>
+            
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
+                <div>
+                  <h3 className="font-medium">Animations</h3>
+                  <p className="text-sm text-text-secondary">Enable card and effect animations</p>
+                </div>
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="toggle toggle-primary"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
+                <div>
+                  <h3 className="font-medium">Timed Matches</h3>
+                  <p className="text-sm text-text-secondary">60 seconds per turn</p>
+                </div>
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="toggle toggle-primary"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
+                <div>
+                  <h3 className="font-medium">Sound Effects</h3>
+                  <p className="text-sm text-text-secondary">Card plays and effects</p>
+                </div>
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="toggle toggle-primary"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
+                <div>
+                  <h3 className="font-medium">Dark Mode</h3>
+                  <p className="text-sm text-text-secondary">Use dark color scheme</p>
+                </div>
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="toggle toggle-primary"
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end mt-8">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowSettings(false)}
+                className="mr-2"
+              >
+                Cancel
+              </Button>
+              <Button onClick={() => setShowSettings(false)}>
+                Save Settings
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Penalty Modal */}
+      {showPenalty && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative">
+            <button 
+              onClick={() => setShowPenalty(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 bg-error/10 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-error" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Penalty</h2>
+              <p className="text-text-secondary">{penaltyMessage}</p>
+            </div>
+            
+            <div className="flex justify-center">
+              <Button 
+                onClick={() => setShowPenalty(false)}
+                className="px-8"
+              >
+                Acknowledge
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
