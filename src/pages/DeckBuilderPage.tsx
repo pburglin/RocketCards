@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
-import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles } from 'lucide-react'
+import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3 } from 'lucide-react'
 
 export default function DeckBuilderPage() {
   const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const {
     collections,
     decks,
@@ -17,6 +18,7 @@ export default function DeckBuilderPage() {
     addToDeck,
     removeFromDeck,
     saveDeck,
+    deleteDeck,
     autoBuildDeck
   } = useGameStore()
   const [searchTerm, setSearchTerm] = useState('')
@@ -27,6 +29,10 @@ export default function DeckBuilderPage() {
   const [importData, setImportData] = useState('')
   const [deckName, setDeckName] = useState(selectedDeck?.name || 'My Deck')
   const [deckCards, setDeckCards] = useState<{[key: string]: number}>({})
+  const [showExistingDecks, setShowExistingDecks] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{show: boolean, deckName: string}>({show: false, deckName: ''})
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   
   useEffect(() => {
     if (selectedDeck) {
@@ -35,6 +41,7 @@ export default function DeckBuilderPage() {
         cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
       })
       setDeckCards(cardCounts)
+      setDeckName(selectedDeck.name || 'My Deck')
     }
   }, [selectedDeck])
 
@@ -55,13 +62,26 @@ export default function DeckBuilderPage() {
       card = selectedCollection.cards.find(c => c.id === cardId);
     }
     
-    if (!card) return;
+    if (!card) {
+      setError('Card not found in collection')
+      setTimeout(() => setError(''), 3000)
+      return
+    }
     
     // Common cards can be included unlimited times
     const maxAllowed = card.rarity === 'common' ? Infinity : card.rarity === 'rare' ? 2 : 1
     
     if (count >= maxAllowed) {
-      // Show error modal
+      setError(`Maximum copies (${maxAllowed}) of this ${card.rarity} card reached`)
+      setTimeout(() => setError(''), 3000)
+      return
+    }
+    
+    // Check if deck is full
+    const deckSize = Object.values(deckCards).reduce((sum, count) => sum + count, 0)
+    if (deckSize >= 30) {
+      setError('Deck is full (30 cards maximum)')
+      setTimeout(() => setError(''), 3000)
       return
     }
     
@@ -70,6 +90,7 @@ export default function DeckBuilderPage() {
       ...prev,
       [cardId]: (prev[cardId] || 0) + 1
     }))
+    setError('')
   }
 
   const handleRemoveFromDeck = (cardId: string) => {
@@ -82,6 +103,87 @@ export default function DeckBuilderPage() {
       }
       return { ...prev, [cardId]: newCount }
     })
+  }
+
+  const handleSelectExistingDeck = (deck: any) => {
+    // Find the collection for this deck
+    const collection = collections.find(c => c.id === deck.collection?.id)
+    if (collection) {
+      setSelectedCollection(collection)
+      setSelectedDeck(deck)
+      setDeckName(deck.name)
+      setShowExistingDecks(false)
+      
+      // Rebuild deckCards from the selected deck
+      const cardCounts: {[key: string]: number} = {}
+      deck.cards.forEach((cardId: string) => {
+        cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
+      })
+      setDeckCards(cardCounts)
+    }
+  }
+
+  const handleDeleteDeck = (deckName: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDeleteConfirmation({show: true, deckName})
+  }
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // Check file type
+      if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        setError('Please upload a valid JSON file')
+        setTimeout(() => setError(''), 3000)
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        return
+      }
+      
+      // Check file size (max 1MB)
+      if (file.size > 1024 * 1024) {
+        setError('File size must be less than 1MB')
+        setTimeout(() => setError(''), 3000)
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        return
+      }
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const deckData = JSON.parse(e.target?.result as string)
+          if (deckData.name && deckData.collection && Array.isArray(deckData.cards)) {
+            setImportData(JSON.stringify(deckData, null, 2))
+            setShowImportModal(true)
+          } else {
+            setError('Invalid deck format. Required fields: name, collection, cards')
+            setTimeout(() => setError(''), 3000)
+          }
+        } catch (err) {
+          setError('Invalid JSON file')
+          setTimeout(() => setError(''), 3000)
+        } finally {
+          // Reset file input
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+          }
+        }
+      }
+      reader.onerror = () => {
+        setError('Error reading file')
+        setTimeout(() => setError(''), 3000)
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+      }
+      reader.readAsText(file)
+    }
   }
 
   const deckSize = Object.values(deckCards).reduce((sum, count) => sum + count, 0)
@@ -97,22 +199,84 @@ export default function DeckBuilderPage() {
         <h1 className="text-3xl font-bold">Deck Builder</h1>
       </div>
       
+      {error && (
+        <div className="mb-4 p-3 bg-error/20 border border-error rounded-lg text-error">
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="mb-4 p-3 bg-success/20 border border-success rounded-lg text-success">
+          {success}
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="md:col-span-1">
           <Card className="p-4 h-full">
-            <h2 className="text-xl font-bold mb-4">Collections</h2>
-            <div className="space-y-2 mb-6">
-              {collections.map(collection => (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Collections</h2>
+              {decks.length > 0 && (
                 <Button
-                  key={collection.id}
-                  variant={selectedCollection?.id === collection.id ? 'primary' : 'outline'}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedCollection(collection)}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowExistingDecks(!showExistingDecks)}
+                  className="text-xs"
                 >
-                  {collection.name}
+                  {showExistingDecks ? 'Hide' : 'Show'} Decks
                 </Button>
-              ))}
+              )}
             </div>
+            
+            {showExistingDecks ? (
+              <div className="mb-6">
+                <h3 className="font-medium mb-2">Your Decks</h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {decks.map(deck => (
+                    <div
+                      key={deck.name}
+                      className="flex items-center justify-between p-2 bg-surface-light rounded-lg cursor-pointer hover:bg-surface-light/80"
+                      onClick={() => handleSelectExistingDeck(deck)}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{deck.name}</p>
+                        <p className="text-xs text-text-secondary truncate">
+                          {deck.collection?.name || 'Unknown Collection'} • {deck.cards.length} cards
+                        </p>
+                      </div>
+                      <div className="flex space-x-1 ml-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => handleDeleteDeck(deck.name, e)}
+                          className="p-1 w-8 h-8"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {decks.length === 0 && (
+                    <p className="text-sm text-text-secondary text-center py-4">
+                      No saved decks yet
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 mb-6">
+                {collections.map(collection => (
+                  <Button
+                    key={collection.id}
+                    variant={selectedCollection?.id === collection.id ? 'primary' : 'outline'}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedCollection(collection)}
+                  >
+                    {collection.name}
+                  </Button>
+                ))}
+              </div>
+            )}
             
             <h2 className="text-xl font-bold mb-4">Deck Stats</h2>
             <div className="bg-surface-light p-4 rounded-lg mb-4">
@@ -153,10 +317,24 @@ export default function DeckBuilderPage() {
                 <Sparkles className="w-4 h-4 mr-2" />
                 Auto-build
               </Button>
-              <Button onClick={() => setShowImportModal(true)} variant="outline">
+              <Button 
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.click()
+                  }
+                }}
+                variant="outline"
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Import Deck
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
               <Button onClick={() => setShowExportModal(true)} variant="outline" disabled={!isDeckValid}>
                 <Upload className="w-4 h-4 mr-2" />
                 Export Deck
@@ -239,7 +417,11 @@ export default function DeckBuilderPage() {
                       onClick={() => {
                         if (isDeckValid) {
                           saveDeck(deckName)
-                          navigate('/play-setup')
+                          setSuccess('Deck saved successfully!')
+                          setTimeout(() => setSuccess(''), 3000)
+                        } else {
+                          setError('Deck must have exactly 30 cards to save')
+                          setTimeout(() => setError(''), 3000)
                         }
                       }}
                       disabled={!isDeckValid}
@@ -533,31 +715,58 @@ export default function DeckBuilderPage() {
                       setSelectedCollection(collection)
                       setDeckName(deckData.name)
                       
-                      // Clear current deck and add imported cards
+                      // Clear current deck
                       setDeckCards({})
-                      const newDeckCards: {[key: string]: number} = {}
+                      // Also clear the selected deck in store
+                      if (selectedDeck) {
+                        setSelectedDeck({ ...selectedDeck, cards: [] })
+                      }
                       
+                      const newDeckCards: {[key: string]: number} = {}
+                      let validCards = 0
+                      let invalidCards = 0
+                      
+                      // Process each card in the imported deck
                       deckData.cards.forEach((cardId: string) => {
-                        const count = newDeckCards[cardId] || 0
                         const card = collection.cards.find(c => c.id === cardId)
                         if (card) {
+                          const currentCount = newDeckCards[cardId] || 0
                           // Common cards can be included unlimited times
                           const maxAllowed = card.rarity === 'common' ? Infinity : card.rarity === 'rare' ? 2 : 1
-                          if (count < maxAllowed) {
-                            newDeckCards[cardId] = count + 1
+                          if (currentCount < maxAllowed) {
+                            newDeckCards[cardId] = currentCount + 1
                             addToDeck(cardId)
+                            validCards++
+                          } else {
+                            invalidCards++
                           }
+                        } else {
+                          invalidCards++
                         }
                       })
                       
                       setDeckCards(newDeckCards)
                       setShowImportModal(false)
                       setImportData('')
+                      
+                      if (invalidCards > 0) {
+                        setError(`Deck imported with ${validCards} valid cards. ${invalidCards} cards were skipped due to rarity limits or missing cards.`)
+                      } else {
+                        setSuccess('Deck imported successfully!')
+                      }
+                      setTimeout(() => setError(''), 5000)
+                    } else {
+                      setError('Collection not found')
+                      setTimeout(() => setError(''), 3000)
                     }
+                  } else {
+                    setError('Invalid deck format. Required fields: name, collection, cards')
+                    setTimeout(() => setError(''), 3000)
                   }
                 } catch (e) {
                   console.error('Invalid JSON', e)
-                  // Show error to user
+                  setError('Invalid JSON format')
+                  setTimeout(() => setError(''), 3000)
                 }
               }}>
                 Import
@@ -594,21 +803,82 @@ export default function DeckBuilderPage() {
             />
             
             <div className="flex justify-end mt-6">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowExportModal(false)}
                 className="mr-2"
               >
                 Close
               </Button>
-              <Button onClick={() => navigator.clipboard.writeText(
-                JSON.stringify({
+              <Button
+                variant="outline"
+                className="mr-2"
+                onClick={() => {
+                  const deckData = JSON.stringify({
+                    name: deckName,
+                    collection: selectedCollection?.id,
+                    cards: Object.keys(deckCards)
+                  }, null, 2)
+                  const blob = new Blob([deckData], { type: 'application/json' })
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `${deckName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_deck.json`
+                  document.body.appendChild(a)
+                  a.click()
+                  document.body.removeChild(a)
+                  URL.revokeObjectURL(url)
+                  setSuccess('Deck downloaded successfully!')
+                  setTimeout(() => setSuccess(''), 3000)
+                  setShowExportModal(false)
+                }}
+              >
+                Download JSON
+              </Button>
+              <Button onClick={() => {
+                const deckData = JSON.stringify({
                   name: deckName,
                   collection: selectedCollection?.id,
                   cards: Object.keys(deckCards)
                 }, null, 2)
-              )}>
+                navigator.clipboard.writeText(deckData)
+                setSuccess('Deck copied to clipboard!')
+                setTimeout(() => setSuccess(''), 3000)
+                setShowExportModal(false)
+              }}>
                 Copy to Clipboard
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation.show && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative">
+            <h2 className="text-2xl font-bold mb-4">Delete Deck</h2>
+            <p className="text-text-secondary mb-6">
+              Are you sure you want to delete the deck "{deleteConfirmation.deckName}"? This action cannot be undone.
+            </p>
+            
+            <div className="flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteConfirmation({show: false, deckName: ''})}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  deleteDeck(deleteConfirmation.deckName)
+                  setDeleteConfirmation({show: false, deckName: ''})
+                  setSuccess('Deck deleted successfully!')
+                  setTimeout(() => setSuccess(''), 3000)
+                }}
+              >
+                Delete
               </Button>
             </div>
           </div>
