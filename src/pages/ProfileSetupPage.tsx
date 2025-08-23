@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { RadioGroup, RadioGroupItem } from '../components/ui/RadioGroup'
 import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
 import { Shield, Sword, Sparkles, Flame, Star } from 'lucide-react'
@@ -74,64 +73,152 @@ export default function ProfileSetupPage() {
           
           <div className="mb-6">
             <Label className="mb-2 block">Strategy</Label>
-            <RadioGroup value={strategy} onValueChange={(value: any) => setStrategy(value)} className="grid grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="aggressive" id="aggressive" />
-                <Label htmlFor="aggressive" className="flex items-center">
-                  <Flame className="w-4 h-4 text-error mr-2" />
-                  Aggressive
-                </Label>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="aggressive"
+                  name="strategy"
+                  value="aggressive"
+                  checked={strategy === 'aggressive'}
+                  onChange={(e) => e.target.checked && setStrategy('aggressive')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="aggressive"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    strategy === 'aggressive' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <Flame className="w-6 h-6 text-error mb-2" />
+                  <span className="font-medium mb-1">Aggressive</span>
+                  <span className="text-sm text-text-secondary">+4 MP, MP Regen: 4</span>
+                </label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="balanced" id="balanced" />
-                <Label htmlFor="balanced" className="flex items-center">
-                  <Sparkles className="w-4 h-4 text-success mr-2" />
-                  Balanced
-                </Label>
+              
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="balanced"
+                  name="strategy"
+                  value="balanced"
+                  checked={strategy === 'balanced'}
+                  onChange={(e) => e.target.checked && setStrategy('balanced')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="balanced"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    strategy === 'balanced' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <Sparkles className="w-6 h-6 text-success mb-2" />
+                  <span className="font-medium mb-1">Balanced</span>
+                  <span className="text-sm text-text-secondary">+2 HP, +2 MP, MP Regen: 3</span>
+                </label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="defensive" id="defensive" />
-                <Label htmlFor="defensive" className="flex items-center">
-                  <Shield className="w-4 h-4 text-secondary mr-2" />
-                  Defensive
-                </Label>
+              
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="defensive"
+                  name="strategy"
+                  value="defensive"
+                  checked={strategy === 'defensive'}
+                  onChange={(e) => e.target.checked && setStrategy('defensive')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="defensive"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    strategy === 'defensive' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <Shield className="w-6 h-6 text-secondary mb-2" />
+                  <span className="font-medium mb-1">Defensive</span>
+                  <span className="text-sm text-text-secondary">+4 HP, MP Regen: 2</span>
+                </label>
               </div>
-            </RadioGroup>
-            
-            <div className="mt-4 bg-surface-light p-4 rounded-lg">
-              <h4 className="font-medium mb-2">Strategy Effects:</h4>
-              <ul className="text-sm text-text-secondary space-y-1">
-                <li>• Aggressive: +4 MP, MP Regen: 4</li>
-                <li>• Balanced: +2 HP, +2 MP, MP Regen: 3</li>
-                <li>• Defensive: +4 HP, MP Regen: 2</li>
-              </ul>
             </div>
           </div>
           
           <div className="mb-8">
             <Label className="mb-2 block">Key Stat</Label>
-            <RadioGroup value={keyStat} onValueChange={(value: any) => setKeyStat(value)} className="grid grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="strength" id="strength" />
-                <Label htmlFor="strength">Strength</Label>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="strength"
+                  name="keyStat"
+                  value="strength"
+                  checked={keyStat === 'strength'}
+                  onChange={(e) => e.target.checked && setKeyStat('strength')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="strength"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    keyStat === 'strength' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <span className="font-medium mb-1">Strength</span>
+                  <span className="text-sm text-text-secondary">+8 HP, +2 MP</span>
+                </label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="intelligence" id="intelligence" />
-                <Label htmlFor="intelligence">Intelligence</Label>
+              
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="intelligence"
+                  name="keyStat"
+                  value="intelligence"
+                  checked={keyStat === 'intelligence'}
+                  onChange={(e) => e.target.checked && setKeyStat('intelligence')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="intelligence"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    keyStat === 'intelligence' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <span className="font-medium mb-1">Intelligence</span>
+                  <span className="text-sm text-text-secondary">+2 HP, +6 MP</span>
+                </label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="charisma" id="charisma" />
-                <Label htmlFor="charisma">Charisma</Label>
+              
+              <div className="text-center">
+                <input
+                  type="radio"
+                  id="charisma"
+                  name="keyStat"
+                  value="charisma"
+                  checked={keyStat === 'charisma'}
+                  onChange={(e) => e.target.checked && setKeyStat('charisma')}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="charisma"
+                  className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer ${
+                    keyStat === 'charisma' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <span className="font-medium mb-1">Charisma</span>
+                  <span className="text-sm text-text-secondary">+2 HP, +2 MP</span>
+                </label>
               </div>
-            </RadioGroup>
-            
-            <div className="mt-4 bg-surface-light p-4 rounded-lg">
-              <h4 className="font-medium mb-2">Key Stat Effects:</h4>
-              <ul className="text-sm text-text-secondary space-y-1">
-                <li>• Strength: +8 HP, +2 MP</li>
-                <li>• Intelligence: +2 HP, +6 MP</li>
-                <li>• Charisma: +2 HP, +2 MP</li>
-              </ul>
             </div>
           </div>
 
@@ -149,9 +236,7 @@ export default function ProfileSetupPage() {
             </div>
             <div className="mt-4">
               <p className="text-sm text-text-secondary">MP Regen</p>
-              <p className="text-xl font-bold text-accent">
-                {strategy === 'aggressive' ? 4 : strategy === 'balanced' ? 3 : 2}
-              </p>
+              <p className="text-xl font-bold text-accent">{mpRegen}</p>
             </div>
           </div>
           

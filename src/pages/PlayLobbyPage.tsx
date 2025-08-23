@@ -8,7 +8,7 @@ import { Gamepad2, User, Settings, Clock, Shuffle } from 'lucide-react'
 
 export default function PlayLobbyPage() {
   const navigate = useNavigate()
-  const { decks, selectedDeck, setSelectedDeck, startMatch } = useGameStore()
+  const { decks, selectedDeck, setSelectedDeck, startMatch, profile } = useGameStore()
   const [opponent, setOpponent] = useState<'ai' | 'pvp'>('ai')
   const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
   const [timedMatch, setTimedMatch] = useState(true)
@@ -17,15 +17,24 @@ export default function PlayLobbyPage() {
   const [errors, setErrors] = useState<{deck?: string}>({})
   
   useEffect(() => {
+    // Redirect to profile setup immediately if no profile exists
+    if (!profile) {
+      navigate('/profile')
+      return
+    }
+    
     if (decks.length > 0 && !selectedDeck) {
       setSelectedDeck(decks[0])
     } else if (decks.length === 0) {
       // No decks exist, redirect to deck builder with message
       navigate('/deck-builder?from=play-lobby')
     }
-  }, [decks, selectedDeck, setSelectedDeck, navigate])
+  }, [decks, selectedDeck, setSelectedDeck, navigate, profile])
   
   const handleStartMatch = () => {
+    // Reset errors
+    setErrors({})
+    
     if (!selectedDeck) {
       setErrors({ deck: 'Please select a deck' })
       return
@@ -47,6 +56,22 @@ export default function PlayLobbyPage() {
     })
     
     navigate('/game')
+  }
+
+  // Don't render the lobby content if there's no profile
+  if (!profile) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+              <Settings className="w-8 h-8 text-primary" />
+            </div>
+            <p className="text-text-secondary">Redirecting to profile setup...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
