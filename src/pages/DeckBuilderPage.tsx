@@ -33,7 +33,20 @@ export default function DeckBuilderPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<{show: boolean, deckName: string}>({show: false, deckName: ''})
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showNoDecksMessage, setShowNoDecksMessage] = useState(false)
   
+  useEffect(() => {
+    // Check if user came from Play Lobby (no decks exist)
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('from') === 'play-lobby' || decks.length === 0) {
+      setShowNoDecksMessage(true)
+      // Auto-select the first collection if none selected
+      if (!selectedCollection && collections.length > 0) {
+        setSelectedCollection(collections[0])
+      }
+    }
+  }, [decks.length, selectedCollection, collections, setSelectedCollection])
+
   useEffect(() => {
     if (selectedDeck) {
       const cardCounts: {[key: string]: number} = {}
@@ -198,6 +211,19 @@ export default function DeckBuilderPage() {
         </div>
         <h1 className="text-3xl font-bold">Deck Builder</h1>
       </div>
+      
+      {showNoDecksMessage && decks.length === 0 && (
+        <div className="mb-6 p-4 bg-info/20 border border-info rounded-lg">
+          <div className="flex items-center">
+            <div className="w-5 h-5 bg-info rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-xs font-bold">!</span>
+            </div>
+            <p className="text-info font-medium">
+              You need to create a deck to play. Select a collection below and build your 30-card deck.
+            </p>
+          </div>
+        </div>
+      )}
       
       {error && (
         <div className="mb-4 p-3 bg-error/20 border border-error rounded-lg text-error">

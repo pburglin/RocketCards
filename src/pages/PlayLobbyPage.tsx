@@ -19,8 +19,11 @@ export default function PlayLobbyPage() {
   useEffect(() => {
     if (decks.length > 0 && !selectedDeck) {
       setSelectedDeck(decks[0])
+    } else if (decks.length === 0) {
+      // No decks exist, redirect to deck builder with message
+      navigate('/deck-builder?from=play-lobby')
     }
-  }, [decks, selectedDeck, setSelectedDeck])
+  }, [decks, selectedDeck, setSelectedDeck, navigate])
   
   const handleStartMatch = () => {
     if (!selectedDeck) {
