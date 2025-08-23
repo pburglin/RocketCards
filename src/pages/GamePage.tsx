@@ -350,7 +350,7 @@ export default function GamePage() {
             size="sm"
             className="text-error border-error hover:bg-error/10"
           >
-            <Concede className="w-4 h-4 mr-2" />
+            <Hand className="w-4 h-4 mr-2" />
             Concede
           </Button>
         </div>
@@ -564,7 +564,7 @@ export default function GamePage() {
               onClick={handleConcede}
               className="text-error border-error hover:bg-error/10"
             >
-              <Concede className="w-5 h-5 mr-2" />
+              <Hand className="w-5 h-5 mr-2" />
               Concede
             </Button>
             
