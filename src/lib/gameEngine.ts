@@ -201,11 +201,12 @@ export function upkeepPhase(
 export function playCard(
   matchState: MatchState,
   playerState: PlayerState,
-  cardId: string
-): { 
-  success: boolean 
-  matchState: MatchState 
-  playerState: PlayerState 
+  cardId: string,
+  collections: any[]
+): {
+  success: boolean
+  matchState: MatchState
+  playerState: PlayerState
 } {
   // Check if it's the player's turn
   if (matchState.activePlayer !== 'player') {
@@ -237,7 +238,13 @@ export function playCard(
   }
   
   // Check costs
-  const card = getCardById(cardId)
+  // Find the card in collections
+  let card: Card | undefined;
+  for (const collection of collections) {
+    card = collection.cards.find((c: any) => c.id === cardId);
+    if (card) break;
+  }
+  
   if (!card) {
     return { success: false, matchState, playerState }
   }
@@ -373,20 +380,10 @@ function seededRandom(seed: string): () => number {
 
 function getCardById(cardId: string): Card | undefined {
   // In a real implementation, this would look up the card from the current collection
-  // For MVP, we'll return a mock card
-  return {
-    id: cardId,
-    title: 'Mock Card',
-    description: 'This is a mock card for demonstration purposes',
-    imageDescription: 'Mock card image',
-    type: 'events',
-    rarity: 'common',
-    effect: '+3 MP',
-    cost: { HP: 0, MP: -2, fatigue: 0 },
-    tags: ['extra_play:+1'],
-    flavor: 'Mock flavor text',
-    collection: 'mock'
-  };
+  // For MVP, we'll need to access the collections from the store or pass them as parameters
+  // This is a temporary solution - in practice, we should pass collections as a parameter
+  console.warn('getCardById: This function needs access to collections from the store');
+  return undefined;
 }
 
 function generateRandomSeed(): string {

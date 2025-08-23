@@ -261,10 +261,10 @@ export const useGameStore = create<GameStore>()(
         
       },
       playCard: (cardId) => {
-        const { matchState, playerState } = get()
+        const { matchState, playerState, collections } = get()
         if (!matchState || !playerState) return false
         
-        const result = playCard(matchState, playerState, cardId)
+        const result = playCard(matchState, playerState, cardId, collections)
         if (result.success) {
           set({
             matchState: result.matchState,

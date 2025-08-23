@@ -168,22 +168,54 @@ export default function GamePage() {
                     return (
                       <div
                         key={cardId}
-                        className="relative card-hover-effect cursor-pointer"
+                        className="relative card-hover-effect cursor-pointer bg-surface rounded-lg shadow-lg overflow-hidden"
                         onClick={() => {
                           setSelectedCard(card)
                           setShowCardModal(true)
                         }}
                       >
-                        <img
-                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
-                          alt={card?.title || cardId}
-                          className="w-full h-32 object-cover rounded-lg shadow-lg"
-                          onError={(e) => {
-                            e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || cardId || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity">
-                          <div className="absolute bottom-2 left-2 right-2">
+                        <div className="relative">
+                          <img
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            alt={card?.title || cardId}
+                            className="w-full h-32 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || cardId || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                            }}
+                          />
+                          <div className="absolute top-2 right-2">
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              card?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                              card?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                              'bg-accent/20 text-accent'
+                            }`}>
+                              {card?.rarity?.charAt(0).toUpperCase() + card?.rarity?.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-3">
+                          <h4 className="font-bold text-sm mb-1 truncate">{card?.title || cardId}</h4>
+                          <p className="text-xs text-text-secondary mb-2 line-clamp-2">{card?.effect || 'No effect'}</p>
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {card?.cost?.HP !== 0 && (
+                              <span className="px-1 py-0.5 bg-error/20 text-error text-xs rounded">
+                                HP: {card?.cost?.HP}
+                              </span>
+                            )}
+                            {card?.cost?.MP !== 0 && (
+                              <span className="px-1 py-0.5 bg-secondary/20 text-secondary text-xs rounded">
+                                MP: {card?.cost?.MP}
+                              </span>
+                            )}
+                            {card?.cost?.fatigue !== 0 && (
+                              <span className="px-1 py-0.5 bg-warning/20 text-warning text-xs rounded">
+                                F: {card?.cost?.fatigue}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
+                          <div className="p-3 w-full">
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();
