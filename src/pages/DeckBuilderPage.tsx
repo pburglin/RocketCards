@@ -58,6 +58,17 @@ export default function DeckBuilderPage() {
     }
   }, [selectedDeck])
 
+  // Sync local deckCards state when selectedDeck.cards changes from external sources
+  useEffect(() => {
+    if (selectedDeck) {
+      const cardCounts: {[key: string]: number} = {}
+      selectedDeck.cards.forEach(cardId => {
+        cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
+      })
+      setDeckCards(cardCounts)
+    }
+  }, [selectedDeck?.cards])
+
   const filteredCards = (selectedCollection?.cards || []).filter(card => 
     card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (typeFilter === '' || card.type === typeFilter) &&
@@ -339,7 +350,12 @@ export default function DeckBuilderPage() {
             </div>
             
             <div className="flex flex-col gap-2">
-              <Button onClick={autoBuildDeck} disabled={!selectedCollection}>
+              <Button
+                onClick={() => {
+                  autoBuildDeck()
+                }}
+                disabled={!selectedCollection}
+              >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Auto-build
               </Button>

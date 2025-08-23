@@ -142,15 +142,12 @@ export const useGameStore = create<GameStore>()(
             } else {
               state.decks.push(deck)
             }
-            
-            localStorage.setItem('decks.v1', JSON.stringify(state.decks))
           }
         })
       },
       deleteDeck: (name) => {
         set(state => {
           state.decks = state.decks.filter(d => d.name !== name)
-          localStorage.setItem('decks.v1', JSON.stringify(state.decks))
         })
       },
       autoBuildDeck: () => {
@@ -202,7 +199,6 @@ export const useGameStore = create<GameStore>()(
       profile: null,
       saveProfile: (profile) => {
         set({ profile })
-        localStorage.setItem('playerProfile.v1', JSON.stringify(profile))
       },
       
       // Match
@@ -229,11 +225,6 @@ export const useGameStore = create<GameStore>()(
           opponentState: match.opponentState
         })
         
-        localStorage.setItem('currentMatch.v1', JSON.stringify({
-          matchState: match.matchState,
-          playerState: match.playerState,
-          opponentState: match.opponentState
-        }))
       },
       playCard: (cardId) => {
         const { matchState, playerState } = get()
@@ -246,11 +237,6 @@ export const useGameStore = create<GameStore>()(
             playerState: result.playerState
           })
           
-          localStorage.setItem('currentMatch.v1', JSON.stringify({
-            matchState: result.matchState,
-            playerState: result.playerState,
-            opponentState: get().opponentState
-          }))
           
           return true
         }
@@ -267,11 +253,6 @@ export const useGameStore = create<GameStore>()(
           opponentState: result.opponentState
         })
         
-        localStorage.setItem('currentMatch.v1', JSON.stringify({
-          matchState: result.matchState,
-          playerState: result.playerState,
-          opponentState: result.opponentState
-        }))
       },
       resolveLLM: async () => {
         const { matchState, playerState, opponentState } = get()
@@ -309,56 +290,12 @@ export const useGameStore = create<GameStore>()(
           opponentState: result.opponentState
         })
         
-        localStorage.setItem('currentMatch.v1', JSON.stringify({
-          matchState: result.matchState,
-          playerState: result.playerState,
-          opponentState: result.opponentState
-        }))
       },
-      
       // Persistence
       loadGameState: () => {
-        // Load profile
-        const profileStr = localStorage.getItem('playerProfile.v1')
-        if (profileStr) {
-          try {
-            const profile = JSON.parse(profileStr)
-            set({ profile })
-          } catch (e) {
-            console.error('Error loading profile', e)
-          }
-        }
-        
-        // Load decks
-        const decksStr = localStorage.getItem('decks.v1')
-        if (decksStr) {
-          try {
-            const decks = JSON.parse(decksStr)
-            set({ decks })
-          } catch (e) {
-            console.error('Error loading decks', e)
-          }
-        }
-        
-        // Load current match
-        const matchStr = localStorage.getItem('currentMatch.v1')
-        if (matchStr) {
-          try {
-            const match = JSON.parse(matchStr)
-            set({
-              matchState: match.matchState,
-              playerState: match.playerState,
-              opponentState: match.opponentState
-            })
-          } catch (e) {
-            console.error('Error loading match', e)
-          }
-        }
+        // Persistence is handled automatically by the persist middleware
       },
       clearGameState: () => {
-        localStorage.removeItem('playerProfile.v1')
-        localStorage.removeItem('decks.v1')
-        localStorage.removeItem('currentMatch.v1')
         set({
           profile: null,
           decks: [],

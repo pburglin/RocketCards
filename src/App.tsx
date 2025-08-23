@@ -23,8 +23,8 @@ function App() {
   useEffect(() => {
     // Initialize game state on app load
     initializeGame()
-    loadGameState()
-  }, [loadGameState])
+    // loadGameState() - no longer needed, persistence is handled automatically
+  }, [])
 
   return (
     <div className="min-h-screen bg-background text-text flex flex-col">
