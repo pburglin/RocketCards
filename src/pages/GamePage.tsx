@@ -32,8 +32,6 @@ export default function GamePage() {
     endTurn: endTurnAction,
     resolveLLM,
     concede,
-    startPhase: startPhaseAction,
-    upkeepPhase: upkeepPhaseAction,
     collections,
     selectedDeck
   } = useGameStore()
@@ -80,16 +78,7 @@ export default function GamePage() {
   const handleEndTurn = () => {
     if (matchState?.phase !== 'main' && matchState?.phase !== 'battle') return
     
-    // End current phase
-    if (matchState?.phase === 'main') {
-      endTurnAction()
-      return
-    }
-    
-    // End battle phase
-    if (matchState?.phase === 'battle') {
-      endTurnAction()
-    }
+    endTurnAction()
   }
   
   const handleConcede = () => {
@@ -113,138 +102,6 @@ export default function GamePage() {
     if (!matchState) return null
     
     switch (matchState.phase) {
-      case 'start':
-        return (
-          <div className="bg-surface-light p-6 rounded-lg mb-6">
-            <h2 className="text-2xl font-bold mb-4">Start Phase</h2>
-            {matchState.startPhaseDetails ? (
-              <div className="space-y-6">
-                <div className="text-text-secondary">
-                  <p className="mb-2">• Restored {matchState.startPhaseDetails.mpRestored} MP</p>
-                  {matchState.startPhaseDetails.cardDrawn && (
-                    <div className="mb-4">
-                      <p className="mb-2">• Drew card:</p>
-                      {(() => {
-                        // Find the drawn card
-                        let drawnCard = null;
-                        for (const collection of collections) {
-                          drawnCard = collection.cards.find((c: any) => c.id === matchState.startPhaseDetails?.cardDrawn);
-                          if (drawnCard) break;
-                        }
-                        if (!drawnCard && matchState.startPhaseDetails.cardDrawn) {
-                          drawnCard = {
-                            id: matchState.startPhaseDetails.cardDrawn,
-                            title: matchState.startPhaseDetails.cardDrawn,
-                            description: 'Unknown card',
-                            type: 'unknown',
-                            rarity: 'common',
-                            effect: 'Unknown effect',
-                            cost: { HP: 0, MP: 0, fatigue: 0 },
-                            tags: []
-                          };
-                        }
-                        return drawnCard ? (
-                          <div className="flex items-center space-x-4 bg-surface p-3 rounded-lg">
-                            <div className="relative">
-                              <img
-                                src={`https://image.pollinations.ai/prompt/${encodeURIComponent(drawnCard.description || drawnCard.title || 'card')}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
-                                alt={drawnCard.title}
-                                className="w-16 h-16 object-cover rounded"
-                                onError={(e) => {
-                                  e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(drawnCard.title || 'card')}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
-                                }}
-                              />
-                              <div className="absolute top-1 right-1">
-                                <span className={`px-1 py-0.5 rounded-full text-xs ${
-                                  drawnCard.rarity === 'common' ? 'bg-surface text-text-secondary' :
-                                  drawnCard.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
-                                  'bg-accent/20 text-accent'
-                                }`}>
-                                  {drawnCard.rarity?.charAt(0).toUpperCase() + drawnCard.rarity?.slice(1)}
-                                </span>
-                              </div>
-                            </div>
-                            <div>
-                              <h4 className="font-bold">{drawnCard.title}</h4>
-                              <p className="text-xs text-text-secondary">{drawnCard.effect || 'No effect'}</p>
-                            </div>
-                          </div>
-                        ) : (
-                          <p className="text-text-secondary">{getCardTitle(matchState.startPhaseDetails.cardDrawn, collections)}</p>
-                        );
-                      })()}
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <h3 className="font-bold mb-3">Current Hand ({matchState.startPhaseDetails.hand.length} cards)</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {matchState.startPhaseDetails.hand.map((cardId, index) => {
-                      // Find the card
-                      let card = null;
-                      for (const collection of collections) {
-                        card = collection.cards.find((c: any) => c.id === cardId);
-                        if (card) break;
-                      }
-                      if (!card) {
-                        card = {
-                          id: cardId,
-                          title: cardId,
-                          description: 'Unknown card',
-                          type: 'unknown',
-                          rarity: 'common',
-                          effect: 'Unknown effect',
-                          cost: { HP: 0, MP: 0, fatigue: 0 },
-                          tags: []
-                        };
-                      }
-                      
-                      return (
-                        <div
-                          key={`${cardId}-${index}`}
-                          className="relative bg-surface rounded-lg shadow overflow-hidden"
-                        >
-                          <div className="relative">
-                            <img
-                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description || card.title || 'card')}?width=96&height=96&nologo=true&private=true&safe=true&seed=1`}
-                              alt={card.title}
-                              className="w-full h-24 object-cover"
-                              onError={(e) => {
-                                e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title || 'card')}?width=96&height=96&nologo=true&private=true&safe=true&seed=1`
-                              }}
-                            />
-                            <div className="absolute top-1 right-1">
-                              <span className={`px-1 py-0.5 rounded-full text-xs ${
-                                card.rarity === 'common' ? 'bg-surface text-text-secondary' :
-                                card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
-                                'bg-accent/20 text-accent'
-                              }`}>
-                                {card.rarity?.charAt(0).toUpperCase() + card.rarity?.slice(1)}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="p-2">
-                            <h4 className="font-bold text-xs mb-1 truncate">{card.title}</h4>
-                            <p className="text-xs text-text-secondary truncate">{card.effect || 'No effect'}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p className="text-text-secondary mb-6">
-                Drawing card and restoring mana
-              </p>
-            )}
-            <Button onClick={startPhaseAction}>
-              Continue to Main Phase
-            </Button>
-          </div>
-        )
-        
       case 'main':
         return (
           <div className="bg-surface-light p-6 rounded-lg mb-6">
@@ -383,15 +240,6 @@ export default function GamePage() {
                             </div>
             </div>
             
-            <div className="flex justify-end">
-              <Button
-                onClick={handleEndTurn}
-                disabled={!matchState || (matchState.phase !== 'main' && matchState.phase !== 'battle')}
-              >
-                <Flag className="w-4 h-4 mr-2" />
-                End Phase
-              </Button>
-            </div>
           </div>
         )
         
@@ -466,11 +314,6 @@ export default function GamePage() {
               </div>
             </div>
             
-            <div className="flex justify-end mt-6">
-              <Button onClick={handleEndTurn}>
-                End Battle Phase
-              </Button>
-            </div>
           </div>
         )
         
@@ -497,22 +340,6 @@ export default function GamePage() {
                   </Button>
                 </div>
               )}
-            </div>
-          </div>
-        )
-        
-      case 'end':
-        return (
-          <div className="bg-surface-light p-6 rounded-lg mb-6">
-            <h2 className="text-2xl font-bold mb-4">End Phase</h2>
-            <p className="text-text-secondary mb-6">
-              Discarding down to {matchState?.rules.handLimit} cards
-            </p>
-            
-            <div className="flex justify-end">
-              <Button onClick={endTurnAction}>
-                Start Next Turn
-              </Button>
             </div>
           </div>
         )

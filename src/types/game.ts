@@ -73,19 +73,12 @@ export interface LogEntry {
   turn: number;
 }
 
-export interface StartPhaseDetails {
-  mpRestored: number;
-  cardDrawn?: string;
-  hand: string[];
-}
-
 export interface MatchState {
   turn: number;
-  phase: 'start' | 'main' | 'battle' | 'resolve' | 'end';
+  phase: 'main' | 'battle' | 'resolve';
   activePlayer: 'player' | 'opponent';
   log: LogEntry[];
   lastLLMResult?: any;
   rngSeed: string;
   rules: MatchRules;
-  startPhaseDetails?: StartPhaseDetails;
 }

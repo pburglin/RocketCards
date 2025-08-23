@@ -102,7 +102,7 @@ export function initializeMatch(options: {
   
   const matchState: MatchState = {
     turn: 0,
-    phase: 'start',
+    phase: 'main',
     activePlayer: 'player',
     log: [],
     rules: {
@@ -146,117 +146,6 @@ export function initializeMatch(options: {
   }
 }
 
-export function startPhase(
-  matchState: MatchState,
-  playerState: PlayerState,
-  opponentState: PlayerState
-): {
-  matchState: MatchState
-  playerState: PlayerState
-  opponentState: PlayerState
-} {
-  const startDetails: any = {
-    mpRestored: 0,
-    hand: matchState.activePlayer === 'player' ? [...playerState.hand] : [...opponentState.hand]
-  };
-  
-  // Restore MP for active player based on their strategy
-  if (matchState.activePlayer === 'player') {
-    const mpBefore = playerState.mp;
-    playerState.mp = Math.min(playerState.mp + 3, 10); // Simplified regen
-    startDetails.mpRestored = playerState.mp - mpBefore;
-  } else {
-    const mpBefore = opponentState.mp;
-    opponentState.mp = Math.min(opponentState.mp + 3, 10); // Simplified regen
-    startDetails.mpRestored = opponentState.mp - mpBefore;
-  }
-  
-  // Draw a card for the active player
-  if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
-    const drawnCard = playerState.deck.pop()
-    if (drawnCard) {
-      playerState.hand.push(drawnCard)
-      startDetails.cardDrawn = drawnCard;
-      startDetails.hand = [...playerState.hand];
-    }
-  } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
-    const drawnCard = opponentState.deck.pop()
-    if (drawnCard) {
-      opponentState.hand.push(drawnCard)
-      startDetails.cardDrawn = drawnCard;
-      startDetails.hand = [...opponentState.hand];
-    }
-  }
-  
-  // Reset play limit for active player
-  if (matchState.activePlayer === 'player') {
-    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
-  } else {
-    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
-  }
-  
-  // Move to main phase
-  matchState.phase = 'main'
-  matchState.startPhaseDetails = startDetails;
-  
-  return { matchState, playerState, opponentState }
-}
-
-export function upkeepPhase(
-  matchState: MatchState,
-  playerState: PlayerState,
-  opponentState: PlayerState
-): {
-  matchState: MatchState
-  playerState: PlayerState
-  opponentState: PlayerState
-} {
-  const startDetails: any = {
-    mpRestored: 0,
-    hand: matchState.activePlayer === 'player' ? [...playerState.hand] : [...opponentState.hand]
-  };
-  
-  // Restore MP for active player based on their strategy
-  if (matchState.activePlayer === 'player') {
-    const mpBefore = playerState.mp;
-    playerState.mp = Math.min(playerState.mp + 3, 10); // Simplified regen
-    startDetails.mpRestored = playerState.mp - mpBefore;
-  } else {
-    const mpBefore = opponentState.mp;
-    opponentState.mp = Math.min(opponentState.mp + 3, 10); // Simplified regen
-    startDetails.mpRestored = opponentState.mp - mpBefore;
-  }
-  
-  // Draw a card for the active player
-  if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
-    const drawnCard = playerState.deck.pop()
-    if (drawnCard) {
-      playerState.hand.push(drawnCard)
-      startDetails.cardDrawn = drawnCard;
-      startDetails.hand = [...playerState.hand];
-    }
-  } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
-    const drawnCard = opponentState.deck.pop()
-    if (drawnCard) {
-      opponentState.hand.push(drawnCard)
-      startDetails.cardDrawn = drawnCard;
-      startDetails.hand = [...opponentState.hand];
-    }
-  }
-  
-  // Reset play limit for active player
-  if (matchState.activePlayer === 'player') {
-    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
-  } else {
-    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
-  }
-  
-  // Move to main phase
-  matchState.phase = 'main'
-  matchState.startPhaseDetails = startDetails;
-  
-  return { matchState, playerState, opponentState }
-}
 
 export function playCard(
   matchState: MatchState,
@@ -294,7 +183,6 @@ export function playCard(
     matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn })
     
     // Immediately end turn
-    matchState.phase = 'end'
     
     return { success: false, matchState, playerState, opponentState }
   }
@@ -391,10 +279,69 @@ export function endTurn(
   matchState.turn += 1
   
   // Switch active player
+  const previousPlayer = matchState.activePlayer
   matchState.activePlayer = matchState.activePlayer === 'player' ? 'opponent' : 'player'
   
-  // Start next turn phases
-  matchState.phase = 'start'
+  // Perform start phase actions for the new active player (skip separate start phase)
+  const startDetails: any = {
+    mpRestored: 0,
+    hand: matchState.activePlayer === 'player' ? [...playerState.hand] : [...opponentState.hand],
+    cardDrawn: null
+  };
+  
+  // Restore MP for active player
+  if (matchState.activePlayer === 'player') {
+    const mpBefore = playerState.mp;
+    playerState.mp = Math.min(playerState.mp + 3, 10);
+    startDetails.mpRestored = playerState.mp - mpBefore;
+  } else {
+    const mpBefore = opponentState.mp;
+    opponentState.mp = Math.min(opponentState.mp + 3, 10);
+    startDetails.mpRestored = opponentState.mp - mpBefore;
+  }
+  
+  // Draw a card for the active player
+  let drawnCardId = null;
+  if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
+    const drawnCard = playerState.deck.pop()
+    if (drawnCard) {
+      playerState.hand.push(drawnCard)
+      drawnCardId = drawnCard;
+      startDetails.hand = [...playerState.hand];
+    }
+  } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
+    const drawnCard = opponentState.deck.pop()
+    if (drawnCard) {
+      opponentState.hand.push(drawnCard)
+      drawnCardId = drawnCard;
+      startDetails.hand = [...opponentState.hand];
+    }
+  }
+  
+  // Reset play limit for active player
+  if (matchState.activePlayer === 'player') {
+    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+  } else {
+    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+  }
+  
+  // Add log entries for start phase actions
+  if (startDetails.mpRestored > 0) {
+    matchState.log.push({
+      message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} restored ${startDetails.mpRestored} MP`,
+      turn: matchState.turn
+    });
+  }
+  
+  if (drawnCardId) {
+    matchState.log.push({
+      message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} drew a card`,
+      turn: matchState.turn
+    });
+  }
+  
+  // Skip to main phase directly
+  matchState.phase = 'main'
   
   return {
     matchState,

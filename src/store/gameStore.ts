@@ -12,8 +12,6 @@ import {
 import {
   calculatePlayerStats,
   initializeMatch,
-  startPhase,
-  upkeepPhase,
   playCard,
   resolveEffects,
   endTurn,
@@ -59,8 +57,6 @@ interface GameStore {
   endTurn: () => void
   resolveLLM: () => Promise<{ log: string[] }>
   concede: () => void
-  startPhase: () => void
-  upkeepPhase: () => void
   
   // Persistence
   loadGameState: () => void
@@ -291,16 +287,15 @@ export const useGameStore = create<GameStore>()(
         })
         
         // After ending turn, if it's now the opponent's turn, trigger AI after a short delay
-        if (result.matchState.activePlayer === 'opponent') {
+        if (result.matchState.activePlayer === 'opponent' && result.matchState.phase === 'main') {
           setTimeout(() => {
             const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
-            if (currentMatchState && currentPlayerState && currentOpponentState && currentMatchState.phase === 'start') {
-              // Call startPhase to trigger opponent's start phase, which will then call AI
-              const startResult = startPhase(currentMatchState, currentPlayerState, currentOpponentState)
+            if (currentMatchState && currentPlayerState && currentOpponentState) {
+              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
               set({
-                matchState: startResult.matchState,
-                playerState: startResult.playerState,
-                opponentState: startResult.opponentState
+                matchState: aiResult.matchState,
+                playerState: aiResult.playerState,
+                opponentState: aiResult.opponentState
               })
             }
           }, 500)
@@ -325,7 +320,6 @@ export const useGameStore = create<GameStore>()(
         
         set(state => {
           if (state.matchState) {
-            state.matchState.phase = 'end'
             state.matchState.log = [...state.matchState.log, ...log.map(message => ({ message, turn: state.matchState!.turn }))]
           }
         })
@@ -343,44 +337,6 @@ export const useGameStore = create<GameStore>()(
           opponentState: result.opponentState
         })
         
-      },
-      startPhase: () => {
-        const { matchState, playerState, opponentState, collections } = get()
-        if (!matchState || !playerState || !opponentState) return
-        
-        const result = startPhase(matchState, playerState, opponentState)
-        
-        set({
-          matchState: result.matchState,
-          playerState: result.playerState,
-          opponentState: result.opponentState
-        })
-        
-        // If it's the opponent's turn, trigger AI after a short delay to allow UI to update
-        if (result.matchState.activePlayer === 'opponent') {
-          setTimeout(() => {
-            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
-            if (currentMatchState && currentPlayerState && currentOpponentState && currentMatchState.phase === 'main') {
-              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
-              set({
-                matchState: aiResult.matchState,
-                playerState: aiResult.playerState,
-                opponentState: aiResult.opponentState
-              })
-            }
-          }, 500)
-        }
-      },
-      upkeepPhase: () => {
-        const { matchState, playerState, opponentState } = get()
-        if (!matchState || !playerState || !opponentState) return
-        
-        const result = upkeepPhase(matchState, playerState, opponentState)
-        set({
-          matchState: result.matchState,
-          playerState: result.playerState,
-          opponentState: result.opponentState
-        })
       },
       // Persistence
       loadGameState: () => {
