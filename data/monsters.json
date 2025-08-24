@@ -91,7 +91,12 @@
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "One look is all it takes.",
       "collection": "monsters",
-      "championStats": {
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
         "ap": 2,
         "dp": 4
       }
