@@ -110,6 +110,8 @@ export function initializeMatch(options: {
       championSlots: GAME_CHAMPION_SLOTS,
       playLimitPerTurn: 1
     },
+    timedMatch: options.timedMatch,
+    mulliganEnabled: options.mulliganEnabled,
     rngSeed: options.seed || generateRandomSeed()
   }
   

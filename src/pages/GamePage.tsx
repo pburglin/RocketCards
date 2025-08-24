@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { 
@@ -44,6 +44,9 @@ export default function GamePage() {
   const [penaltyMessage, setPenaltyMessage] = useState('')
   const [isResolving, setIsResolving] = useState(false)
   const [actionLog, setActionLog] = useState<string[]>([])
+  const [timeLeft, setTimeLeft] = useState(10)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  
   
   useEffect(() => {
     if (!matchState) {
@@ -55,10 +58,55 @@ export default function GamePage() {
     // Let the user click the button to proceed
   }, [matchState, navigate])
   
+  // Timed match countdown
+  useEffect(() => {
+    if (matchState?.timedMatch && matchState.activePlayer === 'player') {
+      // Reset timer to 10 seconds
+      setTimeLeft(10)
+      
+      // Clear any existing timer
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+      
+      // Start new timer
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            // Time's up - end turn automatically
+            if (timerRef.current) {
+              clearInterval(timerRef.current)
+            }
+            handleEndTurn()
+            return 10 // This will be reset by the useEffect when turn changes
+          }
+          return prev - 1
+        })
+      }, 1000)
+      
+      // Cleanup function
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+        }
+      }
+    }
+  }, [matchState?.turn, matchState?.activePlayer, matchState?.timedMatch])
+  
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+    }
+  }, [])
   // Check for game over conditions
   useEffect(() => {
     if (playerState?.hp !== undefined && opponentState?.hp !== undefined) {
       if (playerState.hp <= 0 || opponentState.hp <= 0) {
+        // Scroll to top when match ends
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate('/results')
       }
     }
@@ -117,7 +165,17 @@ export default function GamePage() {
           <div className="bg-surface-light p-6 rounded-lg mb-6">
             <h2 className="text-2xl font-bold mb-4">Controls</h2>
             <p className="text-text-secondary mb-6">
-              You can play {playerState?.extraPlaysRemaining || 0} card{(playerState?.extraPlaysRemaining || 0) !== 1 ? 's' : ''} this turn
+              You can play {Math.max(0, Math.min(
+                playerState?.extraPlaysRemaining || 0,
+                playerState?.fatigue !== undefined
+                  ? (playerState.fatigue < 3 ? 2 : playerState.fatigue <= 5 ? 1 : 0)
+                  : (playerState?.extraPlaysRemaining || 0)
+              ))} card{Math.max(0, Math.min(
+                playerState?.extraPlaysRemaining || 0,
+                playerState?.fatigue !== undefined
+                  ? (playerState.fatigue < 3 ? 2 : playerState.fatigue <= 5 ? 1 : 0)
+                  : (playerState?.extraPlaysRemaining || 0)
+              )) !== 1 ? 's' : ''} this turn
               {playerState?.fatigue !== undefined && (
                 <span className="ml-2">
                   (Fatigue: {playerState.fatigue} -
@@ -291,9 +349,9 @@ export default function GamePage() {
                   {playerState?.champions?.map((champion, index) => (
                     <Card 
                       key={index} 
-                      className="p-4 border ${
+                      className={`p-4 border ${
                         champion.status.includes('exhausted') ? 'opacity-50' : ''
-                      }"
+                      }`}
                     >
                       <div className="flex justify-between items-start">
                         <CardTitle>{champion.cardId}</CardTitle>
@@ -883,7 +941,8 @@ export default function GamePage() {
               onClick={() => {
                 // Handle mulligan
               }}
-              disabled={matchState?.turn !== 0}
+              disabled={matchState?.turn !== 0 || !matchState?.mulliganEnabled}
+              className={matchState?.mulliganEnabled ? '' : 'hidden'}
             >
               <RotateCw className="w-5 h-5 mr-2" />
               Mulligan
@@ -906,6 +965,12 @@ export default function GamePage() {
             <div className="text-sm text-text-secondary">
               {matchState?.phase ? matchState.phase.charAt(0).toUpperCase() + matchState.phase.slice(1) : ''} Phase
             </div>
+            {/* Timed Match Countdown */}
+            {matchState?.timedMatch && (
+              <div className="text-sm text-warning mt-1">
+                Time: {timeLeft}s
+              </div>
+            )}
           </div>
           
           <div className="flex space-x-2">

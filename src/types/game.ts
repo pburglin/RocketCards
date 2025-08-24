@@ -108,4 +108,6 @@ export interface MatchState {
   lastLLMResult?: any;
   rngSeed: string;
   rules: MatchRules;
+  timedMatch?: boolean;
+  mulliganEnabled?: boolean;
 }
