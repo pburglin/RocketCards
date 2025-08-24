@@ -250,7 +250,18 @@ export default function GamePage() {
     // Check if card can be played
     const canPlay = playCardAction(cardId)
     if (!canPlay) {
-      setPenaltyMessage('Invalid play - check costs and phase')
+      // Check if this is a skill card and there's no champion
+      let card = null;
+      for (const collection of collections) {
+        card = collection.cards.find((c: any) => c.id === cardId);
+        if (card) break;
+      }
+      
+      if (card && card.type === 'skills' && (!playerState?.champions || playerState.champions.length === 0)) {
+        setPenaltyMessage('Cannot play skill card - no champion in play. Play a champion first.')
+      } else {
+        setPenaltyMessage('Invalid play - check costs and phase')
+      }
       setShowPenalty(true)
     }
   }
@@ -471,39 +482,18 @@ export default function GamePage() {
                 <h3 className="font-bold mb-4">Your Champion</h3>
                 <div className="space-y-4">
                   {playerState?.champions?.map((champion, index) => (
-                    <Card 
-                      key={index} 
+                    <Card
+                      key={index}
                       className={`p-4 border ${
                         champion.status.includes('exhausted') ? 'opacity-50' : ''
                       }`}
                     >
                       <div className="flex justify-between items-start">
                         <CardTitle>{champion.cardId}</CardTitle>
-                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                          Slot {champion.slot}
-                        </span>
                       </div>
                       <CardDescription className="mt-2">
                         {champion.attachedSkills.length} attached skills
                       </CardDescription>
-                      <div className="mt-4 flex space-x-2">
-                        <Button 
-                          disabled={champion.status.includes('exhausted')}
-                          onClick={() => {
-                            // Handle champion action
-                          }}
-                        >
-                          Attack
-                        </Button>
-                        <Button 
-                          disabled={champion.status.includes('silenced')}
-                          onClick={() => {
-                            // Handle skill activation
-                          }}
-                        >
-                          Activate Skill
-                        </Button>
-                      </div>
                     </Card>
                   ))}
                 </div>
@@ -516,9 +506,6 @@ export default function GamePage() {
                     <Card key={index} className="p-4">
                       <div className="flex justify-between items-start">
                         <CardTitle>{champion.cardId}</CardTitle>
-                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                          Slot {champion.slot}
-                        </span>
                       </div>
                       <CardDescription className="mt-2">
                         {champion.attachedSkills.length} attached skills
@@ -687,9 +674,6 @@ export default function GamePage() {
                       )}
                       <div className="flex justify-between items-start">
                         <CardTitle>{card?.title || champion?.cardId}</CardTitle>
-                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                          Slot {champion?.slot}
-                        </span>
                       </div>
                       {card?.championStats && (
                         <div className="flex space-x-4 text-xs mt-2">
@@ -710,23 +694,45 @@ export default function GamePage() {
                       <CardDescription className="mt-2">
                         {champion?.attachedSkills?.length} attached skills
                       </CardDescription>
+                      
+                      {/* Show attached skill cards */}
+                      {champion?.attachedSkills && champion.attachedSkills.length > 0 && (
+                        <div className="mt-3">
+                          <h4 className="text-xs font-semibold mb-2">Attached Skills:</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            {champion.attachedSkills.map((skillId, skillIndex) => {
+                              let skillCard = null;
+                              for (const collection of collections) {
+                                skillCard = collection.cards.find((c: any) => c.id === skillId);
+                                if (skillCard) break;
+                              }
+                              
+                              return (
+                                <div key={skillIndex} className="bg-surface-light p-2 rounded">
+                                  {skillCard && (
+                                    <>
+                                      <div className="flex items-center mb-1">
+                                        <img
+                                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
+                                          alt={skillCard?.title || skillId}
+                                          className="w-8 h-8 object-cover rounded mr-2"
+                                          onError={(e) => {
+                                            e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.title || skillId || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`
+                                          }}
+                                        />
+                                        <span className="text-xs font-medium truncate">{skillCard?.title || skillId}</span>
+                                      </div>
+                                      <p className="text-xs text-text-secondary truncate">{skillCard?.effect || 'No effect'}</p>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="mt-4 flex space-x-2">
-                        <Button
-                          disabled={champion?.status?.includes('exhausted')}
-                          onClick={() => {
-                            // Handle champion action
-                          }}
-                        >
-                          Attack
-                        </Button>
-                        <Button
-                          disabled={champion?.status?.includes('silenced')}
-                          onClick={() => {
-                            // Handle skill activation
-                          }}
-                        >
-                          Activate Skill
-                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
@@ -895,9 +901,6 @@ export default function GamePage() {
                       )}
                       <div className="flex justify-between items-start">
                         <CardTitle>{card?.title || champion?.cardId}</CardTitle>
-                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                          Slot {champion?.slot}
-                        </span>
                       </div>
                       {card?.championStats && (
                         <div className="flex space-x-4 text-xs mt-2">
@@ -918,6 +921,43 @@ export default function GamePage() {
                       <CardDescription className="mt-2">
                         {champion?.attachedSkills?.length} attached skills
                       </CardDescription>
+                      
+                      {/* Show attached skill cards */}
+                      {champion?.attachedSkills && champion.attachedSkills.length > 0 && (
+                        <div className="mt-3">
+                          <h4 className="text-xs font-semibold mb-2">Attached Skills:</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            {champion.attachedSkills.map((skillId, skillIndex) => {
+                              let skillCard = null;
+                              for (const collection of collections) {
+                                skillCard = collection.cards.find((c: any) => c.id === skillId);
+                                if (skillCard) break;
+                              }
+                              
+                              return (
+                                <div key={skillIndex} className="bg-surface-light p-2 rounded">
+                                  {skillCard && (
+                                    <>
+                                      <div className="flex items-center mb-1">
+                                        <img
+                                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
+                                          alt={skillCard?.title || skillId}
+                                          className="w-8 h-8 object-cover rounded mr-2"
+                                          onError={(e) => {
+                                            e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.title || skillId || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`
+                                          }}
+                                        />
+                                        <span className="text-xs font-medium truncate">{skillCard?.title || skillId}</span>
+                                      </div>
+                                      <p className="text-xs text-text-secondary truncate">{skillCard?.effect || 'No effect'}</p>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </Card>
                   );
                 })

@@ -285,6 +285,22 @@ export function playCard(
       // Add to log
       matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played champion ${card.title}`, turn: matchState.turn });
     }
+  } else if (card.type === 'skills') {
+    // This is a skill card - check if player has a champion to attach it to
+    if (!currentPlayerState.champions || currentPlayerState.champions.length === 0) {
+      // No champion to attach skill to
+      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play skill card - no champion in play`, turn: matchState.turn });
+      return { success: false, matchState, playerState, opponentState };
+    }
+    
+    // Attach skill to the first champion (since only one champion is allowed)
+    currentPlayerState.champions[0].attachedSkills.push(cardId);
+    
+    // Remove card from hand
+    currentPlayerState.hand.splice(cardIndex, 1);
+    
+    // Add to log
+    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} attached skill ${card.title} to champion`, turn: matchState.turn });
   } else if (card.duration !== undefined || card.creatureStats !== undefined) {
     // This is a creature card that stays in play
     const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -736,6 +752,86 @@ function processCombatPhase(
   opponentState: PlayerState,
   collections: any[]
 ): void {
+  // Player's champion attacks and uses skills
+  if (playerState.champions && playerState.champions.length > 0) {
+    const champion = playerState.champions[0];
+    
+    // Find the champion card to get AP
+    let championCard: any = null;
+    for (const collection of collections) {
+      championCard = collection.cards.find((c: any) => c.id === champion.cardId);
+      if (championCard) break;
+    }
+    
+    const championAp = championCard?.championStats?.ap || 1; // Default to 1 AP if not specified
+    
+    // Champion attacks
+    dealDamage(matchState, playerState, opponentState, championAp, collections, champion.cardId);
+    
+    // Apply skill effects
+    for (const skillId of champion.attachedSkills) {
+      let skillCard: any = null;
+      for (const collection of collections) {
+        skillCard = collection.cards.find((c: any) => c.id === skillId);
+        if (skillCard) break;
+      }
+      
+      if (skillCard) {
+        // Apply skill effect (for now, just deal damage based on effect text)
+        if (skillCard.effect.includes('damage')) {
+          const damageMatch = skillCard.effect.match(/deal (\d+) damage/i);
+          if (damageMatch) {
+            const damage = parseInt(damageMatch[1]);
+            dealDamage(matchState, playerState, opponentState, damage, collections, skillId);
+          }
+        }
+        
+        // Add skill effect to log
+        matchState.log.push({ message: `Player's champion used skill ${skillCard.title}`, turn: matchState.turn });
+      }
+    }
+  }
+  
+  // Opponent's champion attacks and uses skills
+  if (opponentState.champions && opponentState.champions.length > 0) {
+    const champion = opponentState.champions[0];
+    
+    // Find the champion card to get AP
+    let championCard: any = null;
+    for (const collection of collections) {
+      championCard = collection.cards.find((c: any) => c.id === champion.cardId);
+      if (championCard) break;
+    }
+    
+    const championAp = championCard?.championStats?.ap || 1; // Default to 1 AP if not specified
+    
+    // Champion attacks
+    dealDamage(matchState, opponentState, playerState, championAp, collections, champion.cardId);
+    
+    // Apply skill effects
+    for (const skillId of champion.attachedSkills) {
+      let skillCard: any = null;
+      for (const collection of collections) {
+        skillCard = collection.cards.find((c: any) => c.id === skillId);
+        if (skillCard) break;
+      }
+      
+      if (skillCard) {
+        // Apply skill effect (for now, just deal damage based on effect text)
+        if (skillCard.effect.includes('damage')) {
+          const damageMatch = skillCard.effect.match(/deal (\d+) damage/i);
+          if (damageMatch) {
+            const damage = parseInt(damageMatch[1]);
+            dealDamage(matchState, opponentState, playerState, damage, collections, skillId);
+          }
+        }
+        
+        // Add skill effect to log
+        matchState.log.push({ message: `Opponent's champion used skill ${skillCard.title}`, turn: matchState.turn });
+      }
+    }
+  }
+  
   // Player's creatures attack opponent's creatures/player
   if (playerState.creaturesInPlay && playerState.creaturesInPlay.length > 0) {
     for (const creature of playerState.creaturesInPlay) {
