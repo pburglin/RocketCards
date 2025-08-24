@@ -47,6 +47,20 @@ export default function GamePage() {
   const [timeLeft, setTimeLeft] = useState(10)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   
+  // Animation states
+  const [playerHpAnimation, setPlayerHpAnimation] = useState(false)
+  const [opponentHpAnimation, setOpponentHpAnimation] = useState(false)
+  const [cardAttackAnimation, setCardAttackAnimation] = useState<string | null>(null)
+  const [cardRemovalAnimation, setCardRemovalAnimation] = useState<string | null>(null)
+  const [barAnimations, setBarAnimations] = useState({
+    playerHp: false,
+    playerMp: false,
+    playerFatigue: false,
+    opponentHp: false,
+    opponentMp: false,
+    opponentFatigue: false
+  })
+  
   
   useEffect(() => {
     if (!matchState) {
@@ -112,6 +126,108 @@ export default function GamePage() {
     }
   }, [playerState?.hp, opponentState?.hp, navigate])
   
+  // Monitor HP changes for animations
+  const prevPlayerHp = useRef(playerState?.hp);
+  const prevOpponentHp = useRef(opponentState?.hp);
+  
+  useEffect(() => {
+    if (areAnimationsEnabled()) {
+      // Player HP damage animation
+      if (playerState?.hp !== undefined && prevPlayerHp.current !== undefined && playerState.hp < prevPlayerHp.current) {
+        setPlayerHpAnimation(true);
+        setTimeout(() => setPlayerHpAnimation(false), 1000);
+      }
+      
+      // Opponent HP damage animation
+      if (opponentState?.hp !== undefined && prevOpponentHp.current !== undefined && opponentState.hp < prevOpponentHp.current) {
+        setOpponentHpAnimation(true);
+        setTimeout(() => setOpponentHpAnimation(false), 1000);
+      }
+      
+      // Update previous values
+      prevPlayerHp.current = playerState?.hp;
+      prevOpponentHp.current = opponentState?.hp;
+    }
+  }, [playerState?.hp, opponentState?.hp]);
+  
+  // Monitor resource changes for bar animations
+  const prevPlayerResources = useRef({ hp: playerState?.hp, mp: playerState?.mp, fatigue: playerState?.fatigue });
+  const prevOpponentResources = useRef({ hp: opponentState?.hp, mp: opponentState?.mp, fatigue: opponentState?.fatigue });
+  
+  useEffect(() => {
+    if (areAnimationsEnabled()) {
+      const animations: any = {};
+      let shouldAnimate = false;
+      
+      // Player resources
+      if (playerState) {
+        if (playerState.hp !== prevPlayerResources.current.hp) {
+          animations.playerHp = true;
+          shouldAnimate = true;
+        }
+        if (playerState.mp !== prevPlayerResources.current.mp) {
+          animations.playerMp = true;
+          shouldAnimate = true;
+        }
+        if (playerState.fatigue !== prevPlayerResources.current.fatigue) {
+          animations.playerFatigue = true;
+          shouldAnimate = true;
+        }
+      }
+      
+      // Opponent resources
+      if (opponentState) {
+        if (opponentState.hp !== prevOpponentResources.current.hp) {
+          animations.opponentHp = true;
+          shouldAnimate = true;
+        }
+        if (opponentState.mp !== prevOpponentResources.current.mp) {
+          animations.opponentMp = true;
+          shouldAnimate = true;
+        }
+        if (opponentState.fatigue !== prevOpponentResources.current.fatigue) {
+          animations.opponentFatigue = true;
+          shouldAnimate = true;
+        }
+      }
+      
+      if (shouldAnimate) {
+        setBarAnimations(prev => ({ ...prev, ...animations }));
+        setTimeout(() => {
+          setBarAnimations(prev => {
+            const reset: any = {};
+            Object.keys(animations).forEach(key => {
+              reset[key] = false;
+            });
+            return { ...prev, ...reset };
+          });
+        }, 1000);
+      }
+      
+      // Update previous values
+      if (playerState) {
+        prevPlayerResources.current = { hp: playerState.hp, mp: playerState.mp, fatigue: playerState.fatigue };
+      }
+      if (opponentState) {
+        prevOpponentResources.current = { hp: opponentState.hp, mp: opponentState.mp, fatigue: opponentState.fatigue };
+      }
+    }
+  }, [playerState?.hp, playerState?.mp, playerState?.fatigue, opponentState?.hp, opponentState?.mp, opponentState?.fatigue]);
+  
+  // Check if animations are enabled
+  const areAnimationsEnabled = () => {
+    const settings = localStorage.getItem('userSettings');
+    if (settings) {
+      try {
+        const parsed = JSON.parse(settings);
+        return parsed.general?.animations !== false;
+      } catch (e) {
+        return true; // Default to enabled if parsing fails
+      }
+    }
+    return true; // Default to enabled
+  };
+  
   const getCardTitle = (cardId: string, collections: any[]) => {
     if (!cardId) return 'Unknown Card';
     
@@ -124,6 +240,12 @@ export default function GamePage() {
   
   const handlePlayCard = (cardId: string) => {
     if (matchState?.phase !== 'main') return
+    
+    // Trigger card attack animation if animations are enabled
+    if (areAnimationsEnabled()) {
+      setCardAttackAnimation(cardId);
+      setTimeout(() => setCardAttackAnimation(null), 1000);
+    }
     
     // Check if card can be played
     const canPlay = playCardAction(cardId)
@@ -229,7 +351,9 @@ export default function GamePage() {
                     return (
                       <div
                         key={`${cardId}-${index}`}
-                        className="relative card-hover-effect cursor-pointer bg-surface rounded-lg shadow-lg overflow-hidden"
+                        className={`relative card-hover-effect cursor-pointer bg-surface rounded-lg shadow-lg overflow-hidden ${
+                          cardAttackAnimation === cardId ? 'animate-zoom' : ''
+                        }`}
                         onClick={() => {
                           setSelectedCard(card)
                           setShowCardModal(true)
@@ -473,12 +597,12 @@ export default function GamePage() {
       
       {/* Opponent Resources */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-surface-light p-4 rounded-lg">
+        <div className={`bg-surface-light p-4 rounded-lg ${opponentHpAnimation ? 'animate-damage' : ''}`}>
           <h3 className="text-sm text-text-secondary mb-2">Opponent HP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
               <div
-                className="h-4 rounded-full bg-error"
+                className={`h-4 rounded-full bg-error ${barAnimations.opponentHp ? 'animate-bar-change' : ''}`}
                 style={{ width: `${((opponentState?.hp || 0) / 30) * 100}%` }}
               />
             </div>
@@ -491,7 +615,7 @@ export default function GamePage() {
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
-                className="h-4 rounded-full bg-secondary"
+                className={`h-4 rounded-full bg-secondary ${barAnimations.opponentMp ? 'animate-bar-change' : ''}`}
                 style={{ width: `${Math.min(100, Math.max(0, ((opponentState?.mp || 0) / 10) * 100))}%` }}
               />
             </div>
@@ -507,7 +631,7 @@ export default function GamePage() {
                 className={`h-4 rounded-full ${
                   (opponentState?.fatigue || 0) < 3 ? 'bg-success' :
                   (opponentState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
-                }`}
+                } ${barAnimations.opponentFatigue ? 'animate-bar-change' : ''}`}
                 style={{ width: `${((opponentState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>
@@ -538,7 +662,7 @@ export default function GamePage() {
                       key={index}
                       className={`p-4 ${
                         champion?.status?.includes('exhausted') ? 'opacity-50' : ''
-                      }`}
+                      } ${cardRemovalAnimation === champion.cardId ? 'animate-removal' : ''}`}
                     >
                       {card && (
                         <div className="relative mb-3">
@@ -608,6 +732,10 @@ export default function GamePage() {
                           size="sm"
                           onClick={() => {
                             // Handle champion discard
+                            if (areAnimationsEnabled()) {
+                              setCardRemovalAnimation(champion.cardId);
+                              setTimeout(() => setCardRemovalAnimation(null), 1000);
+                            }
                             const { discardChampion } = useGameStore.getState();
                             discardChampion(index);
                           }}
@@ -639,7 +767,7 @@ export default function GamePage() {
                     }
                     
                     return (
-                      <Card key={index} className="p-3 bg-surface">
+                      <Card key={index} className={`p-3 bg-surface ${cardRemovalAnimation === creature.cardId ? 'animate-removal' : ''}`}>
                         {card && (
                           <div className="relative mb-2">
                             <img
@@ -708,6 +836,10 @@ export default function GamePage() {
                             size="sm"
                             onClick={() => {
                               // Handle creature discard
+                              if (areAnimationsEnabled()) {
+                                setCardRemovalAnimation(creature.cardId);
+                                setTimeout(() => setCardRemovalAnimation(null), 1000);
+                              }
                               const { discardCreature } = useGameStore.getState();
                               discardCreature(index);
                             }}
@@ -885,12 +1017,12 @@ export default function GamePage() {
       
       {/* Player Resources */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-surface-light p-4 rounded-lg">
+        <div className={`bg-surface-light p-4 rounded-lg ${playerHpAnimation ? 'animate-damage' : ''}`}>
           <h3 className="text-sm text-text-secondary mb-2">Your HP</h3>
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
               <div
-                className="h-4 rounded-full bg-error"
+                className={`h-4 rounded-full bg-error ${barAnimations.playerHp ? 'animate-bar-change' : ''}`}
                 style={{ width: `${((playerState?.hp || 0) / 30) * 100}%` }}
               />
             </div>
@@ -903,7 +1035,7 @@ export default function GamePage() {
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
-                className="h-4 rounded-full bg-secondary"
+                className={`h-4 rounded-full bg-secondary ${barAnimations.playerMp ? 'animate-bar-change' : ''}`}
                 style={{ width: `${Math.min(100, Math.max(0, ((playerState?.mp || 0) / 10) * 100))}%` }}
               />
             </div>
@@ -919,7 +1051,7 @@ export default function GamePage() {
                 className={`h-4 rounded-full ${
                   (playerState?.fatigue || 0) < 3 ? 'bg-success' :
                   (playerState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
-                }`}
+                } ${barAnimations.playerFatigue ? 'animate-bar-change' : ''}`}
                 style={{ width: `${((playerState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>

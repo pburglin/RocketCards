@@ -16,6 +16,7 @@ export default function PlayLobbyPage() {
   const [mulliganEnabled, setMulliganEnabled] = useState(true)
   const [seed, setSeed] = useState('')
   const [errors, setErrors] = useState<{deck?: string}>({})
+  const [showLoading, setShowLoading] = useState(false)
   
   useEffect(() => {
     // If user somehow gets here without profile or deck, redirect to play flow
@@ -38,22 +39,32 @@ export default function PlayLobbyPage() {
       return
     }
     
-    // Ensure the deck has the proper collection reference
-    const deckToStart = {
-      ...selectedDeck,
-      collection: selectedDeck.collection || decks.find(d => d.name === selectedDeck.name)?.collection
-    };
+    // Show loading animation
+    setShowLoading(true);
     
-    startMatch({
-      deck: deckToStart,
-      opponentType: opponent,
-      aiDifficulty,
-      timedMatch,
-      mulliganEnabled,
-      seed: seed || undefined
-    })
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    navigate('/game')
+    // Simulate loading for 2 seconds
+    setTimeout(() => {
+      // Ensure the deck has the proper collection reference
+      const deckToStart = {
+        ...selectedDeck,
+        collection: selectedDeck.collection || decks.find(d => d.name === selectedDeck.name)?.collection
+      };
+      
+      startMatch({
+        deck: deckToStart,
+        opponentType: opponent,
+        aiDifficulty,
+        timedMatch,
+        mulliganEnabled,
+        seed: seed || undefined
+      })
+      
+      setShowLoading(false);
+      navigate('/game')
+    }, 2000);
   }
 
   // Don't render the lobby content if there's no profile
@@ -244,6 +255,24 @@ export default function PlayLobbyPage() {
           </Button>
         </div>
       </Card>
+      
+      {/* Loading Animation Modal */}
+      {showLoading && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="text-center animate-fade-in-up">
+            <div className="w-24 h-24 mx-auto mb-6 relative">
+              <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-75"></div>
+              <div className="absolute inset-2 rounded-full border-4 border-secondary animate-spin"></div>
+              <div className="absolute inset-4 rounded-full border-4 border-accent animate-pulse"></div>
+            </div>
+            <h2 className="text-3xl font-bold mb-2 animate-pulse">Preparing Match</h2>
+            <p className="text-text-secondary text-lg">Setting up your battlefield...</p>
+            <div className="mt-6 w-64 h-2 bg-surface rounded-full mx-auto overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full animate-progress"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

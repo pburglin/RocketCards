@@ -5,7 +5,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
-import { Shield, Sword, Sparkles, Flame, Star, Coins } from 'lucide-react'
+import { Shield, Sword, Sparkles, Flame, Star, Coins, X } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function ProfileSetupPage() {
@@ -16,6 +16,8 @@ export default function ProfileSetupPage() {
   const [keyStat, setKeyStat] = useState<'strength' | 'intelligence' | 'charisma'>(profile?.keyStat || 'intelligence')
   const [errors, setErrors] = useState<{displayName?: string}>({})
   const [activeTab, setActiveTab] = useState<'profile' | 'tokens'>('profile')
+  const [selectedCard, setSelectedCard] = useState<any>(null)
+  const [showCardModal, setShowCardModal] = useState(false)
   
   const stats = calculatePlayerStats(strategy, keyStat)
   
@@ -317,9 +319,20 @@ export default function ProfileSetupPage() {
                 {tokenCards.map(card => {
                   // Find the collection for this card
                   const collection = collections.find(c => c.id === card.collection);
+                  const hasEnoughTokens = profile && profile.tokens !== undefined && profile.tokens >= (card.tokenCost || 0);
                   
                   return (
-                    <Card key={card.id} className="p-4">
+                    <Card
+                      key={card.id}
+                      className={`p-4 cursor-pointer card-hover-effect transition-all duration-300 ${
+                        hasEnoughTokens ? 'hover:shadow-lg hover:shadow-primary/20' : 'opacity-70'
+                      }`}
+                      onClick={() => {
+                        // Show card details modal
+                        setSelectedCard(card);
+                        setShowCardModal(true);
+                      }}
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-start space-x-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
@@ -358,8 +371,12 @@ export default function ProfileSetupPage() {
                         <div className="text-xs text-text-secondary">
                           {collection?.name}
                         </div>
-                        <Button size="sm" disabled>
-                          Purchase in Deck Builder
+                        <Button
+                          size="sm"
+                          disabled={!hasEnoughTokens}
+                          className={!hasEnoughTokens ? 'opacity-50 cursor-not-allowed' : ''}
+                        >
+                          {!hasEnoughTokens ? 'Not enough tokens' : 'Purchase in Deck Builder'}
                         </Button>
                       </div>
                     </Card>
@@ -382,6 +399,149 @@ export default function ProfileSetupPage() {
           </div>
         )}
       </Card>
+      
+      {/* Card Details Modal */}
+      {showCardModal && selectedCard && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+            <button
+              onClick={() => setShowCardModal(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="relative h-64 mb-4">
+                  <img
+                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    alt={selectedCard?.title}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      selectedCard?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                      selectedCard?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                      'bg-accent/20 text-accent'
+                    }`}>
+                      {selectedCard?.rarity?.charAt(0).toUpperCase() + selectedCard?.rarity?.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2 mb-4">
+                  {selectedCard?.cost?.HP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      HP: {selectedCard?.cost?.HP}
+                    </div>
+                  )}
+                  {selectedCard?.cost?.MP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      MP: {selectedCard?.cost?.MP}
+                    </div>
+                  )}
+                  {selectedCard?.cost?.fatigue !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Fatigue: {selectedCard?.cost?.fatigue}
+                    </div>
+                  )}
+                  {selectedCard?.duration !== undefined && selectedCard?.duration !== null && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Duration: {typeof selectedCard.duration === 'number'
+                        ? `${selectedCard.duration} turns`
+                        : selectedCard.duration === 'HP'
+                          ? 'HP-based'
+                          : 'MP-based'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-bold mb-2">{selectedCard?.title}</h2>
+                <p className="text-text-secondary mb-4 capitalize">
+                  {selectedCard?.type} Card
+                </p>
+                
+                {selectedCard?.championStats && (
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Champion Stats</h3>
+                    <div className="flex space-x-4">
+                      {selectedCard.championStats.ap !== undefined && (
+                        <div className="px-3 py-1 bg-error/20 text-error rounded">
+                          AP: {selectedCard.championStats.ap}
+                        </div>
+                      )}
+                      {selectedCard.championStats.dp !== undefined && (
+                        <div className="px-3 py-1 bg-secondary/20 text-secondary rounded">
+                          DP: {selectedCard.championStats.dp}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {selectedCard?.creatureStats && (
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Creature Stats</h3>
+                    <div className="flex space-x-4">
+                      {selectedCard.creatureStats.ap !== undefined && (
+                        <div className="px-3 py-1 bg-error/20 text-error rounded">
+                          AP: {selectedCard.creatureStats.ap}
+                        </div>
+                      )}
+                      {selectedCard.creatureStats.dp !== undefined && (
+                        <div className="px-3 py-1 bg-secondary/20 text-secondary rounded">
+                          DP: {selectedCard.creatureStats.dp}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Effect</h3>
+                  <p className="text-text-secondary">{selectedCard?.effect}</p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-text-secondary">{selectedCard?.description}</p>
+                </div>
+                
+                {selectedCard?.flavor && (
+                  <div className="italic text-text-secondary border-l-2 border-primary pl-4 py-2">
+                    "{selectedCard?.flavor}"
+                  </div>
+                )}
+                
+                <div className="mt-8">
+                  <div className="flex items-center justify-between p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <div>
+                      <div className="font-medium">Token Cost</div>
+                      <div className="text-sm text-text-secondary">Purchase this card with tokens</div>
+                    </div>
+                    <div className="text-2xl font-bold text-amber-400">
+                      🔑 {selectedCard?.tokenCost}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 flex space-x-4">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setShowCardModal(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
