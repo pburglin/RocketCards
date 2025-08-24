@@ -4,10 +4,10 @@ import { useState } from 'react'
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },
-  { path: '/collections', icon: BookOpen, label: 'Collections' },
-  { path: '/deck-builder', icon: Layout, label: 'Deck Builder' },
-  { path: '/play', icon: Gamepad2, label: 'Play' },
   { path: '/profile', icon: User, label: 'Profile' },
+  { path: '/deck-builder', icon: Layout, label: 'Deck Builder' },
+  { path: '/play-flow', icon: Gamepad2, label: 'Play' },
+  { path: '/collections', icon: BookOpen, label: 'Collections' },
   { path: '/settings', icon: Settings, label: 'Settings' },
 ]
 

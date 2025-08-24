@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button'
 import { Label } from '../components/ui/Label'
 import { useGameStore } from '../store/gameStore'
 import { Gamepad2, User, Settings, Clock, Shuffle } from 'lucide-react'
+import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function PlayLobbyPage() {
   const navigate = useNavigate()
@@ -17,17 +18,14 @@ export default function PlayLobbyPage() {
   const [errors, setErrors] = useState<{deck?: string}>({})
   
   useEffect(() => {
-    // Redirect to profile setup immediately if no profile exists
-    if (!profile) {
-      navigate('/profile')
+    // If user somehow gets here without profile or deck, redirect to play flow
+    if (!profile || decks.length === 0) {
+      navigate('/play-flow')
       return
     }
     
     if (decks.length > 0 && !selectedDeck) {
       setSelectedDeck(decks[0])
-    } else if (decks.length === 0) {
-      // No decks exist, redirect to deck builder with message
-      navigate('/deck-builder?from=play-lobby')
     }
   }, [decks, selectedDeck, setSelectedDeck, navigate, profile])
   
@@ -76,6 +74,13 @@ export default function PlayLobbyPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
+      {/* Progress Indicator */}
+      <SetupProgressIndicator
+        currentStep="play"
+        hasProfile={!!profile}
+        hasDeck={decks.length > 0}
+      />
+      
       <div className="flex items-center mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mr-4">
           <Gamepad2 className="w-6 h-6 text-white" />

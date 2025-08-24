@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { LayoutGrid, User, Gamepad2, AlertCircle } from 'lucide-react'
+import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function PlaySetupPage() {
   const navigate = useNavigate()
@@ -12,17 +13,11 @@ export default function PlaySetupPage() {
   const [errors, setErrors] = useState<{deck?: string, profile?: string}>({})
 
   useEffect(() => {
-    // If no decks exist, redirect to deck builder
-    if (decks.length === 0) {
-      navigate('/deck-builder')
-      return
-    }
-    
     // If a deck is already selected, move to profile step
     if (selectedDeck) {
       setCurrentStep('profile')
     }
-  }, [decks, selectedDeck, navigate])
+  }, [selectedDeck])
 
   const handleSelectDeck = (deck: any) => {
     setSelectedDeck(deck)
@@ -55,6 +50,13 @@ export default function PlaySetupPage() {
   if (decks.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-2xl">
+        {/* Progress Indicator */}
+        <SetupProgressIndicator
+          currentStep="deck"
+          hasProfile={!!profile}
+          hasDeck={false}
+        />
+        
         <div className="flex items-center mb-8">
           <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mr-4">
             <AlertCircle className="w-6 h-6 text-white" />
@@ -66,7 +68,7 @@ export default function PlaySetupPage() {
           <AlertCircle className="w-16 h-16 text-accent mx-auto mb-6" />
           <h2 className="text-2xl font-bold mb-4">Build Your First Deck</h2>
           <p className="text-text-secondary mb-8 max-w-md mx-auto">
-            You need to create a deck of cards before you can play the game. 
+            You need to create a deck of cards before you can play the game.
             Visit the Deck Builder to create your first 30-card deck.
           </p>
           <Button onClick={handleBuildDeck} className="px-8 py-3">
@@ -80,6 +82,13 @@ export default function PlaySetupPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Progress Indicator */}
+      <SetupProgressIndicator
+        currentStep={currentStep}
+        hasProfile={!!profile}
+        hasDeck={decks.length > 0}
+      />
+      
       <div className="flex items-center mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mr-4">
           <Gamepad2 className="w-6 h-6 text-white" />

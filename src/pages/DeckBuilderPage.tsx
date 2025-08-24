@@ -4,6 +4,7 @@ import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3 } from 'lucide-react'
+import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function DeckBuilderPage() {
   const navigate = useNavigate()
@@ -228,6 +229,13 @@ export default function DeckBuilderPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Progress Indicator */}
+      <SetupProgressIndicator
+        currentStep="deck"
+        hasProfile={true}
+        hasDeck={decks.length > 0 || isDeckValid}
+      />
+      
       <div className="flex items-center mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-secondary to-accent rounded-xl flex items-center justify-center mr-4">
           <LayoutGrid className="w-6 h-6 text-white" />
@@ -485,7 +493,11 @@ export default function DeckBuilderPage() {
                         if (isDeckValid) {
                           saveDeck(deckName)
                           setSuccess('Deck saved successfully!')
-                          setTimeout(() => setSuccess(''), 3000)
+                          setTimeout(() => {
+                            setSuccess('')
+                            // Redirect to play lobby after successful deck creation
+                            navigate('/play')
+                          }, 1000)
                         } else {
                           setError('Deck must have exactly 30 cards to save')
                           setTimeout(() => setError(''), 3000)

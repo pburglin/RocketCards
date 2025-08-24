@@ -88,7 +88,7 @@ export default function LandingPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
               <Link
-                to="/play-setup"
+                to="/play-flow"
                 className="btn btn-outline border-2 text-lg font-semibold py-4 px-8"
               >
                 Start Playing
@@ -251,7 +251,7 @@ export default function LandingPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
               <Link
-                to="/play-setup"
+                to="/play-flow"
                 className="btn btn-outline border-2 text-lg font-semibold py-4 px-8"
               >
                 Start Playing

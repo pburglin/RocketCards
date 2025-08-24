@@ -6,6 +6,7 @@ import { Card } from '../components/ui/Card'
 import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
 import { Shield, Sword, Sparkles, Flame, Star } from 'lucide-react'
+import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
@@ -41,12 +42,19 @@ export default function ProfileSetupPage() {
       mp: stats.mp
     })
     
-    // Navigate back to play setup instead of deck builder
-    navigate('/play-setup')
+    // Navigate to deck builder after profile creation
+    navigate('/deck-builder')
   }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
+      {/* Progress Indicator */}
+      <SetupProgressIndicator
+        currentStep="profile"
+        hasProfile={false}
+        hasDeck={false}
+      />
+      
       <div className="flex items-center mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center mr-4">
           <Sword className="w-6 h-6 text-white" />
