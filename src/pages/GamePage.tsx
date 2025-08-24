@@ -477,7 +477,6 @@ export default function GamePage() {
               ))}
               {(playerState?.champions?.length || 0) < 3 && (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
-                  <Plus className="w-8 h-8 text-text-secondary mb-2" />
                   <p className="text-text-secondary">Empty Slot</p>
                 </div>
               )}
