@@ -176,6 +176,24 @@
         "maxHp": 4,
         "maxMp": 2
       }
+    },
+    {
+      "id": "champion_token_legendary_dragon",
+      "title": "Legendary Dragon Sovereign",
+      "description": "The most powerful dragon in existence, awakened by concentrated magical energy",
+      "imageDescription": "Massive ancient dragon with golden scales, surrounded by swirling magical energy, perched on a mountain of treasure",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 5 damage to all enemy champions; Passive: +3 damage to all attacks; When attacking: Gain 2 MP",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Born from the dreams of mortals and the power of pure magic.",
+      "collection": "fantasy",
+      "tokenCost": 50
     }
   ]
 }

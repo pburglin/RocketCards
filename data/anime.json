@@ -152,6 +152,24 @@
         "maxHp": 3,
         "maxMp": 6
       }
+    },
+    {
+      "id": "champion_token_divine_spirit",
+      "title": "Divine Spirit",
+      "description": "A transcendent being that embodies the pure essence of spiritual power and enlightenment",
+      "imageDescription": "Ethereal angelic being with flowing white robes, glowing wings, and a halo of light, surrounded by divine energy",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 5 HP to all your champions; Passive: Cannot be targeted by enemy effects; When attacking: Heal 2 HP to player",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Beyond the realm of mortals, where purity of spirit reigns supreme.",
+      "collection": "anime",
+      "tokenCost": 60
     }
   ]
 }

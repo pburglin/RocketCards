@@ -176,6 +176,24 @@
         "maxHp": 3,
         "maxMp": 4
       }
+    },
+    {
+      "id": "champion_token_ancient_kraken",
+      "title": "Ancient Kraken",
+      "description": "A primordial sea monster of unimaginable size and power, awakened from the deepest ocean trenches",
+      "imageDescription": "Massive tentacled sea monster emerging from dark ocean depths, with glowing eyes and bioluminescent patterns",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 4 damage to all enemies; Passive: Gain 1 HP at the start of each turn; When attacking: +2 damage if MP >= 3",
+      "cost": {
+        "HP": 4,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Older than the mountains, deeper than the abyss, and hungrier than death itself.",
+      "collection": "monsters",
+      "tokenCost": 55
     }
   ]
 }

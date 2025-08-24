@@ -152,6 +152,24 @@
         "maxHp": 2,
         "maxMp": 3
       }
+    },
+    {
+      "id": "champion_token_supreme_leader",
+      "title": "Supreme Leader",
+      "description": "A master of political manipulation and strategic control who can sway entire populations with a single speech",
+      "imageDescription": "Charismatic political figure in an ornate suit, standing at a podium with a crowd of supporters, radiating commanding presence",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: Draw 1 extra card each turn; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The pen is mightier than the sword, but charisma is mightier than both.",
+      "collection": "politics",
+      "tokenCost": 65
     }
   ]
 }

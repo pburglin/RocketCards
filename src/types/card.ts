@@ -24,4 +24,5 @@ export interface Card {
     maxHp: number;
     maxMp: number;
   }; // Stats for creature cards
+  tokenCost?: number; // Cost in tokens for special cards
 }

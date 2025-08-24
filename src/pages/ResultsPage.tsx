@@ -12,7 +12,7 @@ import {
 
 export default function ResultsPage() {
   const navigate = useNavigate()
-  const { matchState, playerState, opponentState, clearGameState } = useGameStore()
+  const { matchState, playerState, opponentState, clearGameState, addTokens } = useGameStore()
   const [animateIn, setAnimateIn] = useState(false)
 
   useEffect(() => {
@@ -43,6 +43,13 @@ export default function ResultsPage() {
   const totalTurns = matchState?.turn || 0
   const playerHp = playerState?.hp || 0
   const opponentHp = opponentState?.hp || 0
+  
+  // Award tokens when player wins
+  useEffect(() => {
+    if (isPlayerWinner) {
+      addTokens(10) // Award 10 tokens for winning
+    }
+  }, [isPlayerWinner, addTokens])
 
   return (
     <div className="min-h-screen pt-16 pb-12">
@@ -79,10 +86,15 @@ export default function ResultsPage() {
             </h1>
             
             <p className="text-xl text-text-secondary mb-10">
-              {isPlayerWinner 
-                ? "You've emerged victorious in this strategic battle!" 
+              {isPlayerWinner
+                ? "You've emerged victorious in this strategic battle!"
                 : "A hard-fought match with valuable lessons learned."}
             </p>
+            {isPlayerWinner && (
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-success/20 border border-success mb-6">
+                <span className="text-success font-medium">+10 Tokens Awarded!</span>
+              </div>
+            )}
           </div>
         </div>
       </section>

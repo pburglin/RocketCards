@@ -40,6 +40,10 @@ interface GameStore {
   // Profile
   profile: Profile | null
   saveProfile: (profile: Profile) => void
+  addTokens: (amount: number) => void
+  
+  // Token purchases
+  purchaseCardWithTokens: (cardId: string) => boolean
   
   // Match
   matchState: MatchState | null
@@ -174,9 +178,10 @@ export const useGameStore = create<GameStore>()(
             state.selectedDeck.cards = []
             
             // Add cards based on rarity with balanced distribution
-            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common')]
-            const rares = [...state.selectedCollection.cards.filter(c => c.rarity === 'rare')]
-            const uniques = [...state.selectedCollection.cards.filter(c => c.rarity === 'unique')]
+            // Exclude token-purchased cards from auto-building
+            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common' && !c.tokenCost)]
+            const rares = [...state.selectedCollection.cards.filter(c => c.rarity === 'rare' && !c.tokenCost)]
+            const uniques = [...state.selectedCollection.cards.filter(c => c.rarity === 'unique' && !c.tokenCost)]
             
             // Shuffle arrays to randomize selection
             commons.sort(() => Math.random() - 0.5)
@@ -230,6 +235,53 @@ export const useGameStore = create<GameStore>()(
       profile: null,
       saveProfile: (profile) => {
         set({ profile })
+      },
+      addTokens: (amount: number) => {
+        set(state => {
+          if (state.profile) {
+            return {
+              profile: {
+                ...state.profile,
+                tokens: (state.profile.tokens || 0) + amount
+              }
+            }
+          }
+          return state
+        })
+      },
+      
+      // Token purchases
+      purchaseCardWithTokens: (cardId) => {
+        const { profile, collections } = get()
+        
+        if (!profile) return false
+        
+        // Find the card in any collection
+        let card: Card | undefined
+        for (const collection of collections) {
+          card = collection.cards.find(c => c.id === cardId)
+          if (card) break
+        }
+        
+        if (!card || !card.tokenCost) return false
+        
+        // Check if player has enough tokens
+        if ((profile.tokens || 0) < card.tokenCost) return false
+        
+        // Deduct tokens
+        set(state => {
+          if (state.profile) {
+            return {
+              profile: {
+                ...state.profile,
+                tokens: (state.profile.tokens || 0) - card!.tokenCost!
+              }
+            }
+          }
+          return state
+        })
+        
+        return true
       },
       
       // Match

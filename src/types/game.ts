@@ -26,6 +26,7 @@ export interface Card {
     maxHp: number;
     maxMp: number;
   }; // Stats for creature cards
+  tokenCost?: number; // Cost in tokens for special cards
 }
 
 export interface CardCollection {
@@ -47,6 +48,7 @@ export interface Profile {
   keyStat: KeyStat;
   hp: number;
   mp: number;
+  tokens: number; // Add token balance to profile
 }
 
 export interface ChampionSlot {

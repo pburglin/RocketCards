@@ -152,6 +152,24 @@
         "maxHp": 2,
         "maxMp": 8
       }
+    },
+    {
+      "id": "champion_token_cosmic_entity",
+      "title": "Cosmic Entity",
+      "description": "A being of pure stellar energy that exists beyond the boundaries of space and time",
+      "imageDescription": "Huge translucent cosmic being made of swirling galaxies and stars, floating in deep space with nebulae in the background",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Draw 3 cards; Passive: All your cards cost 1 less MP; When attacking: Deal 3 damage to all opponents",
+      "cost": {
+        "HP": 0,
+        "MP": -8,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "From the birth of stars to the death of universes, it has witnessed all.",
+      "collection": "scifi",
+      "tokenCost": 75
     }
   ]
 }
