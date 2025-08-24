@@ -272,7 +272,9 @@ export function playCard(
         slot: 1 as const, // Only one champion slot
         cardId: cardId,
         attachedSkills: [],
-        status: []
+        status: [],
+        currentHp: card.championStats?.hp || 10, // Default champion HP if not specified
+        maxHp: card.championStats?.maxHp || (card.championStats?.hp || 10) // Default max HP
       };
       
       currentPlayerState.champions.push(championSlot);
@@ -346,7 +348,7 @@ export function playCard(
   return { success: true, matchState, playerState, opponentState }
 }
 
-// Function to deal damage, targeting creatures first
+// Function to deal damage, targeting creatures first, then champions, then player HP
 export function dealDamage(
   matchState: MatchState,
   attackerState: PlayerState,
@@ -395,8 +397,35 @@ export function dealDamage(
       defenderState.discard.push(removedCreature.cardId);
       matchState.log.push({ message: `${creatureTitle} was destroyed`, turn: matchState.turn });
     }
+  } else if (defenderState.champions && defenderState.champions.length > 0) {
+    // No creatures, target a random champion
+    const randomIndex = Math.floor(Math.random() * defenderState.champions.length);
+    const targetChampion = defenderState.champions[randomIndex];
+    
+    // Find the champion card to get the title
+    let championTitle = "Champion";
+    for (const collection of collections) {
+      const card = collection.cards.find((c: any) => c.id === targetChampion.cardId);
+      if (card) {
+        championTitle = card.title;
+        break;
+      }
+    }
+    
+    // Deal damage to champion
+    targetChampion.currentHp -= damage;
+    
+    matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to ${championTitle}`, turn: matchState.turn });
+    
+    // Check if champion is destroyed
+    if (targetChampion.currentHp <= 0) {
+      // Remove champion from play and add to discard
+      const removedChampion = defenderState.champions.splice(randomIndex, 1)[0];
+      defenderState.discard.push(removedChampion.cardId);
+      matchState.log.push({ message: `${championTitle} was destroyed`, turn: matchState.turn });
+    }
   } else {
-    // No creatures, damage player directly
+    // No creatures or champions, damage player directly
     defenderState.hp -= damage;
     matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to ${defenderState.id}`, turn: matchState.turn });
   }
@@ -429,6 +458,10 @@ export function endTurn(
   // Check for creatures with HP or MP at zero or below
   checkCreatureStats(matchState, playerState, collections);
   checkCreatureStats(matchState, opponentState, collections);
+  
+  // Check for champions with HP at zero or below
+  checkChampionStats(matchState, playerState, collections);
+  checkChampionStats(matchState, opponentState, collections);
   
   // Enable creatures to attack on subsequent turns
   if (playerState.creaturesInPlay) {
@@ -655,6 +688,43 @@ function checkCreatureStats(
       // Add log entry
       const reason = creature.currentHp <= 0 ? "HP" : "MP";
       matchState.log.push({ message: `${cardTitle} was removed (ran out of ${reason})`, turn: matchState.turn });
+    }
+  }
+}
+
+// Function to check and remove champions with HP at zero or below
+function checkChampionStats(
+  matchState: MatchState,
+  playerState: PlayerState,
+  collections: any[]
+): void {
+  if (!playerState.champions || playerState.champions.length === 0) {
+    return;
+  }
+  
+  // Check each champion for HP at zero or below
+  for (let i = playerState.champions.length - 1; i >= 0; i--) {
+    const champion = playerState.champions[i];
+    
+    // Check if HP is at zero or below
+    if (champion.currentHp <= 0) {
+      // Find card title for log
+      let cardTitle = "Champion";
+      let card: any = null;
+      for (const collection of collections) {
+        card = collection.cards.find((c: any) => c.id === champion.cardId);
+        if (card) {
+          cardTitle = card.title;
+          break;
+        }
+      }
+      
+      // Remove champion from play and add to discard
+      const removedChampion = playerState.champions.splice(i, 1)[0];
+      playerState.discard.push(removedChampion.cardId);
+      
+      // Add log entry
+      matchState.log.push({ message: `${cardTitle} was removed (ran out of HP)`, turn: matchState.turn });
     }
   }
 }

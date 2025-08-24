@@ -31,6 +31,8 @@ export interface Card {
   championStats?: {
     ap?: number; // Attack Power for champions
     dp?: number; // Defense Power for champions
+    hp?: number; // Health Points for champions
+    maxHp?: number; // Maximum Health Points for champions
   }; // Stats for champion cards
   tokenCost?: number; // Cost in tokens for special cards
 }
@@ -62,6 +64,8 @@ export interface ChampionSlot {
   cardId: string;
   attachedSkills: string[];
   status: string[];
+  currentHp: number;
+  maxHp: number;
 }
 
 export interface PlayerState {
