@@ -415,6 +415,11 @@ export function endTurn(
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Store the current active player state before processing
+  const currentPlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
+  const maxPlaysAllowed = currentPlayerState.fatigue < 3 ? 2 : currentPlayerState.fatigue <= 5 ? 1 : 0;
+  const cardsPlayedThisTurn = currentPlayerState.extraPlaysRemaining < maxPlaysAllowed;
+  
   // Check duration-based card expiration for both players
   checkDurationExpiration(matchState, playerState, collections);
   checkDurationExpiration(matchState, opponentState, collections);
@@ -522,6 +527,11 @@ export function endTurn(
   
   // Skip to main phase directly
   matchState.phase = 'main'
+  
+  // If the previous player didn't play any cards, decrease their fatigue by 1
+  if (!cardsPlayedThisTurn && maxPlaysAllowed > 0) {
+    currentPlayerState.fatigue = Math.max(0, currentPlayerState.fatigue - 1);
+  }
   
   return {
     matchState,

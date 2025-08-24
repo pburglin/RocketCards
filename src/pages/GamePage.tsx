@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   X,
   Flag,
-  Hand
+  Hand,
+  Trash
 } from 'lucide-react'
 
 export default function GamePage() {
@@ -553,7 +554,7 @@ export default function GamePage() {
                             discardChampion(index);
                           }}
                         >
-                          Discard
+                          <Trash className="w-4 h-4" />
                         </Button>
                       </div>
                     </Card>
@@ -653,7 +654,7 @@ export default function GamePage() {
                               discardCreature(index);
                             }}
                           >
-                            Discard
+                            <Trash className="w-4 h-4" />
                           </Button>
                         </div>
                       </Card>
@@ -994,6 +995,42 @@ export default function GamePage() {
                   {selectedCard?.type} Card
                 </p>
                 
+                {selectedCard?.championStats && (
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Champion Stats</h3>
+                    <div className="flex space-x-4">
+                      {selectedCard.championStats.ap !== undefined && (
+                        <div className="px-3 py-1 bg-error/20 text-error rounded">
+                          AP: {selectedCard.championStats.ap}
+                        </div>
+                      )}
+                      {selectedCard.championStats.dp !== undefined && (
+                        <div className="px-3 py-1 bg-secondary/20 text-secondary rounded">
+                          DP: {selectedCard.championStats.dp}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {selectedCard?.creatureStats && (
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Creature Stats</h3>
+                    <div className="flex space-x-4">
+                      {selectedCard.creatureStats.ap !== undefined && (
+                        <div className="px-3 py-1 bg-error/20 text-error rounded">
+                          AP: {selectedCard.creatureStats.ap}
+                        </div>
+                      )}
+                      {selectedCard.creatureStats.dp !== undefined && (
+                        <div className="px-3 py-1 bg-secondary/20 text-secondary rounded">
+                          DP: {selectedCard.creatureStats.dp}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Effect</h3>
                   <p className="text-text-secondary">{selectedCard?.effect}</p>
@@ -1065,7 +1102,7 @@ export default function GamePage() {
               <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
                 <div>
                   <h3 className="font-medium">Timed Matches</h3>
-                  <p className="text-sm text-text-secondary">60 seconds per turn</p>
+                  <p className="text-sm text-text-secondary">10 seconds per turn</p>
                 </div>
                 <input
                   type="checkbox"

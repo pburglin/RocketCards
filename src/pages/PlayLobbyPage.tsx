@@ -183,7 +183,7 @@ export default function PlayLobbyPage() {
                     <Clock className="w-5 h-5 text-text-secondary mr-3" />
                     <div>
                       <p className="font-medium">Timed Match</p>
-                      <p className="text-sm text-text-secondary">60 seconds per turn</p>
+                      <p className="text-sm text-text-secondary">10 seconds per turn</p>
                     </div>
                   </div>
                   <input
