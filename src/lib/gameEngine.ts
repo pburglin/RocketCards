@@ -101,7 +101,7 @@ export function initializeMatch(options: {
   }
   
   const matchState: MatchState = {
-    turn: 0,
+    turn: 1,
     phase: 'main',
     activePlayer: 'player',
     log: [],
@@ -177,17 +177,26 @@ export function playCard(
     return { success: false, matchState, playerState, opponentState }
   }
   
-  // Check play limit
-  if (playerState.extraPlaysRemaining <= 0) {
-    // Apply penalty for overplay
-    playerState.hp -= 2
-    playerState.fatigue += 1
-    playerState.extraPlaysRemaining -= 1
-    matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn })
-    
-    // Immediately end turn
-    
-    return { success: false, matchState, playerState, opponentState }
+  // Check play limit based on fatigue
+  const maxPlays = playerState.fatigue < 3 ? 2 : playerState.fatigue <= 5 ? 1 : 0;
+  const canPlay = playerState.extraPlaysRemaining > 0 && maxPlays > 0;
+  
+  if (!canPlay) {
+    if (maxPlays <= 0) {
+      // Cannot play due to high fatigue
+      matchState.log.push({ message: 'Cannot play card - Fatigue too high', turn: matchState.turn });
+      return { success: false, matchState, playerState, opponentState };
+    } else {
+      // Apply penalty for overplay
+      playerState.hp -= 2;
+      playerState.fatigue += 1;
+      playerState.extraPlaysRemaining -= 1;
+      matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn });
+      
+      // Immediately end turn
+      
+      return { success: false, matchState, playerState, opponentState };
+    }
   }
   
   // Check costs
@@ -233,7 +242,9 @@ export function playCard(
         currentMp: card.creatureStats?.mp || 0,
         maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
         maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
-        remainingDuration: typeof card.duration === 'number' ? card.duration : undefined
+        remainingDuration: typeof card.duration === 'number' ? card.duration : undefined,
+        playedOnTurn: matchState.turn,
+        canAttack: false // Cannot attack on the turn it's played
       };
       
       playerState.creaturesInPlay.push(creatureEntry);
@@ -286,7 +297,9 @@ export function playCard(
       currentMp: card.creatureStats?.mp || 0,
       maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
       maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
-      remainingDuration: typeof card.duration === 'number' ? card.duration : undefined
+      remainingDuration: typeof card.duration === 'number' ? card.duration : undefined,
+      playedOnTurn: matchState.turn,
+      canAttack: false // Cannot attack on the turn it's played
     };
     
     playerState.creaturesInPlay.push(creatureEntry);
@@ -415,6 +428,23 @@ export function endTurn(
   checkCreatureStats(matchState, playerState, collections);
   checkCreatureStats(matchState, opponentState, collections);
   
+  // Enable creatures to attack on subsequent turns
+  if (playerState.creaturesInPlay) {
+    playerState.creaturesInPlay.forEach(creature => {
+      if (creature.playedOnTurn < matchState.turn) {
+        creature.canAttack = true;
+      }
+    });
+  }
+  
+  if (opponentState.creaturesInPlay) {
+    opponentState.creaturesInPlay.forEach(creature => {
+      if (creature.playedOnTurn < matchState.turn) {
+        creature.canAttack = true;
+      }
+    });
+  }
+  
   // Combat phase: creatures deal damage to opponent's creatures/player
   processCombatPhase(matchState, playerState, opponentState, collections);
   
@@ -470,11 +500,14 @@ export function endTurn(
     }
   }
   
-  // Reset play limit for active player
+  // Reset play limit for active player based on fatigue
+  const activePlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
+  const maxPlays = activePlayerState.fatigue < 3 ? 2 : activePlayerState.fatigue <= 5 ? 1 : 0;
+  
   if (matchState.activePlayer === 'player') {
-    playerState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+    playerState.extraPlaysRemaining = maxPlays;
   } else {
-    opponentState.extraPlaysRemaining = matchState.rules.playLimitPerTurn;
+    opponentState.extraPlaysRemaining = maxPlays;
   }
   
   // Add log entries for start phase actions
@@ -629,34 +662,40 @@ function processCombatPhase(
   // Player's creatures attack opponent's creatures/player
   if (playerState.creaturesInPlay && playerState.creaturesInPlay.length > 0) {
     for (const creature of playerState.creaturesInPlay) {
-      // Find the creature card to get AP
-      let card: any = null;
-      for (const collection of collections) {
-        card = collection.cards.find((c: any) => c.id === creature.cardId);
-        if (card) break;
+      // Only attack if creature can attack
+      if (creature.canAttack) {
+        // Find the creature card to get AP
+        let card: any = null;
+        for (const collection of collections) {
+          card = collection.cards.find((c: any) => c.id === creature.cardId);
+          if (card) break;
+        }
+        
+        const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
+        
+        // Deal damage to opponent
+        dealDamage(matchState, playerState, opponentState, ap, collections, creature.cardId);
       }
-      
-      const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
-      
-      // Deal damage to opponent
-      dealDamage(matchState, playerState, opponentState, ap, collections, creature.cardId);
     }
   }
   
   // Opponent's creatures attack player's creatures/player
   if (opponentState.creaturesInPlay && opponentState.creaturesInPlay.length > 0) {
     for (const creature of opponentState.creaturesInPlay) {
-      // Find the creature card to get AP
-      let card: any = null;
-      for (const collection of collections) {
-        card = collection.cards.find((c: any) => c.id === creature.cardId);
-        if (card) break;
+      // Only attack if creature can attack
+      if (creature.canAttack) {
+        // Find the creature card to get AP
+        let card: any = null;
+        for (const collection of collections) {
+          card = collection.cards.find((c: any) => c.id === creature.cardId);
+          if (card) break;
+        }
+        
+        const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
+        
+        // Deal damage to player
+        dealDamage(matchState, opponentState, playerState, ap, collections, creature.cardId);
       }
-      
-      const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
-      
-      // Deal damage to player
-      dealDamage(matchState, opponentState, playerState, ap, collections, creature.cardId);
     }
   }
 }

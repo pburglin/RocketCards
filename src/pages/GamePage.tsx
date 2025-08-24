@@ -116,7 +116,14 @@ export default function GamePage() {
           <div className="bg-surface-light p-6 rounded-lg mb-6">
             <h2 className="text-2xl font-bold mb-4">Main Phase</h2>
             <p className="text-text-secondary mb-6">
-              You can play {playerState?.extraPlaysRemaining || 1} card{(playerState?.extraPlaysRemaining || 1) !== 1 ? 's' : ''} this turn
+              You can play {playerState?.extraPlaysRemaining || 0} card{(playerState?.extraPlaysRemaining || 0) !== 1 ? 's' : ''} this turn
+              {playerState?.fatigue !== undefined && (
+                <span className="ml-2">
+                  (Fatigue: {playerState.fatigue} -
+                  {playerState.fatigue < 3 ? ' 2 cards allowed' :
+                   playerState.fatigue <= 5 ? ' 1 card allowed' : ' 0 cards allowed'})
+                </span>
+              )}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -438,7 +445,10 @@ export default function GamePage() {
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
               <div
-                className="h-4 rounded-full bg-warning"
+                className={`h-4 rounded-full ${
+                  (opponentState?.fatigue || 0) < 3 ? 'bg-success' :
+                  (opponentState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
+                }`}
                 style={{ width: `${((opponentState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>
@@ -626,6 +636,13 @@ export default function GamePage() {
                             <span>{creature.currentMp}/{creature.maxMp}</span>
                           </div>
                         </div>
+                        <div className="mt-1">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
+                          }`}>
+                            {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
+                          </span>
+                        </div>
                         <div className="mt-2">
                           <Button
                             variant="outline"
@@ -790,6 +807,13 @@ export default function GamePage() {
                             <span>{creature.currentMp}/{creature.maxMp}</span>
                           </div>
                         </div>
+                        <div className="mt-1">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
+                          }`}>
+                            {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
+                          </span>
+                        </div>
                       </Card>
                     );
                   })}
@@ -833,7 +857,10 @@ export default function GamePage() {
           <div className="flex items-center">
             <div className="w-full bg-surface rounded-full h-4">
               <div
-                className="h-4 rounded-full bg-warning"
+                className={`h-4 rounded-full ${
+                  (playerState?.fatigue || 0) < 3 ? 'bg-success' :
+                  (playerState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
+                }`}
                 style={{ width: `${((playerState?.fatigue || 0) / 10) * 100}%` }}
               />
             </div>

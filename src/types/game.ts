@@ -84,6 +84,8 @@ export interface PlayerState {
     maxHp: number;
     maxMp: number;
     remainingDuration?: number; // For cards with numeric duration
+    playedOnTurn: number; // Track which turn the creature was played
+    canAttack: boolean; // Whether the creature can attack this turn
   }[];
 }
 
