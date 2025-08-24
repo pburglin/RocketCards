@@ -18,7 +18,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "Freedom paid in fire.",
-      "collection": "fantasy"
+      "collection": "fantasy",
+      "championStats": {
+        "ap": 3,
+        "dp": 2
+      }
     },
     {
       "id": "tactics_counter",
@@ -86,7 +90,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "Death is not the end, but merely a beginning.",
-      "collection": "fantasy"
+      "collection": "fantasy",
+      "championStats": {
+        "ap": 2,
+        "dp": 3
+      }
     },
     {
       "id": "skill_heal",
@@ -126,7 +134,9 @@
         "hp": 2,
         "mp": 1,
         "maxHp": 2,
-        "maxMp": 1
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 1
       }
     },
     {
@@ -150,7 +160,9 @@
         "hp": 6,
         "mp": 0,
         "maxHp": 6,
-        "maxMp": 0
+        "maxMp": 0,
+        "ap": 2,
+        "dp": 3
       }
     },
     {
@@ -174,7 +186,9 @@
         "hp": 4,
         "mp": 2,
         "maxHp": 4,
-        "maxMp": 2
+        "maxMp": 2,
+        "ap": 2,
+        "dp": 2
       }
     },
     {
@@ -193,7 +207,11 @@
       "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
       "flavor": "Born from the dreams of mortals and the power of pure magic.",
       "collection": "fantasy",
-      "tokenCost": 50
+      "tokenCost": 50,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
     }
   ]
 }

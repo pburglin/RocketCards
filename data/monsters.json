@@ -18,7 +18,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "From the depths, it rises.",
-      "collection": "monsters"
+      "collection": "monsters",
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
     },
     {
       "id": "tactics_ambush",
@@ -72,13 +76,13 @@
       "collection": "monsters"
     },
     {
-      "id": "champion_basilisk",
+      "id": "creature_basilisk",
       "title": "Basilisk",
       "description": "Serpentine creature whose gaze turns flesh to stone",
       "imageDescription": "Large snake-like creature with glowing eyes, stone statues in the background",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "unique",
-      "effect": "On summon: opponent discards 1 card; Passive: Opponent champions cost 1 more HP to play",
+      "effect": "On summon: opponent discards 1 card; Passive: Opponent creatures cost 1 more HP to play",
       "cost": {
         "HP": -2,
         "MP": -4,
@@ -86,7 +90,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "One look is all it takes.",
-      "collection": "monsters"
+      "collection": "monsters",
+      "championStats": {
+        "ap": 2,
+        "dp": 4
+      }
     },
     {
       "id": "skill_claw_swipe",
@@ -110,7 +118,7 @@
       "title": "Wolf Pack",
       "description": "A pack of hungry wolves that hunt together",
       "imageDescription": "Three wolves with glowing eyes, surrounding prey in a forest clearing",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "common",
       "effect": "When attacking: Deal 1 damage to target, +1 damage if played during night phase",
       "cost": {
@@ -126,7 +134,9 @@
         "hp": 3,
         "mp": 2,
         "maxHp": 3,
-        "maxMp": 2
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
       }
     },
     {
@@ -134,7 +144,7 @@
       "title": "Ancient Wyrm",
       "description": "A massive dragon-like creature with scales that shimmer like oil",
       "imageDescription": "Huge serpentine dragon with iridescent scales, coiled around a mountain peak",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "unique",
       "effect": "On summon: Deal 2 damage to all enemy creatures; Passive: Gain 1 MP each turn",
       "cost": {
@@ -150,7 +160,9 @@
         "hp": 8,
         "mp": 3,
         "maxHp": 8,
-        "maxMp": 3
+        "maxMp": 3,
+        "ap": 3,
+        "dp": 2
       }
     },
     {
@@ -158,7 +170,7 @@
       "title": "Haunted Spirit",
       "description": "A vengeful spirit bound to the mortal realm for a limited time",
       "imageDescription": "Ghostly figure with glowing eyes, chained to an ancient tomb",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "rare",
       "effect": "On summon: Deal 1 damage to all opponent champions; When attacking: Deal 2 damage to target",
       "cost": {
@@ -174,7 +186,9 @@
         "hp": 3,
         "mp": 4,
         "maxHp": 3,
-        "maxMp": 4
+        "maxMp": 4,
+        "ap": 2,
+        "dp": 1
       }
     },
     {
@@ -193,7 +207,11 @@
       "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
       "flavor": "Older than the mountains, deeper than the abyss, and hungrier than death itself.",
       "collection": "monsters",
-      "tokenCost": 55
+      "tokenCost": 55,
+      "championStats": {
+        "ap": 5,
+        "dp": 4
+      }
     }
   ]
 }

@@ -230,23 +230,25 @@ export default function GamePage() {
               </div>
               
               <div>
-                              <h3 className="font-bold mb-4">Campaign Board</h3>
-                              <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
-                                {matchState.log.length > 0 ? (
-                                  matchState.log.map((logEntry, index) => (
-                                    <div key={index} className="bg-surface p-3 rounded-lg border-l-4 border-primary">
-                                      <p className="text-sm">
-                                        <span className="font-bold text-primary">Turn {logEntry.turn}:</span> {logEntry.message}
-                                      </p>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <div className="bg-surface p-4 rounded-lg text-text-secondary text-center">
-                                    <p>No events yet</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                <h3 className="font-bold mb-4">Campaign History</h3>
+                <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                  {matchState.log.length > 0 ? (
+                    [...matchState.log]
+                      .sort((a, b) => b.turn - a.turn || matchState.log.indexOf(b) - matchState.log.indexOf(a))
+                      .map((logEntry, index) => (
+                        <div key={index} className="bg-surface p-3 rounded-lg border-l-4 border-primary">
+                          <p className="text-sm">
+                            <span className="font-bold text-primary">Turn {logEntry.turn}:</span> {logEntry.message}
+                          </p>
+                        </div>
+                      ))
+                  ) : (
+                    <div className="bg-surface p-4 rounded-lg text-text-secondary text-center">
+                      <p>No events yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
           </div>
@@ -262,7 +264,7 @@ export default function GamePage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-bold mb-4">Your Champions</h3>
+                <h3 className="font-bold mb-4">Your Champion</h3>
                 <div className="space-y-4">
                   {playerState?.champions?.map((champion, index) => (
                     <Card 
@@ -304,7 +306,7 @@ export default function GamePage() {
               </div>
               
               <div>
-                <h3 className="font-bold mb-4">Opponent Champions</h3>
+                <h3 className="font-bold mb-4">Opponent Champion</h3>
                 <div className="space-y-4">
                   {opponentState?.champions?.map((champion, index) => (
                     <Card key={index} className="p-4">
@@ -435,49 +437,75 @@ export default function GamePage() {
       <div className="bg-surface-light p-6 rounded-lg mb-8">
         <h2 className="text-2xl font-bold mb-6">Campaign Board</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
           <div>
-            <h3 className="text-lg font-bold mb-4">Your Champions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {playerState?.champions?.map((champion, index) => (
-                <Card
-                  key={index}
-                  className={`p-4 ${
-                    champion?.status?.includes('exhausted') ? 'opacity-50' : ''
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <CardTitle>{champion?.cardId}</CardTitle>
-                    <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                      Slot {champion?.slot}
-                    </span>
-                  </div>
-                  <CardDescription className="mt-2">
-                    {champion?.attachedSkills?.length} attached skills
-                  </CardDescription>
-                  <div className="mt-4 flex space-x-2">
-                    <Button
-                      disabled={champion?.status?.includes('exhausted')}
-                      onClick={() => {
-                        // Handle champion action
-                      }}
+            <h3 className="text-lg font-bold mb-4">Your Champion</h3>
+            <div className="grid grid-cols-1 gap-4">
+              {playerState?.champions && playerState.champions.length > 0 ? (
+                playerState.champions.map((champion, index) => {
+                  // Find the card to get title and details
+                  let card = null;
+                  for (const collection of collections) {
+                    card = collection.cards.find((c: any) => c.id === champion.cardId);
+                    if (card) break;
+                  }
+                  
+                  return (
+                    <Card
+                      key={index}
+                      className={`p-4 ${
+                        champion?.status?.includes('exhausted') ? 'opacity-50' : ''
+                      }`}
                     >
-                      Attack
-                    </Button>
-                    <Button
-                      disabled={champion?.status?.includes('silenced')}
-                      onClick={() => {
-                        // Handle skill activation
-                      }}
-                    >
-                      Activate Skill
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-              {(playerState?.champions?.length || 0) < 3 && (
+                      <div className="flex justify-between items-start">
+                        <CardTitle>{card?.title || champion?.cardId}</CardTitle>
+                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                          Slot {champion?.slot}
+                        </span>
+                      </div>
+                      {card?.championStats && (
+                        <div className="flex space-x-4 text-xs mt-2">
+                          {card.championStats.ap !== undefined && (
+                            <div>
+                              <span className="text-error">AP: </span>
+                              <span>{card.championStats.ap}</span>
+                            </div>
+                          )}
+                          {card.championStats.dp !== undefined && (
+                            <div>
+                              <span className="text-secondary">DP: </span>
+                              <span>{card.championStats.dp}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <CardDescription className="mt-2">
+                        {champion?.attachedSkills?.length} attached skills
+                      </CardDescription>
+                      <div className="mt-4 flex space-x-2">
+                        <Button
+                          disabled={champion?.status?.includes('exhausted')}
+                          onClick={() => {
+                            // Handle champion action
+                          }}
+                        >
+                          Attack
+                        </Button>
+                        <Button
+                          disabled={champion?.status?.includes('silenced')}
+                          onClick={() => {
+                            // Handle skill activation
+                          }}
+                        >
+                          Activate Skill
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })
+              ) : (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
-                  <p className="text-text-secondary">Empty Slot</p>
+                  <p className="text-text-secondary">No Champion</p>
                 </div>
               )}
             </div>
@@ -505,6 +533,22 @@ export default function GamePage() {
                             </span>
                           )}
                         </div>
+                        {card?.creatureStats && (
+                          <div className="flex space-x-4 text-xs mb-2">
+                            {card.creatureStats.ap !== undefined && (
+                              <div>
+                                <span className="text-error">AP: </span>
+                                <span>{card.creatureStats.ap}</span>
+                              </div>
+                            )}
+                            {card.creatureStats.dp !== undefined && (
+                              <div>
+                                <span className="text-secondary">DP: </span>
+                                <span>{card.creatureStats.dp}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <div className="flex space-x-4 text-xs">
                           <div>
                             <span className="text-error">HP: </span>
@@ -523,25 +567,54 @@ export default function GamePage() {
             )}
           </div>
           
-          <div>
-            <h3 className="text-lg font-bold mb-4">Opponent Champions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {opponentState?.champions?.map((champion, index) => (
-                <Card key={index} className="p-4">
-                  <div className="flex justify-between items-start">
-                    <CardTitle>{champion?.cardId}</CardTitle>
-                    <span className="px-2 py-1 bg-surface-light rounded text-xs">
-                      Slot {champion?.slot}
-                    </span>
-                  </div>
-                  <CardDescription className="mt-2">
-                    {champion?.attachedSkills?.length} attached skills
-                  </CardDescription>
-                </Card>
-              ))}
-              {(opponentState?.champions?.length || 0) < 3 && (
+          {/* Dashed vertical separator */}
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px border-l-2 border-dashed border-border transform -translate-x-1/2"></div>
+          
+          <div className="md:pl-8">
+            <h3 className="text-lg font-bold mb-4">Opponent Champion</h3>
+            <div className="grid grid-cols-1 gap-4">
+              {opponentState?.champions && opponentState.champions.length > 0 ? (
+                opponentState.champions.map((champion, index) => {
+                  // Find the card to get title and details
+                  let card = null;
+                  for (const collection of collections) {
+                    card = collection.cards.find((c: any) => c.id === champion.cardId);
+                    if (card) break;
+                  }
+                  
+                  return (
+                    <Card key={index} className="p-4">
+                      <div className="flex justify-between items-start">
+                        <CardTitle>{card?.title || champion?.cardId}</CardTitle>
+                        <span className="px-2 py-1 bg-surface-light rounded text-xs">
+                          Slot {champion?.slot}
+                        </span>
+                      </div>
+                      {card?.championStats && (
+                        <div className="flex space-x-4 text-xs mt-2">
+                          {card.championStats.ap !== undefined && (
+                            <div>
+                              <span className="text-error">AP: </span>
+                              <span>{card.championStats.ap}</span>
+                            </div>
+                          )}
+                          {card.championStats.dp !== undefined && (
+                            <div>
+                              <span className="text-secondary">DP: </span>
+                              <span>{card.championStats.dp}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <CardDescription className="mt-2">
+                        {champion?.attachedSkills?.length} attached skills
+                      </CardDescription>
+                    </Card>
+                  );
+                })
+              ) : (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center">
-                  <p className="text-text-secondary">Empty Slot</p>
+                  <p className="text-text-secondary">No Champion</p>
                 </div>
               )}
             </div>
@@ -569,6 +642,22 @@ export default function GamePage() {
                             </span>
                           )}
                         </div>
+                        {card?.creatureStats && (
+                          <div className="flex space-x-4 text-xs mb-2">
+                            {card.creatureStats.ap !== undefined && (
+                              <div>
+                                <span className="text-error">AP: </span>
+                                <span>{card.creatureStats.ap}</span>
+                              </div>
+                            )}
+                            {card.creatureStats.dp !== undefined && (
+                              <div>
+                                <span className="text-secondary">DP: </span>
+                                <span>{card.creatureStats.dp}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <div className="flex space-x-4 text-xs">
                           <div>
                             <span className="text-error">HP: </span>

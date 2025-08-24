@@ -214,8 +214,63 @@ export function playCard(
   playerState.mp += card.cost.MP
   playerState.fatigue += card.cost.fatigue
   
-  // Check if card has duration (creature card)
-  if (card.duration !== undefined || card.creatureStats !== undefined) {
+  // Check if this is a champion card
+  if (card.type === 'champions') {
+    // Check if it's a persistent champion (no creatureStats) or creature champion (has creatureStats)
+    if (card.creatureStats !== undefined) {
+      // This is a creature champion - treat as creature
+      const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      if (!playerState.creaturesInPlay) {
+        playerState.creaturesInPlay = [];
+      }
+      
+      const creatureEntry = {
+        cardId: cardId,
+        instanceId: instanceId,
+        currentHp: card.creatureStats?.hp || 1,
+        currentMp: card.creatureStats?.mp || 0,
+        maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
+        maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
+        remainingDuration: typeof card.duration === 'number' ? card.duration : undefined
+      };
+      
+      playerState.creaturesInPlay.push(creatureEntry);
+      
+      // Remove card from hand
+      playerState.hand.splice(cardIndex, 1);
+      
+      // Add to log
+      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
+    } else {
+      // This is a persistent champion - check if player already has a champion
+      if (playerState.champions && playerState.champions.length > 0) {
+        // Player already has a champion, cannot play another one
+        matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play champion - already has one in play`, turn: matchState.turn });
+        return { success: false, matchState, playerState, opponentState };
+      }
+      
+      // Add champion to player's champions (only one allowed)
+      if (!playerState.champions) {
+        playerState.champions = [];
+      }
+      
+      const championSlot = {
+        slot: 1 as const, // Only one champion slot
+        cardId: cardId,
+        attachedSkills: [],
+        status: []
+      };
+      
+      playerState.champions.push(championSlot);
+      
+      // Remove card from hand
+      playerState.hand.splice(cardIndex, 1);
+      
+      // Add to log
+      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played champion ${card.title}`, turn: matchState.turn });
+    }
+  } else if (card.duration !== undefined || card.creatureStats !== undefined) {
     // This is a creature card that stays in play
     const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
@@ -354,6 +409,9 @@ export function endTurn(
   // Check duration-based card expiration for both players
   checkDurationExpiration(matchState, playerState, collections);
   checkDurationExpiration(matchState, opponentState, collections);
+  
+  // Combat phase: creatures deal damage to opponent's creatures/player
+  processCombatPhase(matchState, playerState, opponentState, collections);
   
   // Cleanup phase
   // Discard down to hand limit
@@ -507,6 +565,48 @@ function checkDurationExpiration(
           matchState.log.push({ message: `${cardTitle} expired (MP reached 0)`, turn: matchState.turn });
         }
       }
+    }
+  }
+}
+
+// Function to process combat phase where creatures deal damage
+function processCombatPhase(
+  matchState: MatchState,
+  playerState: PlayerState,
+  opponentState: PlayerState,
+  collections: any[]
+): void {
+  // Player's creatures attack opponent's creatures/player
+  if (playerState.creaturesInPlay && playerState.creaturesInPlay.length > 0) {
+    for (const creature of playerState.creaturesInPlay) {
+      // Find the creature card to get AP
+      let card: any = null;
+      for (const collection of collections) {
+        card = collection.cards.find((c: any) => c.id === creature.cardId);
+        if (card) break;
+      }
+      
+      const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
+      
+      // Deal damage to opponent
+      dealDamage(matchState, playerState, opponentState, ap, collections, creature.cardId);
+    }
+  }
+  
+  // Opponent's creatures attack player's creatures/player
+  if (opponentState.creaturesInPlay && opponentState.creaturesInPlay.length > 0) {
+    for (const creature of opponentState.creaturesInPlay) {
+      // Find the creature card to get AP
+      let card: any = null;
+      for (const collection of collections) {
+        card = collection.cards.find((c: any) => c.id === creature.cardId);
+        if (card) break;
+      }
+      
+      const ap = card?.creatureStats?.ap || 1; // Default to 1 AP if not specified
+      
+      // Deal damage to player
+      dealDamage(matchState, opponentState, playerState, ap, collections, creature.cardId);
     }
   }
 }

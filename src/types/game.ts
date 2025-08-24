@@ -25,7 +25,13 @@ export interface Card {
     mp: number;
     maxHp: number;
     maxMp: number;
+    ap?: number; // Attack Power
+    dp?: number; // Defense Power
   }; // Stats for creature cards
+  championStats?: {
+    ap?: number; // Attack Power for champions
+    dp?: number; // Defense Power for champions
+  }; // Stats for champion cards
   tokenCost?: number; // Cost in tokens for special cards
 }
 

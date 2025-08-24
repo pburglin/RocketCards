@@ -18,7 +18,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "The power of a warrior knows no bounds.",
-      "collection": "anime"
+      "collection": "anime",
+      "championStats": {
+        "ap": 3,
+        "dp": 2
+      }
     },
     {
       "id": "tactics_henshin",
@@ -86,7 +90,11 @@
       },
       "tags": ["reaction:false", "duration:persistent"],
       "flavor": "Age is no barrier to magical mastery.",
-      "collection": "anime"
+      "collection": "anime",
+      "championStats": {
+        "ap": 2,
+        "dp": 3
+      }
     },
     {
       "id": "skill_shuriken",
@@ -126,7 +134,9 @@
         "hp": 4,
         "mp": 2,
         "maxHp": 4,
-        "maxMp": 2
+        "maxMp": 2,
+        "ap": 2,
+        "dp": 1
       }
     },
     {
@@ -150,7 +160,9 @@
         "hp": 3,
         "mp": 6,
         "maxHp": 3,
-        "maxMp": 6
+        "maxMp": 6,
+        "ap": 1,
+        "dp": 2
       }
     },
     {
@@ -169,7 +181,11 @@
       "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
       "flavor": "Beyond the realm of mortals, where purity of spirit reigns supreme.",
       "collection": "anime",
-      "tokenCost": 60
+      "tokenCost": 60,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
     }
   ]
 }
