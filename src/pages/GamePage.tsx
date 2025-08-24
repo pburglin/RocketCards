@@ -114,7 +114,7 @@ export default function GamePage() {
       case 'main':
         return (
           <div className="bg-surface-light p-6 rounded-lg mb-6">
-            <h2 className="text-2xl font-bold mb-4">Main Phase</h2>
+            <h2 className="text-2xl font-bold mb-4">Controls</h2>
             <p className="text-text-secondary mb-6">
               You can play {playerState?.extraPlaysRemaining || 0} card{(playerState?.extraPlaysRemaining || 0) !== 1 ? 's' : ''} this turn
               {playerState?.fatigue !== undefined && (
@@ -251,7 +251,7 @@ export default function GamePage() {
               </div>
               
               <div>
-                <h3 className="font-bold mb-4">Campaign History</h3>
+                <h3 className="font-bold mb-4">History</h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
                   {matchState.log.length > 0 ? (
                     [...matchState.log]
@@ -457,9 +457,9 @@ export default function GamePage() {
         </div>
       </div>
       
-      {/* Campaign Board */}
+      {/* Arena */}
       <div className="bg-surface-light p-6 rounded-lg mb-8">
-        <h2 className="text-2xl font-bold mb-6">Campaign Board</h2>
+        <h2 className="text-2xl font-bold mb-6">Arena</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
           <div>
