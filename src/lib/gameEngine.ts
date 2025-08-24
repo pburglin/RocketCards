@@ -182,6 +182,7 @@ export function playCard(
     // Apply penalty for overplay
     playerState.hp -= 2
     playerState.fatigue += 1
+    playerState.extraPlaysRemaining -= 1
     matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn })
     
     // Immediately end turn
@@ -387,7 +388,7 @@ export function dealDamage(
   } else {
     // No creatures, damage player directly
     defenderState.hp -= damage;
-    matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to player`, turn: matchState.turn });
+    matchState.log.push({ message: `${attackSourceTitle} dealt ${damage} damage to ${defenderState.id}`, turn: matchState.turn });
   }
 }
 
@@ -409,6 +410,10 @@ export function endTurn(
   // Check duration-based card expiration for both players
   checkDurationExpiration(matchState, playerState, collections);
   checkDurationExpiration(matchState, opponentState, collections);
+  
+  // Check for creatures with HP or MP at zero or below
+  checkCreatureStats(matchState, playerState, collections);
+  checkCreatureStats(matchState, opponentState, collections);
   
   // Combat phase: creatures deal damage to opponent's creatures/player
   processCombatPhase(matchState, playerState, opponentState, collections);
@@ -565,6 +570,51 @@ function checkDurationExpiration(
           matchState.log.push({ message: `${cardTitle} expired (MP reached 0)`, turn: matchState.turn });
         }
       }
+    }
+  }
+}
+
+// Function to check and remove creatures with HP or MP at zero or below
+function checkCreatureStats(
+  matchState: MatchState,
+  playerState: PlayerState,
+  collections: any[]
+): void {
+  if (!playerState.creaturesInPlay || playerState.creaturesInPlay.length === 0) {
+    return;
+  }
+  
+  // Check each creature for HP or MP at zero or below
+  for (let i = playerState.creaturesInPlay.length - 1; i >= 0; i--) {
+    const creature = playerState.creaturesInPlay[i];
+    
+    // Skip creatures with duration-based expiration (handled by checkDurationExpiration)
+    let card: any = null;
+    for (const collection of collections) {
+      card = collection.cards.find((c: any) => c.id === creature.cardId);
+      if (card) break;
+    }
+    
+    // Skip if this is a duration-based card
+    if (card && card.duration !== undefined) {
+      continue;
+    }
+    
+    // Check if HP or MP is at zero or below
+    if (creature.currentHp <= 0 || creature.currentMp <= 0) {
+      // Find card title for log
+      let cardTitle = "Creature";
+      if (card) {
+        cardTitle = card.title;
+      }
+      
+      // Remove creature from play and add to discard
+      const removedCreature = playerState.creaturesInPlay.splice(i, 1)[0];
+      playerState.discard.push(removedCreature.cardId);
+      
+      // Add log entry
+      const reason = creature.currentHp <= 0 ? "HP" : "MP";
+      matchState.log.push({ message: `${cardTitle} was removed (ran out of ${reason})`, turn: matchState.turn });
     }
   }
 }
@@ -753,4 +803,58 @@ export function playOpponentAI(
   matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
   console.log('Opponent ended their turn');
   return { matchState, playerState, opponentState };
+}
+
+// Function to discard a champion
+export function discardChampion(
+  matchState: MatchState,
+  playerState: PlayerState,
+  championIndex: number
+): {
+  success: boolean
+  matchState: MatchState
+  playerState: PlayerState
+} {
+  if (!playerState.champions || championIndex < 0 || championIndex >= playerState.champions.length) {
+    return { success: false, matchState, playerState };
+  }
+  
+  const champion = playerState.champions[championIndex];
+  const cardId = champion.cardId;
+  
+  // Remove champion from play and add to discard pile
+  playerState.champions.splice(championIndex, 1);
+  playerState.discard.push(cardId);
+  
+  // Add to log
+  matchState.log.push({ message: `Player discarded champion`, turn: matchState.turn });
+  
+  return { success: true, matchState, playerState };
+}
+
+// Function to discard a creature
+export function discardCreature(
+  matchState: MatchState,
+  playerState: PlayerState,
+  creatureIndex: number
+): {
+  success: boolean
+  matchState: MatchState
+  playerState: PlayerState
+} {
+  if (!playerState.creaturesInPlay || creatureIndex < 0 || creatureIndex >= playerState.creaturesInPlay.length) {
+    return { success: false, matchState, playerState };
+  }
+  
+  const creature = playerState.creaturesInPlay[creatureIndex];
+  const cardId = creature.cardId;
+  
+  // Remove creature from play and add to discard pile
+  playerState.creaturesInPlay.splice(creatureIndex, 1);
+  playerState.discard.push(cardId);
+  
+  // Add to log
+  matchState.log.push({ message: `Player discarded creature`, turn: matchState.turn });
+  
+  return { success: true, matchState, playerState };
 }

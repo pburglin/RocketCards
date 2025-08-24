@@ -16,7 +16,9 @@ import {
   resolveEffects,
   endTurn,
   concedeMatch,
-  playOpponentAI
+  playOpponentAI,
+  discardChampion,
+  discardCreature
 } from '../lib/gameEngine'
 import { loadAllCollections, loadCollection } from '../lib/collectionLoader'
 
@@ -61,6 +63,8 @@ interface GameStore {
   endTurn: () => void
   resolveLLM: () => Promise<{ log: string[] }>
   concede: () => void
+  discardChampion: (championIndex: number) => boolean
+  discardCreature: (creatureIndex: number) => boolean
   
   // Persistence
   loadGameState: () => void
@@ -389,6 +393,34 @@ export const useGameStore = create<GameStore>()(
           opponentState: result.opponentState
         })
         
+      },
+      discardChampion: (championIndex) => {
+        const { matchState, playerState } = get()
+        if (!matchState || !playerState) return false
+        
+        const result = discardChampion(matchState, playerState, championIndex)
+        if (result.success) {
+          set({
+            matchState: result.matchState,
+            playerState: result.playerState
+          })
+          return true
+        }
+        return false
+      },
+      discardCreature: (creatureIndex) => {
+        const { matchState, playerState } = get()
+        if (!matchState || !playerState) return false
+        
+        const result = discardCreature(matchState, playerState, creatureIndex)
+        if (result.success) {
+          set({
+            matchState: result.matchState,
+            playerState: result.playerState
+          })
+          return true
+        }
+        return false
       },
       // Persistence
       loadGameState: () => {

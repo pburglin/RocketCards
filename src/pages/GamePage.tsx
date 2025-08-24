@@ -54,6 +54,15 @@ export default function GamePage() {
     // Let the user click the button to proceed
   }, [matchState, navigate])
   
+  // Check for game over conditions
+  useEffect(() => {
+    if (playerState?.hp !== undefined && opponentState?.hp !== undefined) {
+      if (playerState.hp <= 0 || opponentState.hp <= 0) {
+        navigate('/results')
+      }
+    }
+  }, [playerState?.hp, opponentState?.hp, navigate])
+  
   const getCardTitle = (cardId: string, collections: any[]) => {
     if (!cardId) return 'Unknown Card';
     
@@ -205,6 +214,11 @@ export default function GamePage() {
                                   : card.duration === 'HP'
                                     ? 'HP-based'
                                     : 'MP-based'}
+                              </span>
+                            )}
+                            {card?.type && (
+                              <span className="px-1 py-0.5 bg-accent/20 text-accent text-xs rounded capitalize">
+                                {card.type}
                               </span>
                             )}
                           </div>
@@ -457,6 +471,27 @@ export default function GamePage() {
                         champion?.status?.includes('exhausted') ? 'opacity-50' : ''
                       }`}
                     >
+                      {card && (
+                        <div className="relative mb-3">
+                          <img
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            alt={card?.title || champion?.cardId}
+                            className="w-full h-24 object-cover rounded"
+                            onError={(e) => {
+                              e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || champion?.cardId || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                            }}
+                          />
+                          <div className="absolute top-1 right-1">
+                            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                              card?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                              card?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                              'bg-accent/20 text-accent'
+                            }`}>
+                              {card?.rarity?.charAt(0).toUpperCase() + card?.rarity?.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex justify-between items-start">
                         <CardTitle>{card?.title || champion?.cardId}</CardTitle>
                         <span className="px-2 py-1 bg-surface-light rounded text-xs">
@@ -499,6 +534,17 @@ export default function GamePage() {
                         >
                           Activate Skill
                         </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            // Handle champion discard
+                            const { discardChampion } = useGameStore.getState();
+                            discardChampion(index);
+                          }}
+                        >
+                          Discard
+                        </Button>
                       </div>
                     </Card>
                   );
@@ -525,6 +571,27 @@ export default function GamePage() {
                     
                     return (
                       <Card key={index} className="p-3 bg-surface">
+                        {card && (
+                          <div className="relative mb-2">
+                            <img
+                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                              alt={card?.title || creature.cardId}
+                              className="w-full h-20 object-cover rounded"
+                              onError={(e) => {
+                                e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || creature.cardId || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                              }}
+                            />
+                            <div className="absolute top-1 right-1">
+                              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                card?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                                card?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                                'bg-accent/20 text-accent'
+                              }`}>
+                                {card?.rarity?.charAt(0).toUpperCase() + card?.rarity?.slice(1)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                         <div className="flex justify-between items-start mb-2">
                           <CardTitle className="text-sm">{card?.title || creature.cardId}</CardTitle>
                           {creature.remainingDuration !== undefined && (
@@ -559,6 +626,19 @@ export default function GamePage() {
                             <span>{creature.currentMp}/{creature.maxMp}</span>
                           </div>
                         </div>
+                        <div className="mt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              // Handle creature discard
+                              const { discardCreature } = useGameStore.getState();
+                              discardCreature(index);
+                            }}
+                          >
+                            Discard
+                          </Button>
+                        </div>
                       </Card>
                     );
                   })}
@@ -584,6 +664,27 @@ export default function GamePage() {
                   
                   return (
                     <Card key={index} className="p-4">
+                      {card && (
+                        <div className="relative mb-3">
+                          <img
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            alt={card?.title || champion?.cardId}
+                            className="w-full h-24 object-cover rounded"
+                            onError={(e) => {
+                              e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || champion?.cardId || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                            }}
+                          />
+                          <div className="absolute top-1 right-1">
+                            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                              card?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                              card?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                              'bg-accent/20 text-accent'
+                            }`}>
+                              {card?.rarity?.charAt(0).toUpperCase() + card?.rarity?.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex justify-between items-start">
                         <CardTitle>{card?.title || champion?.cardId}</CardTitle>
                         <span className="px-2 py-1 bg-surface-light rounded text-xs">
@@ -634,6 +735,27 @@ export default function GamePage() {
                     
                     return (
                       <Card key={index} className="p-3 bg-surface">
+                        {card && (
+                          <div className="relative mb-2">
+                            <img
+                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                              alt={card?.title || creature.cardId}
+                              className="w-full h-20 object-cover rounded"
+                              onError={(e) => {
+                                e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || creature.cardId || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                              }}
+                            />
+                            <div className="absolute top-1 right-1">
+                              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                card?.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                                card?.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                                'bg-accent/20 text-accent'
+                              }`}>
+                                {card?.rarity?.charAt(0).toUpperCase() + card?.rarity?.slice(1)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                         <div className="flex justify-between items-start mb-2">
                           <CardTitle className="text-sm">{card?.title || creature.cardId}</CardTitle>
                           {creature.remainingDuration !== undefined && (
