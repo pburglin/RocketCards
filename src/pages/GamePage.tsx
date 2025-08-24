@@ -640,9 +640,9 @@ export default function GamePage() {
         </div>
       </div>
       
-      {/* Arena */}
+      {/* Battlefield */}
       <div className="bg-surface-light p-6 rounded-lg mb-8">
-        <h2 className="text-2xl font-bold mb-6">Arena</h2>
+        <h2 className="text-2xl font-bold mb-6">Battlefield</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
           <div>
