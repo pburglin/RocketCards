@@ -161,10 +161,9 @@ export function playCard(
   playerState: PlayerState
   opponentState: PlayerState
 } {
-  // Check if it's the player's turn
-  if (matchState.activePlayer !== 'player') {
-    return { success: false, matchState, playerState, opponentState }
-  }
+  // Check if it's the correct player's turn
+  const currentPlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
+  const otherPlayerState = matchState.activePlayer === 'player' ? opponentState : playerState;
   
   // Check if in main phase
   if (matchState.phase !== 'main') {
@@ -172,14 +171,14 @@ export function playCard(
   }
   
   // Check if card is in hand
-  const cardIndex = playerState.hand.indexOf(cardId)
+  const cardIndex = currentPlayerState.hand.indexOf(cardId)
   if (cardIndex === -1) {
     return { success: false, matchState, playerState, opponentState }
   }
   
   // Check play limit based on fatigue
-  const maxPlays = playerState.fatigue < 3 ? 2 : playerState.fatigue <= 5 ? 1 : 0;
-  const canPlay = playerState.extraPlaysRemaining > 0 && maxPlays > 0;
+  const maxPlays = currentPlayerState.fatigue < 3 ? 2 : currentPlayerState.fatigue <= 5 ? 1 : 0;
+  const canPlay = currentPlayerState.extraPlaysRemaining > 0 && maxPlays > 0;
   
   if (!canPlay) {
     if (maxPlays <= 0) {
@@ -188,9 +187,9 @@ export function playCard(
       return { success: false, matchState, playerState, opponentState };
     } else {
       // Apply penalty for overplay
-      playerState.hp -= 2;
-      playerState.fatigue += 1;
-      playerState.extraPlaysRemaining -= 1;
+      currentPlayerState.hp -= 2;
+      currentPlayerState.fatigue += 1;
+      currentPlayerState.extraPlaysRemaining -= 1;
       matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn });
       
       // Immediately end turn
@@ -211,18 +210,18 @@ export function playCard(
     return { success: false, matchState, playerState, opponentState }
   }
   
-  if (playerState.hp + card.cost.HP < 0) {
+  if (currentPlayerState.hp + card.cost.HP < 0) {
     return { success: false, matchState, playerState, opponentState }
   }
   
-  if (playerState.mp + card.cost.MP < 0) {
+  if (currentPlayerState.mp + card.cost.MP < 0) {
     return { success: false, matchState, playerState, opponentState }
   }
   
   // Pay costs
-  playerState.hp += card.cost.HP
-  playerState.mp += card.cost.MP
-  playerState.fatigue += card.cost.fatigue
+  currentPlayerState.hp += card.cost.HP
+  currentPlayerState.mp += card.cost.MP
+  currentPlayerState.fatigue += card.cost.fatigue
   
   // Check if this is a champion card
   if (card.type === 'champions') {
@@ -231,8 +230,8 @@ export function playCard(
       // This is a creature champion - treat as creature
       const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      if (!playerState.creaturesInPlay) {
-        playerState.creaturesInPlay = [];
+      if (!currentPlayerState.creaturesInPlay) {
+        currentPlayerState.creaturesInPlay = [];
       }
       
       const creatureEntry = {
@@ -247,24 +246,24 @@ export function playCard(
         canAttack: false // Cannot attack on the turn it's played
       };
       
-      playerState.creaturesInPlay.push(creatureEntry);
+      currentPlayerState.creaturesInPlay.push(creatureEntry);
       
       // Remove card from hand
-      playerState.hand.splice(cardIndex, 1);
+      currentPlayerState.hand.splice(cardIndex, 1);
       
       // Add to log
       matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
     } else {
       // This is a persistent champion - check if player already has a champion
-      if (playerState.champions && playerState.champions.length > 0) {
+      if (currentPlayerState.champions && currentPlayerState.champions.length > 0) {
         // Player already has a champion, cannot play another one
         matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play champion - already has one in play`, turn: matchState.turn });
         return { success: false, matchState, playerState, opponentState };
       }
       
       // Add champion to player's champions (only one allowed)
-      if (!playerState.champions) {
-        playerState.champions = [];
+      if (!currentPlayerState.champions) {
+        currentPlayerState.champions = [];
       }
       
       const championSlot = {
@@ -274,10 +273,10 @@ export function playCard(
         status: []
       };
       
-      playerState.champions.push(championSlot);
+      currentPlayerState.champions.push(championSlot);
       
       // Remove card from hand
-      playerState.hand.splice(cardIndex, 1);
+      currentPlayerState.hand.splice(cardIndex, 1);
       
       // Add to log
       matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played champion ${card.title}`, turn: matchState.turn });
@@ -286,8 +285,8 @@ export function playCard(
     // This is a creature card that stays in play
     const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    if (!playerState.creaturesInPlay) {
-      playerState.creaturesInPlay = [];
+    if (!currentPlayerState.creaturesInPlay) {
+      currentPlayerState.creaturesInPlay = [];
     }
     
     const creatureEntry = {
@@ -302,28 +301,28 @@ export function playCard(
       canAttack: false // Cannot attack on the turn it's played
     };
     
-    playerState.creaturesInPlay.push(creatureEntry);
+    currentPlayerState.creaturesInPlay.push(creatureEntry);
     
     // Remove card from hand
-    playerState.hand.splice(cardIndex, 1);
+    currentPlayerState.hand.splice(cardIndex, 1);
     
     // Add to log
     matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
   } else {
     // Move card from hand to discard (instant effect cards)
-    playerState.hand.splice(cardIndex, 1)
-    playerState.discard.push(cardId)
+    currentPlayerState.hand.splice(cardIndex, 1)
+    currentPlayerState.discard.push(cardId)
     
     // Apply card effects (simplified for MVP)
     if (card.effect.includes('+3 MP')) {
-      playerState.mp = Math.min(playerState.mp + 3, calculatePlayerStats(
+      currentPlayerState.mp = Math.min(currentPlayerState.mp + 3, calculatePlayerStats(
         'balanced', // would use actual strategy
         'intelligence' // would use actual key stat
       ).mp)
     }
     
     if (card.tags.includes('extra_play:+1')) {
-      playerState.extraPlaysRemaining += 1
+      currentPlayerState.extraPlaysRemaining += 1
     }
     
     // Parse and apply damage effects
@@ -331,11 +330,7 @@ export function playCard(
       const damageMatch = card.effect.match(/deal (\d+) damage/i);
       if (damageMatch) {
         const damage = parseInt(damageMatch[1]);
-        if (matchState.activePlayer === 'player') {
-          dealDamage(matchState, playerState, opponentState, damage, collections, cardId);
-        } else {
-          dealDamage(matchState, opponentState, playerState, damage, collections, cardId);
-        }
+        dealDamage(matchState, currentPlayerState, otherPlayerState, damage, collections, cardId);
       }
     }
     
@@ -344,7 +339,7 @@ export function playCard(
   }
   
   // Decrement extra plays
-  playerState.extraPlaysRemaining -= 1
+  currentPlayerState.extraPlaysRemaining -= 1
   
   return { success: true, matchState, playerState, opponentState }
 }
@@ -774,6 +769,61 @@ export function initializeGame() {
   // For MVP, we'll use the mock data in the store
 }
 
+// Helper function to get card by ID from collections
+function getCardFromCollections(cardId: string, collections: any[]): any {
+  for (const collection of collections) {
+    const card = collection.cards.find((c: any) => c.id === cardId);
+    if (card) return card;
+  }
+  return null;
+}
+
+// Helper function to evaluate board state
+function evaluateBoardState(opponentState: PlayerState): { hasChampion: boolean, creatureCount: number } {
+  const hasChampion = opponentState.champions && opponentState.champions.length > 0;
+  const creatureCount = opponentState.creaturesInPlay ? opponentState.creaturesInPlay.length : 0;
+  return { hasChampion, creatureCount };
+}
+
+// Helper function to categorize cards
+function categorizeCards(hand: string[], collections: any[], opponentState: PlayerState) {
+  const champions: string[] = [];
+  const creatures: string[] = [];
+  const effects: string[] = [];
+  
+  hand.forEach(cardId => {
+    const card = getCardFromCollections(cardId, collections);
+    if (!card) return;
+    
+    // Check if card is affordable
+    const isAffordable = (opponentState.hp + card.cost.HP >= 0) && (opponentState.mp + card.cost.MP >= 0);
+    if (!isAffordable) return;
+    
+    if (card.type === 'champions') {
+      champions.push(cardId);
+    } else if (card.type === 'creatures' || (card.creatureStats && card.duration !== undefined)) {
+      creatures.push(cardId);
+    } else {
+      effects.push(cardId);
+    }
+  });
+  
+  return { champions, creatures, effects };
+}
+
+// Helper function to sort creatures by cost (prioritize lower cost)
+function sortCreaturesByCost(creatures: string[], collections: any[]): string[] {
+  return [...creatures].sort((a, b) => {
+    const cardA = getCardFromCollections(a, collections);
+    const cardB = getCardFromCollections(b, collections);
+    if (!cardA || !cardB) return 0;
+    
+    const costA = Math.abs(cardA.cost.MP) + Math.abs(cardA.cost.HP);
+    const costB = Math.abs(cardB.cost.MP) + Math.abs(cardB.cost.HP);
+    return costA - costB;
+  });
+}
+
 export function playOpponentAI(
   matchState: MatchState,
   playerState: PlayerState,
@@ -791,41 +841,62 @@ export function playOpponentAI(
     extraPlays: opponentState.extraPlaysRemaining
   });
   
-  // Simple AI: play a random card if possible
-  if (opponentState.hand.length > 0 && opponentState.extraPlaysRemaining > 0) {
-    // Find a playable card (one that doesn't cause negative HP/MP)
-    const playableCards = opponentState.hand.filter(cardId => {
-      let card: any = null;
-      for (const collection of collections) {
-        card = collection.cards.find((c: any) => c.id === cardId);
-        if (card) break;
-      }
-      if (!card) return false;
-      
-      // Check if costs are affordable
-      return (opponentState.hp + card.cost.HP >= 0) && (opponentState.mp + card.cost.MP >= 0);
-    });
-    
-    console.log('Playable cards found:', playableCards.length);
-    
-    if (playableCards.length > 0) {
-      // Play a random playable card
-      const randomCardId = playableCards[Math.floor(Math.random() * playableCards.length)];
-      
-      // Find the card title for logging
-      let cardTitle = randomCardId;
-      for (const collection of collections) {
-        const card = collection.cards.find((c: any) => c.id === randomCardId);
-        if (card) {
-          cardTitle = card.title;
-          break;
-        }
-      }
-      
-      console.log('Opponent playing card:', cardTitle);
-      const result = playCard(matchState, playerState, opponentState, randomCardId, collections);
+  // Check if opponent can play cards
+  if (opponentState.hand.length === 0 || opponentState.extraPlaysRemaining <= 0) {
+    matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
+    console.log('Opponent ended their turn - no plays available');
+    return { matchState, playerState, opponentState };
+  }
+  
+  // Evaluate current board state
+  const boardState = evaluateBoardState(opponentState);
+  const { champions, creatures, effects } = categorizeCards(opponentState.hand, collections, opponentState);
+  
+  console.log('Board state evaluation:', boardState);
+  console.log('Categorized cards - Champions:', champions.length, 'Creatures:', creatures.length, 'Effects:', effects.length);
+  
+  // Strategy: Play cards based on priority
+  let cardToPlay: string | null = null;
+  let playReason = '';
+  
+  // Priority 1: Play champion if none in play
+  if (!boardState.hasChampion && champions.length > 0) {
+    cardToPlay = champions[0];
+    playReason = 'playing champion (priority 1)';
+  }
+  // Priority 2: Play creatures if we have less than 2
+  else if (boardState.creatureCount < 2 && creatures.length > 0) {
+    // Sort creatures by cost (prefer cheaper ones)
+    const sortedCreatures = sortCreaturesByCost(creatures, collections);
+    cardToPlay = sortedCreatures[0];
+    playReason = 'playing creature to build board (priority 2)';
+  }
+  // Priority 3: Play effects/skills once we have sufficient board state
+  else if (boardState.hasChampion && boardState.creatureCount >= 2 && effects.length > 0) {
+    // For now, play a random effect. In the future, this could be more strategic
+    cardToPlay = effects[Math.floor(Math.random() * effects.length)];
+    playReason = 'playing effect with sufficient board state (priority 3)';
+  }
+  // Priority 4: Play additional creatures if we have board state
+  else if (boardState.hasChampion && creatures.length > 0) {
+    const sortedCreatures = sortCreaturesByCost(creatures, collections);
+    cardToPlay = sortedCreatures[0];
+    playReason = 'playing additional creature (priority 4)';
+  }
+  // Priority 5: Play any remaining champions (shouldn't happen normally)
+  else if (champions.length > 0) {
+    cardToPlay = champions[0];
+    playReason = 'playing remaining champion (priority 5)';
+  }
+  
+  // Play the selected card if any
+  if (cardToPlay) {
+    const card = getCardFromCollections(cardToPlay, collections);
+    if (card) {
+      console.log('Opponent playing card:', card.title, 'Reason:', playReason);
+      const result = playCard(matchState, playerState, opponentState, cardToPlay, collections);
       if (result.success) {
-        matchState.log.push({ message: `Opponent played ${cardTitle}`, turn: matchState.turn });
+        matchState.log.push({ message: `Opponent played ${card.title}`, turn: matchState.turn });
         console.log('Opponent card played successfully');
         return {
           matchState: result.matchState,
