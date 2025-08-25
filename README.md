@@ -1,7 +1,5 @@
 # CardWizard - Browser-Based Card Game Platform
 
-![CardWizard Banner](https://images.pexels.com/photos/10403203/pexels-photo-10403203.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
-
 CardWizard is a browser-based online card game platform where players choose a themed card collection (Fantasy, Politics, Monsters, Anime, etc.), set a player profile, build a deck, and battle an AI or human opponent. Game state and round effects are resolved in collaboration with a configurable LLM via an OpenAI Completions-compatible API.
 
 ## Overview
