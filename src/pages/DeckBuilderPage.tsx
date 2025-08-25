@@ -21,7 +21,8 @@ export default function DeckBuilderPage() {
     saveDeck,
     deleteDeck,
     autoBuildDeck,
-    purchaseCardWithTokens
+    purchaseCardWithTokens,
+    isCardPurchased
   } = useGameStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
@@ -586,23 +587,63 @@ export default function DeckBuilderPage() {
                           </div>
                           
                           {card.tokenCost ? (
-                            <Button
-                              onClick={() => {
-                                if (purchaseCardWithTokens(card.id)) {
-                                  handleAddToDeck(card.id);
-                                  setSuccess(`Purchased ${card.title} for ${card.tokenCost} tokens!`);
-                                  setTimeout(() => setSuccess(''), 3000);
-                                } else {
-                                  setError('Not enough tokens or card already purchased');
-                                  setTimeout(() => setError(''), 3000);
-                                }
-                              }}
-                              disabled={deckCards[card.id] > 0}
-                              size="sm"
-                              className={deckCards[card.id] > 0 ? 'opacity-50 cursor-not-allowed' : ''}
-                            >
-                              {deckCards[card.id] > 0 ? 'Purchased' : `Buy ${card.tokenCost} 🔑`}
-                            </Button>
+                            isCardPurchased(card.id) ? (
+                              <Button
+                                onClick={() => handleAddToDeck(card.id)}
+                                disabled={(() => {
+                                  // Find the card to get its rarity
+                                  const cardInCollection = selectedCollection?.cards.find(c => c.id === card.id);
+                                  if (!cardInCollection) return true;
+                                  
+                                  // Check if we can add more of this card
+                                  const count = getCardCount(card.id);
+                                  // Common cards can be included unlimited times
+                                  const maxAllowed = cardInCollection.rarity === 'common' ? Infinity : cardInCollection.rarity === 'rare' ? 2 : 1;
+                                  const isAtMax = count >= maxAllowed;
+                                  
+                                  // Disable if deck is full and we don't already have this card, or if we're at max copies
+                                  return (isDeckFull && !deckCards[card.id]) || isAtMax;
+                                })()}
+                                size="sm"
+                                className={(() => {
+                                  // Find the card to get its rarity
+                                  const cardInCollection = selectedCollection?.cards.find(c => c.id === card.id);
+                                  if (!cardInCollection) return '';
+                                  
+                                  // Check if we can add more of this card
+                                  const count = getCardCount(card.id);
+                                  // Common cards can be included unlimited times
+                                  const maxAllowed = cardInCollection.rarity === 'common' ? Infinity : cardInCollection.rarity === 'rare' ? 2 : 1;
+                                  const isAtMax = count >= maxAllowed;
+                                  
+                                  // Visibly disable if at max copies or deck is full
+                                  const isDisabled = (isDeckFull && !deckCards[card.id]) || isAtMax;
+                                  
+                                  return isDisabled ? 'opacity-50 cursor-not-allowed' : '';
+                                })()}
+                              >
+                                <Plus className="w-4 h-4 mr-1" />
+                                {deckCards[card.id] ? `Add ${getCardCount(card.id) + 1}` : 'Add'}
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => {
+                                  if (purchaseCardWithTokens(card.id)) {
+                                    handleAddToDeck(card.id);
+                                    setSuccess(`Purchased ${card.title} for ${card.tokenCost} tokens!`);
+                                    setTimeout(() => setSuccess(''), 3000);
+                                  } else {
+                                    setError('Not enough tokens or card already purchased');
+                                    setTimeout(() => setError(''), 3000);
+                                  }
+                                }}
+                                disabled={deckCards[card.id] > 0}
+                                size="sm"
+                                className={deckCards[card.id] > 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                              >
+                                {deckCards[card.id] > 0 ? 'Purchased' : `Buy ${card.tokenCost} 🔑`}
+                              </Button>
+                            )
                           ) : (
                             <Button
                               onClick={() => handleAddToDeck(card.id)}

@@ -15,7 +15,7 @@ export default function CollectionDetailPage() {
   const [rarityFilter, setRarityFilter] = useState('')
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
-  const { addToDeck, selectedDeck, collections } = useGameStore()
+  const { addToDeck, selectedDeck, collections, purchaseCardWithTokens, isCardPurchased, profile } = useGameStore()
 
   useEffect(() => {
     if (!collectionId) return
@@ -127,13 +127,25 @@ export default function CollectionDetailPage() {
                     <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
                       {card.title}
                     </CardTitle>
-                    <span className={`px-3 py-1 rounded-full text-xs ${
-                      card.rarity === 'common' ? 'bg-surface-light text-text-secondary' : 
-                      card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' : 
-                      'bg-accent/20 text-accent'
-                    }`}>
-                      {card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className={`px-3 py-1 rounded-full text-xs ${
+                        card.rarity === 'common' ? 'bg-surface-light text-text-secondary' :
+                        card.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                        'bg-accent/20 text-accent'
+                      }`}>
+                        {card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}
+                      </span>
+                      {card.tokenCost && (
+                        <span className="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                          🔑 {card.tokenCost}
+                        </span>
+                      )}
+                      {card.tokenCost && isCardPurchased(card.id) && (
+                        <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30">
+                          Purchased
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="mb-4">
@@ -174,17 +186,46 @@ export default function CollectionDetailPage() {
                       )}
                     </div>
                     
-                    <Button 
-                      onClick={() => {
-                        setSelectedCard(card)
-                        setShowCardModal(true)
-                      }}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Info className="w-4 h-4 mr-2" />
-                      Details
-                    </Button>
+                    {card.tokenCost ? (
+                      isCardPurchased(card.id) ? (
+                        <Button
+                          onClick={() => {
+                            setSelectedCard(card)
+                            setShowCardModal(true)
+                          }}
+                          size="sm"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add to Deck
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            if (purchaseCardWithTokens(card.id)) {
+                              setSelectedCard(card)
+                              setShowCardModal(true)
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          disabled={!profile || (profile.tokens || 0) < (card.tokenCost || 0)}
+                        >
+                          🔑 {card.tokenCost}
+                        </Button>
+                      )
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setSelectedCard(card)
+                          setShowCardModal(true)
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Info className="w-4 h-4 mr-2" />
+                        Details
+                      </Button>
+                    )}
                   </div>
                 </CardHeader>
               </Card>
@@ -274,18 +315,44 @@ export default function CollectionDetailPage() {
                 )}
                 
                 <div className="mt-8">
-                  <Button 
-                    onClick={() => {
-                      if (selectedDeck) {
-                        addToDeck(selectedCard.id)
-                      }
-                      setShowCardModal(false)
-                    }}
-                    className="w-full"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add to Deck
-                  </Button>
+                  {selectedCard.tokenCost && !isCardPurchased(selectedCard.id) ? (
+                    <div className="space-y-4">
+                      <div className="text-center p-3 bg-amber-500/20 rounded-lg">
+                        <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard.tokenCost} tokens required</p>
+                        <p className="text-sm text-text-secondary mt-1">Purchase this card to unlock it for deck building</p>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          if (purchaseCardWithTokens(selectedCard.id)) {
+                            // Card purchased successfully - force re-render by closing and reopening
+                            setShowCardModal(false)
+                            setTimeout(() => {
+                              setSelectedCard(selectedCard)
+                              setShowCardModal(true)
+                            }, 100)
+                          }
+                        }}
+                        className="w-full"
+                        disabled={!profile || (profile.tokens || 0) < (selectedCard.tokenCost || 0)}
+                      >
+                        🔑 Purchase Card for {selectedCard.tokenCost} Tokens
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        if (selectedDeck) {
+                          addToDeck(selectedCard.id)
+                        }
+                        setShowCardModal(false)
+                      }}
+                      className="w-full"
+                      disabled={!selectedDeck}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add to Deck
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

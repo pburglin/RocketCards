@@ -57,6 +57,7 @@ export interface Profile {
   hp: number;
   mp: number;
   tokens: number; // Add token balance to profile
+  purchasedCards?: string[]; // Track IDs of cards purchased with tokens
 }
 
 export interface ChampionSlot {

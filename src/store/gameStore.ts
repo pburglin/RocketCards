@@ -46,6 +46,7 @@ interface GameStore {
   
   // Token purchases
   purchaseCardWithTokens: (cardId: string) => boolean
+  isCardPurchased: (cardId: string) => boolean
   
   // Match
   matchState: MatchState | null
@@ -272,13 +273,17 @@ export const useGameStore = create<GameStore>()(
         // Check if player has enough tokens
         if ((profile.tokens || 0) < card.tokenCost) return false
         
-        // Deduct tokens
+        // Check if card is already purchased
+        if (profile.purchasedCards?.includes(cardId)) return false
+        
+        // Deduct tokens and track purchased card
         set(state => {
           if (state.profile) {
             return {
               profile: {
                 ...state.profile,
-                tokens: (state.profile.tokens || 0) - card!.tokenCost!
+                tokens: (state.profile.tokens || 0) - card!.tokenCost!,
+                purchasedCards: [...(state.profile.purchasedCards || []), cardId]
               }
             }
           }
@@ -286,6 +291,12 @@ export const useGameStore = create<GameStore>()(
         })
         
         return true
+      },
+      
+      // Check if a card has been purchased with tokens
+      isCardPurchased: (cardId) => {
+        const { profile } = get()
+        return profile?.purchasedCards?.includes(cardId) || false
       },
       
       // Match
