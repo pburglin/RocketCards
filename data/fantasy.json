@@ -118,7 +118,7 @@
       "title": "Goblin Warrior",
       "description": "A fierce goblin warrior with crude armor and a sharp blade",
       "imageDescription": "Small green goblin with leather armor wielding a rusty sword, fierce expression",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "common",
       "effect": "When attacking: Deal 1 damage to target",
       "cost": {
@@ -144,7 +144,7 @@
       "title": "Ancient Golem",
       "description": "A massive stone construct animated by ancient magic",
       "imageDescription": "Huge stone golem with glowing runes, standing guard over ancient ruins",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "rare",
       "effect": "Passive: Cannot be targeted by damage effects; On summon: Gain 3 armor",
       "cost": {
@@ -170,7 +170,7 @@
       "title": "Knight Defender",
       "description": "A noble knight sworn to protect the realm for a limited time",
       "imageDescription": "Armored knight with shield and sword, standing guard at a castle gate",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "rare",
       "effect": "Passive: Reduce damage to player by 1; When attacking: Deal 2 damage to target",
       "cost": {

@@ -4,11 +4,11 @@
   "description": "Futuristic technology, space battles, and intergalactic adventures",
   "cards": [
     {
-      "id": "champion_cyborg_commander",
+      "id": "creature_cyborg_commander",
       "title": "Cyborg Commander",
       "description": "Enhanced human leader with cybernetic implants",
       "imageDescription": "Futuristic soldier with visible cybernetic enhancements, armor plating, and glowing HUD",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "unique",
       "effect": "On summon: +2 MP; Passive: +1 damage for each technology card in play",
       "cost": {
@@ -110,7 +110,7 @@
       "title": "Security Drone",
       "description": "An autonomous defense unit programmed for protection",
       "imageDescription": "Futuristic flying drone with glowing red sensors, weapons mounted on articulated arms",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "common",
       "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by opponent events",
       "cost": {
@@ -134,7 +134,7 @@
       "title": "Psionic Entity",
       "description": "A being of pure mental energy with telepathic and telekinetic powers",
       "imageDescription": "Translucent humanoid figure made of swirling psychic energy, brain visible and glowing",
-      "type": "champions",
+      "type": "creatures",
       "rarity": "unique",
       "effect": "On summon: Look at opponent's hand and choose 1 card to discard; Passive: Gain 1 MP each turn",
       "cost": {
