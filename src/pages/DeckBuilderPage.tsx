@@ -22,7 +22,8 @@ export default function DeckBuilderPage() {
     deleteDeck,
     autoBuildDeck,
     purchaseCardWithTokens,
-    isCardPurchased
+    isCardPurchased,
+    profile
   } = useGameStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
@@ -37,6 +38,9 @@ export default function DeckBuilderPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [showNoDecksMessage, setShowNoDecksMessage] = useState(false)
+  const [showCardModal, setShowCardModal] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<any | null>(null)
+  const [enabledTokenCards, setEnabledTokenCards] = useState<Set<string>>(new Set())
   
   useEffect(() => {
     // Check if user came from Play Lobby (no decks exist)
@@ -71,7 +75,7 @@ export default function DeckBuilderPage() {
         setDeckName(selectedDeck.name || '')
       }
     }
-  }, [selectedDeck, selectedCollection])
+  }, [selectedDeck?.cards.length, selectedCollection])
 
   // Sync local deckCards state when selectedDeck.cards changes from external sources
   useEffect(() => {
@@ -82,7 +86,7 @@ export default function DeckBuilderPage() {
       })
       setDeckCards(cardCounts)
     }
-  }, [selectedDeck?.cards])
+  }, [selectedDeck?.cards.length])
 
   const filteredCards = (selectedCollection?.cards || []).filter(card => 
     card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -108,7 +112,7 @@ export default function DeckBuilderPage() {
     }
     
     // Check if this is a token-purchased card that has already been bought
-    if (card.tokenCost && count === 0) {
+    if (card.tokenCost && count === 0 && !isCardPurchased(cardId)) {
       setError('Token cards must be purchased first')
       setTimeout(() => setError(''), 3000)
       return
@@ -380,21 +384,6 @@ export default function DeckBuilderPage() {
               <Button
                 onClick={() => {
                   autoBuildDeck()
-                  // Refresh the deckCards state to reflect the auto-built deck
-                  setTimeout(() => {
-                    const { selectedDeck: updatedSelectedDeck, selectedCollection: currentCollection } = useGameStore.getState()
-                    if (updatedSelectedDeck) {
-                      const cardCounts: {[key: string]: number} = {}
-                      updatedSelectedDeck.cards.forEach(cardId => {
-                        cardCounts[cardId] = (cardCounts[cardId] || 0) + 1
-                      })
-                      setDeckCards(cardCounts)
-                      // Set the deck name to use collection name
-                      if (currentCollection) {
-                        setDeckName(`${currentCollection.name} Deck`)
-                      }
-                    }
-                  }, 200)
                 }}
                 disabled={!selectedCollection}
               >
@@ -558,7 +547,30 @@ export default function DeckBuilderPage() {
                                   {card.rarity}
                                 </span>
                                 {card.tokenCost && (
-                                  <span className="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs border cursor-pointer ${
+                                      enabledTokenCards.has(card.id)
+                                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
+                                        : 'bg-surface-light text-text-secondary border-border cursor-not-allowed'
+                                    }`}
+                                    onClick={() => {
+                                      if (enabledTokenCards.has(card.id)) {
+                                        if (purchaseCardWithTokens(card.id)) {
+                                          setSuccess(`${card.title} unlocked! You can now add this special card to your deck.`);
+                                          setTimeout(() => setSuccess(''), 3000);
+                                          // Remove from enabled set
+                                          setEnabledTokenCards(prev => {
+                                            const newSet = new Set(prev);
+                                            newSet.delete(card.id);
+                                            return newSet;
+                                          });
+                                        } else {
+                                          setError('Not enough tokens or card already purchased');
+                                          setTimeout(() => setError(''), 3000);
+                                        }
+                                      }
+                                    }}
+                                  >
                                     🔑 {card.tokenCost} tokens
                                   </span>
                                 )}
@@ -628,20 +640,22 @@ export default function DeckBuilderPage() {
                             ) : (
                               <Button
                                 onClick={() => {
-                                  if (purchaseCardWithTokens(card.id)) {
-                                    handleAddToDeck(card.id);
-                                    setSuccess(`Purchased ${card.title} for ${card.tokenCost} tokens!`);
-                                    setTimeout(() => setSuccess(''), 3000);
+                                  if (isCardPurchased(card.id)) {
+                                    // If already purchased, show card details
+                                    setSelectedCard(card)
+                                    setShowCardModal(true)
                                   } else {
-                                    setError('Not enough tokens or card already purchased');
-                                    setTimeout(() => setError(''), 3000);
+                                    // Enable the token cost display for this card
+                                    setEnabledTokenCards(prev => {
+                                      const newSet = new Set(prev);
+                                      newSet.add(card.id);
+                                      return newSet;
+                                    });
                                   }
                                 }}
-                                disabled={deckCards[card.id] > 0}
                                 size="sm"
-                                className={deckCards[card.id] > 0 ? 'opacity-50 cursor-not-allowed' : ''}
                               >
-                                {deckCards[card.id] > 0 ? 'Purchased' : `Buy ${card.tokenCost} 🔑`}
+                                {isCardPurchased(card.id) ? 'Unlocked' : `Unlock ${card.tokenCost} 🔑`}
                               </Button>
                             )
                           ) : (
@@ -1037,6 +1051,161 @@ export default function DeckBuilderPage() {
               >
                 Delete
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Card Details Modal */}
+      {showCardModal && selectedCard && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+            <button
+              onClick={() => setShowCardModal(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="relative h-64 mb-4">
+                  <img
+                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    alt={selectedCard.title}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      selectedCard.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                      selectedCard.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                      'bg-accent/20 text-accent'
+                    }`}>
+                      {selectedCard.rarity.charAt(0).toUpperCase() + selectedCard.rarity.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2 mb-4">
+                  {selectedCard.cost.HP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      HP: {selectedCard.cost.HP}
+                    </div>
+                  )}
+                  {selectedCard.cost.MP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      MP: {selectedCard.cost.MP}
+                    </div>
+                  )}
+                  {selectedCard.cost.fatigue !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Fatigue: {selectedCard.cost.fatigue}
+                    </div>
+                  )}
+                  {selectedCard.duration !== undefined && selectedCard.duration !== null && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Duration: {typeof selectedCard.duration === 'number'
+                        ? `${selectedCard.duration} turns`
+                        : selectedCard.duration === 'HP'
+                          ? 'HP-based'
+                          : 'MP-based'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-bold mb-2">{selectedCard.title}</h2>
+                <p className="text-text-secondary mb-4 capitalize">
+                  {selectedCard.type} Card
+                </p>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Effect</h3>
+                  <p className="text-text-secondary">{selectedCard.effect}</p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-text-secondary">{selectedCard.description}</p>
+                </div>
+                
+                {selectedCard.flavor && (
+                  <div className="italic text-text-secondary border-l-2 border-primary pl-4 py-2">
+                    "{selectedCard.flavor}"
+                  </div>
+                )}
+                
+                <div className="mt-8">
+                  {selectedCard.tokenCost && !isCardPurchased(selectedCard.id) ? (
+                    <div className="space-y-4">
+                      <div className="text-center p-3 bg-amber-500/20 rounded-lg">
+                        <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard.tokenCost} tokens required</p>
+                        <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          // Enable the token cost display for this card
+                          setEnabledTokenCards(prev => {
+                            const newSet = new Set(prev);
+                            newSet.add(selectedCard.id);
+                            return newSet;
+                          });
+                        }}
+                        className="w-full"
+                        disabled={!profile || (profile.tokens || 0) < (selectedCard.tokenCost || 0)}
+                      >
+                        🔓 Enable Token Purchase
+                      </Button>
+                      {enabledTokenCards.has(selectedCard.id) && (
+                        <div className="mt-4 text-center">
+                          <span
+                            className="px-4 py-2 rounded-full text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 cursor-pointer inline-block"
+                            onClick={() => {
+                              if (purchaseCardWithTokens(selectedCard.id)) {
+                                setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
+                                setTimeout(() => setSuccess(''), 3000);
+                                // Close modal
+                                setShowCardModal(false)
+                                // Remove from enabled set
+                                setEnabledTokenCards(prev => {
+                                  const newSet = new Set(prev);
+                                  newSet.delete(selectedCard.id);
+                                  return newSet;
+                                });
+                              }
+                            }}
+                          >
+                            🔑 Purchase Card for {selectedCard.tokenCost} Tokens
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        handleAddToDeck(selectedCard.id)
+                        setShowCardModal(false)
+                      }}
+                      className="w-full"
+                      disabled={(() => {
+                        // Check if we can add more of this card
+                        const count = getCardCount(selectedCard.id);
+                        // Common cards can be included unlimited times
+                        const maxAllowed = selectedCard.rarity === 'common' ? Infinity : selectedCard.rarity === 'rare' ? 2 : 1;
+                        const isAtMax = count >= maxAllowed;
+                        
+                        // Disable if deck is full and we don't already have this card, or if we're at max copies
+                        const isDeckFull = Object.values(deckCards).reduce((sum, count) => sum + count, 0) >= 30;
+                        return (isDeckFull && !deckCards[selectedCard.id]) || isAtMax;
+                      })()}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {deckCards[selectedCard.id] ? `Add ${getCardCount(selectedCard.id) + 1}` : 'Add to Deck'}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
