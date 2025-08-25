@@ -6,7 +6,11 @@ export const AVAILABLE_COLLECTIONS = [
   { id: 'politics', name: 'Political Arena' },
   { id: 'monsters', name: 'Monster Mayhem' },
   { id: 'anime', name: 'Anime All-Stars' },
-  { id: 'scifi', name: 'Sci-Fi Universe' }
+  { id: 'scifi', name: 'Sci-Fi Universe' },
+  { id: 'soccer', name: 'Soccer Legends' },
+  { id: 'lawyers', name: 'Legal Eagles' },
+  { id: 'apocalypse', name: 'Wasteland Warriors' },
+  { id: 'heroes', name: 'Legendary Heroes' }
 ]
 
 // Function to load a collection from JSON file

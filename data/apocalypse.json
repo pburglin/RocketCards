@@ -1,0 +1,230 @@
+{
+  "id": "apocalypse",
+  "name": "Wasteland Warriors",
+  "description": "Survive the end of the world with mutated creatures, wasteland champions, and survival skills",
+  "cards": [
+    {
+      "id": "champion_mad_max",
+      "title": "Mad Max",
+      "description": "The ultimate road warrior with unmatched vehicular combat skills",
+      "imageDescription": "Leather-clad warrior with shotgun, standing next to a heavily modified combat vehicle in desert wasteland",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +2 damage to all champions this turn; Passive: Gain 1 MP when you play a skill",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "What a lovely day.",
+      "collection": "apocalypse",
+      "championStats": {
+        "ap": 4,
+        "dp": 2
+      }
+    },
+    {
+      "id": "tactics_ambush_predator",
+      "title": "Predator's Ambush",
+      "description": "Strike from the shadows like a true wasteland hunter",
+      "imageDescription": "Scavenger hiding behind wrecked car, ready to attack unsuspecting prey",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Deal 5 damage to target champion, then draw 2 cards",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "In the wasteland, the hunter becomes the hunted.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_rad_storm",
+      "title": "Radiation Storm",
+      "description": "Unleash a toxic cloud of radioactive particles",
+      "imageDescription": "Green radioactive cloud spreading across a ruined city landscape",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 2 damage to all champions, opponent champions lose 1 MP regeneration",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 2
+      },
+      "tags": ["area:all", "effect:damage"],
+      "flavor": "The gift that keeps on giving... death.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_scavenge",
+      "title": "Scavenge Resources",
+      "description": "Search the ruins for useful supplies and equipment",
+      "imageDescription": "Survivor rummaging through abandoned building, finding useful items",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Add 2 random common cards from your collection to your hand",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:hand", "card:common"],
+      "flavor": "One man's trash is another man's treasure.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_fallout_shelter",
+      "title": "Fallout Shelter",
+      "description": "Take cover in a reinforced bunker to avoid radiation",
+      "imageDescription": "Survivors huddled in underground bunker with thick concrete walls",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent all damage to your champions this turn, restore 2 HP",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "The safest place during a nuclear war is underground.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_mutant_berserker",
+      "title": "Mutant Berserker Rage",
+      "description": "Enter a frenzied state of enhanced strength and aggression",
+      "imageDescription": "Mutated human with enhanced muscles, glowing red eyes, in combat stance",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Your champions gain +3 damage this turn, but lose 2 HP",
+      "cost": {
+        "HP": -2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["area:player", "effect:damage"],
+      "flavor": "The radiation didn't just change them, it made them unstoppable.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_vault_tech",
+      "title": "Vault-Tec Technology",
+      "description": "Advanced pre-war technology that gives you an edge",
+      "imageDescription": "Futuristic vault door opening, revealing high-tech equipment inside",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 2 cards, gain 1 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:hand", "effect:mp"],
+      "flavor": "Better living through science... and radiation.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "creature_rad_scorpion",
+      "title": "Giant Rad-Scorpion",
+      "description": "A massive mutated arachnid with deadly venomous stingers",
+      "imageDescription": "Huge glowing green scorpion with multiple eyes, crawling through radioactive wasteland",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 3 damage to target; Passive: Opponent champions lose 1 MP each turn",
+      "cost": {
+        "HP": -2,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Size matters, especially when you're packing that much venom.",
+      "collection": "apocalypse",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 6,
+        "mp": 2,
+        "maxHp": 6,
+        "maxMp": 2,
+        "ap": 3,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_ghoul",
+      "title": "Feral Ghoul",
+      "description": "A decomposed human that has become a mindless, aggressive creature",
+      "imageDescription": "Rotting humanoid with glowing eyes, reaching out with clawed hands",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 2 damage to target; Passive: Cannot be targeted by healing effects",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Death couldn't stop them, and neither will you.",
+      "collection": "apocalypse",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 1,
+        "maxHp": 4,
+        "maxMp": 1,
+        "ap": 2,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_super_mutant",
+      "title": "Super Mutant Behemoth",
+      "description": "A towering mutated giant with incredible strength and durability",
+      "imageDescription": "Massive green-skinned mutant with huge muscles, wielding a massive club",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: Deal 3 damage to all enemy champions; Passive: Cannot be targeted by damage effects under 3",
+      "cost": {
+        "HP": -3,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Big, green, and angry doesn't even begin to describe it.",
+      "collection": "apocalypse",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 10,
+        "mp": 0,
+        "maxHp": 10,
+        "maxMp": 0,
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_vault_boy",
+      "title": "Vault Boy Overlord",
+      "description": "The ultimate vault dweller who has mastered both pre-war technology and wasteland survival",
+      "imageDescription": "Smiling vault boy with glowing eyes, surrounded by advanced technology and wasteland weapons",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 4 HP to all your champions; Passive: All your creatures gain +1 HP; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 3,
+        "MP": -6,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "When life gives you radiation, make atomic cocktails.",
+      "collection": "apocalypse",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    }
+  ]
+}

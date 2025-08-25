@@ -1,0 +1,297 @@
+{
+  "id": "heroes",
+  "name": "Legendary Heroes",
+  "description": "Command ancient champions, mythical creatures, and legendary heroes from history and myth",
+  "cards": [
+    {
+      "id": "champion_gilgamesh",
+      "title": "Gilgamesh",
+      "description": "The legendary king of Uruk, wielding the mighty axe of Enkidu",
+      "imageDescription": "Ancient Mesopotamian king in ornate armor, wielding a massive double-bladed axe",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +3 damage to all champions this turn; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": 3,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "I am Gilgamesh, King of Uruk, and I will not be denied!",
+      "collection": "heroes",
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_arthur_pendragon",
+      "title": "Arthur Pendragon",
+      "description": "The mythical King of Britain, wielder of the legendary sword Excalibur",
+      "imageDescription": "Noble king in shining armor, holding a glowing sword aloft on a white horse",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 3 HP to all your champions; Passive: +1 card per turn",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "For Camelot!",
+      "collection": "heroes",
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_diarmuid_ua_duibhne",
+      "title": "Diarmuid Ua Duibhne",
+      "description": "The legendary Irish hero marked by the love spot, master of dual-wielding",
+      "imageDescription": "Celtic warrior with dual spears, a distinctive mark on his face, in heroic stance",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: draw 2 cards; Passive: When attacking, deal 1 damage to all enemy champions",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "The love spot that doomed a king's daughter and made me an outlaw.",
+      "collection": "heroes",
+      "championStats": {
+        "ap": 3,
+        "dp": 2
+      }
+    },
+    {
+      "id": "champion_alexander_the_great",
+      "title": "Alexander the Great",
+      "description": "The Macedonian conqueror who built the largest empire of the ancient world",
+      "imageDescription": "Young conqueror in ornate armor on horseback, pointing toward distant lands",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: Champions cost 1 less MP",
+      "cost": {
+        "HP": -1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "I am not afraid of an army of lions led by a sheep; I am afraid of an army of sheep led by a lion.",
+      "collection": "heroes",
+      "championStats": {
+        "ap": 4,
+        "dp": 2
+      }
+    },
+    {
+      "id": "champion_hassan_i_sabbah",
+      "title": "Hassan-i-Sabbah",
+      "description": "The Old Man of the Mountain, master of the Hashshashin assassins",
+      "imageDescription": "Mysterious figure in dark robes, surrounded by shadows and daggers",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: opponent discards 3 cards at random; Passive: Skills deal double damage when you have 5 or fewer cards",
+      "cost": {
+        "HP": 0,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Nothing is true, everything is permitted.",
+      "collection": "heroes",
+      "championStats": {
+        "ap": 3,
+        "dp": 3
+      }
+    },
+    {
+      "id": "skill_divine_intervention",
+      "title": "Divine Intervention",
+      "description": "Call upon the gods for miraculous aid in battle",
+      "imageDescription": "Ancient temple with divine light shining down on warriors below",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Restore 5 HP to all your champions, draw 2 cards",
+      "cost": {
+        "HP": 3,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["area:player", "effect:heal"],
+      "flavor": "The gods smile upon the righteous.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_epic_quest",
+      "title": "Epic Quest",
+      "description": "Embark on a legendary journey that tests your mettle",
+      "imageDescription": "Hero setting out on a grand adventure, mountains and challenges ahead",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Add 3 random rare cards from your collection to your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:hand", "card:rare"],
+      "flavor": "Every hero's journey begins with a single step.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_ancient_ritual",
+      "title": "Ancient Ritual",
+      "description": "Perform mystical rites to gain supernatural power",
+      "imageDescription": "Ancient druids performing mysterious ceremony in stone circle",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Double the effect of your next card this turn",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 2
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "The old ways hold power beyond comprehension.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_legendary_weapon",
+      "title": "Legendary Weapon",
+      "description": "Wield a weapon of mythic power and renown",
+      "imageDescription": "Glowing legendary weapon materializing in a hero's hands",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you control a unique champion",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Forged in legend, tempered by time.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_heroic_sacrifice",
+      "title": "Heroic Sacrifice",
+      "description": "Give your life to save others and inspire greatness",
+      "imageDescription": "Hero making the ultimate sacrifice to protect allies",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 4 damage to target champion, you lose 3 HP",
+      "cost": {
+        "HP": -3,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "True heroism is measured not by victory, but by sacrifice.",
+      "collection": "heroes"
+    },
+    {
+      "id": "creature_mythical_griffin",
+      "title": "Mythical Griffin",
+      "description": "A majestic creature with the body of a lion and the head and wings of an eagle",
+      "imageDescription": "Majestic griffin with golden feathers and powerful lion body, soaring through clouds",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: Deal 2 damage to all enemy champions; Passive: Cannot be targeted by damage effects under 2",
+      "cost": {
+        "HP": 2,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "King of the skies and master of the land.",
+      "collection": "heroes",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 7,
+        "mp": 3,
+        "maxHp": 7,
+        "maxMp": 3,
+        "ap": 3,
+        "dp": 3
+      }
+    },
+    {
+      "id": "creature_ancient_dragon",
+      "title": "Ancient Dragon",
+      "description": "A wise and powerful dragon that has lived for centuries",
+      "imageDescription": "Massive ancient dragon with scales of gold, perched on a mountain peak",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: +3 damage to all champions; Passive: Gain 2 MP each turn",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false"],
+      "flavor": "I have seen empires rise and fall, and I shall see many more.",
+      "collection": "heroes",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 9,
+        "mp": 5,
+        "maxHp": 9,
+        "maxMp": 5,
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "creature_valkyrie",
+      "title": "Norse Valkyrie",
+      "description": "A divine chooser of the slain who guides heroes to the afterlife",
+      "imageDescription": "Winged warrior maiden in armor, carrying a spear and shield, flying through storm clouds",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 2 damage to target, restore 2 HP to all your champions",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "I choose who lives, I choose who dies.",
+      "collection": "heroes",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 5,
+        "mp": 4,
+        "maxHp": 5,
+        "maxMp": 4,
+        "ap": 2,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_achilles",
+      "title": "Achilles",
+      "description": "The greatest warrior of Greek mythology, nearly invincible except for one fatal weakness",
+      "imageDescription": "Legendary Greek warrior in bronze armor, wielding a spear with divine aura",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +4 damage to all attacks this turn; Passive: Cannot be targeted by damage effects; When attacking: Deal 3 damage to all opponents",
+      "cost": {
+        "HP": 2,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "I am the wrath of Achilles, and I shall not be stopped.",
+      "collection": "heroes",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 5,
+        "dp": 3
+      }
+    }
+  ]
+}

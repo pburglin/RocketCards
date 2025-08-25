@@ -1,0 +1,221 @@
+{
+  "id": "soccer",
+  "name": "Soccer Legends",
+  "description": "Master the beautiful game with legendary players, iconic skills, and spectacular moves",
+  "cards": [
+    {
+      "id": "champion_dribbling_maestro",
+      "title": "Dribbling Maestro",
+      "description": "Master of ball control with lightning-fast footwork and mesmerizing moves",
+      "imageDescription": "Soccer player with incredible ball control, weaving through defenders with smooth dribbling moves",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: draw 1 card; Passive: Skills cost 1 less MP",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "The ball is an extension of their soul.",
+      "collection": "soccer",
+      "championStats": {
+        "ap": 2,
+        "dp": 3
+      }
+    },
+    {
+      "id": "skill_bicycle_kick",
+      "title": "Bicycle Kick",
+      "description": "A spectacular overhead kick that catches defenders off guard",
+      "imageDescription": "Soccer player performing a dramatic bicycle kick with ball in mid-air",
+      "type": "skills",
+      "rarity": "unique",
+      "effect": "Deal 4 damage to target champion, +2 damage if you have no cards in hand",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "When conventional moves won't cut it, go for the spectacular.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_one_foot_double_touch",
+      "title": "One-Foot Double Touch",
+      "description": "Masterful ball control using only one foot to confuse opponents",
+      "imageDescription": "Soccer player showing off incredible one-foot ball control, ball bouncing rapidly",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Draw 2 cards, opponent discards 1 card at random",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:hand", "effect:draw"],
+      "flavor": "Precision and creativity combined into pure artistry.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_elastico_nutmeg",
+      "title": "Elastico Nutmeg",
+      "description": "The classic Brazilian feint followed by a skillful nutmeg",
+      "imageDescription": "Soccer player performing the elastico move, ball passing through opponent's legs",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Negate the next opponent action, gain 2 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Ronaldo's signature move that left defenders in disbelief.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_trap_tap_lift_jump",
+      "title": "Trap-Tap Lift-Jumping Turn",
+      "description": "A mesmerizing sequence of ball control moves that leaves opponents frozen",
+      "imageDescription": "Soccer player performing an intricate ball juggling sequence with trap, tap, and lift moves",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Target champion cannot attack this turn, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:stun"],
+      "flavor": "Street soccer artistry at its finest.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_headshot",
+      "title": "Powerful Header",
+      "description": "A thunderous header that crashes into the goal like a cannonball",
+      "imageDescription": "Soccer player jumping high to head the ball with tremendous power",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you control a creature",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Sometimes the most direct route is the most effective.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_blazing_speed",
+      "title": "Blazing Speed",
+      "description": "Sprint past defenders with explosive acceleration",
+      "imageDescription": "Soccer player sprinting at incredible speed, leaving blur trails behind",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Add 1 common card from your collection to your hand",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:hand", "card:common"],
+      "flavor": "Speed is the difference between good and great.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_long_pass",
+      "title": "Long Ball Pass",
+      "description": "A精准的长传球 that splits the defense and creates scoring opportunities",
+      "imageDescription": "Soccer player delivering a perfect long pass across the field to a teammate",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 1 card, +1 MP to all your champions",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:mp"],
+      "flavor": "Vision and precision create the perfect assist.",
+      "collection": "soccer"
+    },
+    {
+      "id": "creature_soccer_fan",
+      "title": "Passionate Soccer Fan",
+      "description": "An enthusiastic supporter whose energy boosts the team's performance",
+      "imageDescription": "Excited soccer fan in team colors, waving flags and cheering in the stands",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: +1 damage to all champions; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The twelfth player on the field.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_referee",
+      "title": "Strict Referee",
+      "description": "A no-nonsense official who keeps the game fair and disciplined",
+      "imageDescription": "Serious soccer referee with whistle, making a strict call on the field",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "On summon: opponent discards 2 cards; Passive: Opponent skills cost 1 more MP",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The law of the game, enforced without mercy.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 3,
+        "maxHp": 4,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "champion_token_golden_boot",
+      "title": "Golden Boot Legend",
+      "description": "The greatest striker in soccer history, whose shots are like guided missiles",
+      "imageDescription": "Legendary soccer striker in action, ball trailing fire as it rockets toward goal",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 3 damage to all enemy champions; Passive: Skills deal double damage; When attacking: Gain 2 MP",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "One shot, one goal, one legend.",
+      "collection": "soccer",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 4,
+        "dp": 2
+      }
+    }
+  ]
+}

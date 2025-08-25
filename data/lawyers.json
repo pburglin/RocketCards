@@ -1,0 +1,221 @@
+{
+  "id": "lawyers",
+  "name": "Legal Eagles",
+  "description": "Command the courtroom with powerful legal strategies, objections, and witness manipulation",
+  "cards": [
+    {
+      "id": "champion_supreme_advocate",
+      "title": "Supreme Advocate",
+      "description": "Master of legal argumentation with an unbeatable track record",
+      "imageDescription": "Distinguished lawyer in court robes, confidently presenting a compelling case",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: draw 2 cards; Passive: +1 card per turn",
+      "cost": {
+        "HP": -1,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Justice is not just blind, it's also brilliant.",
+      "collection": "lawyers",
+      "championStats": {
+        "ap": 2,
+        "dp": 4
+      }
+    },
+    {
+      "id": "tactics_objection",
+      "title": "Objection!",
+      "description": "A powerful legal objection that disrupts your opponent's strategy",
+      "imageDescription": "Lawyer dramatically pointing and shouting 'Objection!' in a packed courtroom",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Negate the next opponent action, gain 3 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Sustained! Your honor, I object to this entire line of questioning.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_key_witness",
+      "title": "Key Witness Testimony",
+      "description": "Call a crucial witness who provides game-changing evidence",
+      "imageDescription": "Important witness taking the stand and pointing to the defendant",
+      "type": "skills",
+      "rarity": "unique",
+      "effect": "Deal 4 damage to target champion, opponent discards 2 cards",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "The truth will set you free, but first it will blow your case wide open.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_cross_examination",
+      "title": "Rigorous Cross-Examination",
+      "description": "Tear apart your opponent's case with pointed questions",
+      "imageDescription": "Lawyer aggressively questioning a nervous witness on the stand",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Look at opponent's hand, then choose 1 card for them to discard",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:reveal"],
+      "flavor": "Every lie has a crack, and I know exactly where to hit.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_legal_loophole",
+      "title": "Exploit Legal Loophole",
+      "description": "Find a technicality that saves you from a losing position",
+      "imageDescription": "Lawyer studying thick law books, finding a small clause highlighted",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Prevent all damage to your champions this turn, draw 1 card",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "It's not cheating if it's in the rulebook.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_subpoena",
+      "title": "Subpoena",
+      "description": "Force your opponent to reveal their hand",
+      "imageDescription": "Court officer delivering official legal documents to a surprised person",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, draw 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:reveal"],
+      "flavor": "You have the right to remain silent, but I have the right to know what you're hiding.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_settlement",
+      "title": "Out-of-Court Settlement",
+      "description": "Negotiate a favorable deal that benefits both parties",
+      "imageDescription": "Two lawyers shaking hands across a conference table with documents",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 3 HP to all your champions, gain 2 MP",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:heal"],
+      "flavor": "Sometimes the best victory is the one where everyone wins.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_contempt_of_court",
+      "title": "Contempt of Court",
+      "description": "Punish your opponent for unsportsmanlike conduct",
+      "imageDescription": "Judge angrily pointing at a misbehaving person in the courtroom",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Opponent loses 2 MP regeneration this turn, you gain 1 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:opponent", "effect:mp_regen"],
+      "flavor": "Order in the court! Show some respect for the legal process.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "creature_jury",
+      "title": "Hung Jury",
+      "description": "A group of jurors who can't reach a verdict, causing delays",
+      "imageDescription": "Group of diverse jurors in the jury box, looking confused and debating",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "On summon: All champions lose 1 MP regeneration this turn; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Twelve minds, one indecision.",
+      "collection": "lawyers",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 5,
+        "mp": 1,
+        "maxHp": 5,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 3
+      }
+    },
+    {
+      "id": "creature_private_investigator",
+      "title": "Private Investigator",
+      "description": "A skilled detective who uncovers hidden evidence",
+      "imageDescription": "Private eye in trench coat, examining clues with magnifying glass",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Look at opponent's hand; Passive: Draw 1 extra card each turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The truth is out there, and I'm going to find it.",
+      "collection": "lawyers",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 3,
+        "maxHp": 3,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "champion_token_chief_justice",
+      "title": "Chief Justice",
+      "description": "The highest judicial authority whose rulings shape the entire legal landscape",
+      "imageDescription": "Chief Justice in ornate robes, holding gavel with supreme authority in grand courtroom",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your cards cost 1 less MP; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The final word in justice, delivered with absolute authority.",
+      "collection": "lawyers",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    }
+  ]
+}
