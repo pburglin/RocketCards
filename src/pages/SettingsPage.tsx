@@ -18,7 +18,8 @@ export default function SettingsPage() {
     theme: 'dark',
     language: 'en',
     animations: true,
-    autoSave: true
+    autoSave: true,
+    soundEffects: true
   })
   
   const [notificationSettings, setNotificationSettings] = useState({
@@ -132,6 +133,19 @@ export default function SettingsPage() {
               type="checkbox"
               checked={generalSettings.autoSave}
               onChange={(e) => setGeneralSettings({...generalSettings, autoSave: e.target.checked})}
+              className="toggle toggle-primary"
+            />
+          </div>
+          
+          <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
+            <div>
+              <div className="font-medium">Sound Effects</div>
+              <div className="text-sm text-text-secondary">Card plays and game effects</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={generalSettings.soundEffects}
+              onChange={(e) => setGeneralSettings({...generalSettings, soundEffects: e.target.checked})}
               className="toggle toggle-primary"
             />
           </div>

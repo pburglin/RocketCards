@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
+import { audioService } from '../lib/audioService'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription
 } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
-import { 
-  Play, 
-  Info, 
-  Settings, 
-  LogIn, 
+import {
+  Play,
+  Info,
+  Settings,
+  LogIn,
   RotateCw,
   Gamepad,
   Plus,
@@ -33,6 +34,8 @@ export default function GamePage() {
     endTurn: endTurnAction,
     resolveLLM,
     concede,
+    discardChampion,
+    discardCreature,
     collections,
     selectedDeck
   } = useGameStore()
@@ -115,6 +118,23 @@ export default function GamePage() {
       }
     }
   }, [])
+  
+  // Play background music on mount and new turn sound when turn changes
+  const prevTurn = useRef(matchState?.turn);
+  
+  useEffect(() => {
+    // Play background music when game starts
+    if (matchState && prevTurn.current === undefined) {
+      audioService.playBackgroundMusic();
+    }
+    
+    // Play new turn sound when turn changes
+    if (matchState?.turn !== undefined && prevTurn.current !== undefined && matchState.turn > prevTurn.current) {
+      audioService.playNewTurnSound();
+    }
+    
+    prevTurn.current = matchState?.turn;
+  }, [matchState?.turn]);
   // Check for game over conditions
   useEffect(() => {
     if (playerState?.hp !== undefined && opponentState?.hp !== undefined) {
@@ -126,7 +146,7 @@ export default function GamePage() {
     }
   }, [playerState?.hp, opponentState?.hp, navigate])
   
-  // Monitor HP changes for animations
+  // Monitor HP changes for animations and sound effects
   const prevPlayerHp = useRef(playerState?.hp);
   const prevOpponentHp = useRef(opponentState?.hp);
   
@@ -135,12 +155,14 @@ export default function GamePage() {
       // Player HP damage animation
       if (playerState?.hp !== undefined && prevPlayerHp.current !== undefined && playerState.hp < prevPlayerHp.current) {
         setPlayerHpAnimation(true);
+        audioService.playDamageSound();
         setTimeout(() => setPlayerHpAnimation(false), 1000);
       }
       
       // Opponent HP damage animation
       if (opponentState?.hp !== undefined && prevOpponentHp.current !== undefined && opponentState.hp < prevOpponentHp.current) {
         setOpponentHpAnimation(true);
+        audioService.playDamageSound();
         setTimeout(() => setOpponentHpAnimation(false), 1000);
       }
       
@@ -228,6 +250,20 @@ export default function GamePage() {
     return true; // Default to enabled
   };
   
+  // Check if sound effects are enabled
+  const isSoundEffectsEnabled = () => {
+    const settings = localStorage.getItem('userSettings');
+    if (settings) {
+      try {
+        const parsed = JSON.parse(settings);
+        return parsed.general?.soundEffects !== false;
+      } catch (e) {
+        return true; // Default to enabled if parsing fails
+      }
+    }
+    return true; // Default to enabled
+  };
+  
   const getCardTitle = (cardId: string, collections: any[]) => {
     if (!cardId) return 'Unknown Card';
     
@@ -246,6 +282,9 @@ export default function GamePage() {
       setCardAttackAnimation(cardId);
       setTimeout(() => setCardAttackAnimation(null), 1000);
     }
+    
+    // Play card sound
+    audioService.playCardSound();
     
     // Check if card can be played
     const canPlay = playCardAction(cardId)
@@ -742,7 +781,7 @@ export default function GamePage() {
                               setCardRemovalAnimation(champion.cardId);
                               setTimeout(() => setCardRemovalAnimation(null), 1000);
                             }
-                            const { discardChampion } = useGameStore.getState();
+                            audioService.playDamageSound();
                             discardChampion(index);
                           }}
                         >
@@ -841,14 +880,14 @@ export default function GamePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              // Handle creature discard
-                              if (areAnimationsEnabled()) {
-                                setCardRemovalAnimation(creature.cardId);
-                                setTimeout(() => setCardRemovalAnimation(null), 1000);
-                              }
-                              const { discardCreature } = useGameStore.getState();
-                              discardCreature(index);
-                            }}
+                             // Handle creature discard
+                             if (areAnimationsEnabled()) {
+                               setCardRemovalAnimation(creature.cardId);
+                               setTimeout(() => setCardRemovalAnimation(null), 1000);
+                             }
+                             audioService.playDamageSound();
+                             discardCreature(index);
+                           }}
                           >
                             <Trash className="w-4 h-4" />
                           </Button>
@@ -1355,7 +1394,24 @@ export default function GamePage() {
                 </div>
                 <input
                   type="checkbox"
-                  defaultChecked
+                  defaultChecked={isSoundEffectsEnabled()}
+                  onChange={(e) => {
+                    // Update localStorage settings
+                    const settings = localStorage.getItem('userSettings');
+                    let parsedSettings = { general: { soundEffects: true } };
+                    if (settings) {
+                      try {
+                        parsedSettings = JSON.parse(settings);
+                      } catch (error) {
+                        // Use default settings if parsing fails
+                      }
+                    }
+                    parsedSettings.general = {
+                      ...parsedSettings.general,
+                      soundEffects: e.target.checked
+                    };
+                    localStorage.setItem('userSettings', JSON.stringify(parsedSettings));
+                  }}
                   className="toggle toggle-primary"
                 />
               </div>

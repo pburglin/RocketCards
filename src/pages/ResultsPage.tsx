@@ -1,13 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
+import { audioService } from '../lib/audioService'
 import { useEffect, useState } from 'react'
 import { Trophy, RotateCw, Home, User, BarChart } from 'lucide-react'
 import { Button } from '../components/ui/Button'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription
 } from '../components/ui/Card'
 
 export default function ResultsPage() {
@@ -20,6 +21,21 @@ export default function ResultsPage() {
     const timer = setTimeout(() => setAnimateIn(true), 100)
     return () => clearTimeout(timer)
   }, [])
+  
+  // Play victory or defeat sound when page loads
+  const isPlayerWinner = (playerState?.hp || 0) > (opponentState?.hp || 0)
+  
+  useEffect(() => {
+    // Stop background music first
+    audioService.stopBackgroundMusic();
+    
+    // Play victory or defeat sound
+    if (isPlayerWinner) {
+      audioService.playVictorySound();
+    } else {
+      audioService.playDefeatSound();
+    }
+  }, []);
 
   // If no match state, redirect to play
   useEffect(() => {
@@ -39,10 +55,22 @@ export default function ResultsPage() {
   }
 
   // Calculate match statistics
-  const isPlayerWinner = (playerState?.hp || 0) > (opponentState?.hp || 0)
   const totalTurns = matchState?.turn || 0
   const playerHp = playerState?.hp || 0
   const opponentHp = opponentState?.hp || 0
+  
+  // Play victory or defeat sound when page loads
+  useEffect(() => {
+    // Stop background music first
+    audioService.stopBackgroundMusic();
+    
+    // Play victory or defeat sound
+    if (isPlayerWinner) {
+      audioService.playVictorySound();
+    } else {
+      audioService.playDefeatSound();
+    }
+  }, [isPlayerWinner]);
   
   // Award tokens when player wins
   useEffect(() => {
