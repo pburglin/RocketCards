@@ -11,7 +11,7 @@ import SetupProgressIndicator from '../components/SetupProgressIndicator'
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
   const { profile, saveProfile, collections } = useGameStore()
-  const [displayName, setDisplayName] = useState(profile?.displayName || '')
+  const [displayName, setDisplayName] = useState(profile?.displayName || 'Player')
   const [strategy, setStrategy] = useState<'aggressive' | 'balanced' | 'defensive'>(profile?.strategy || 'balanced')
   const [keyStat, setKeyStat] = useState<'strength' | 'intelligence' | 'charisma'>(profile?.keyStat || 'intelligence')
   const [errors, setErrors] = useState<{displayName?: string}>({})
@@ -42,7 +42,10 @@ export default function ProfileSetupPage() {
     e.preventDefault()
     const newErrors: {displayName?: string} = {}
     
-    if (displayName.length < 3 || displayName.length > 20) {
+    // Use "Player" as default if display name is empty
+    const finalDisplayName = displayName.trim() || 'Player'
+    
+    if (finalDisplayName.length < 3 || finalDisplayName.length > 20) {
       newErrors.displayName = 'Display name must be 3-20 characters'
     }
     
@@ -52,12 +55,12 @@ export default function ProfileSetupPage() {
     }
     
     saveProfile({
-      displayName,
+      displayName: finalDisplayName,
       strategy,
       keyStat,
       hp: stats.hp,
       mp: stats.mp,
-      tokens: 0 // Initialize with 0 tokens
+      tokens: profile?.tokens || 0 // Preserve existing tokens or initialize with 0
     })
     
     // Navigate to deck builder after profile creation
@@ -119,7 +122,7 @@ export default function ProfileSetupPage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="w-full px-4 py-3 bg-surface-light border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Enter your display name"
+                placeholder="Enter your display name (default: Player)"
               />
               {errors.displayName && (
                 <p className="mt-2 text-sm text-error">{errors.displayName}</p>
@@ -301,7 +304,7 @@ export default function ProfileSetupPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={!displayName || displayName.length < 3 || displayName.length > 20}
+                disabled={displayName.length > 0 && (displayName.length < 3 || displayName.length > 20)}
               >
                 Save Profile
               </Button>

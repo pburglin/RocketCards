@@ -47,6 +47,7 @@ interface GameStore {
   // Token purchases
   purchaseCardWithTokens: (cardId: string) => boolean
   isCardPurchased: (cardId: string) => boolean
+  initializeDefaultProfile: () => void
   
   // Match
   matchState: MatchState | null
@@ -240,6 +241,24 @@ export const useGameStore = create<GameStore>()(
       profile: null,
       saveProfile: (profile) => {
         set({ profile })
+      },
+      // Initialize with default profile if none exists
+      initializeDefaultProfile: () => {
+        set((state) => {
+          if (!state.profile) {
+            const defaultProfile = {
+              displayName: 'Player',
+              strategy: 'balanced' as const,
+              keyStat: 'intelligence' as const,
+              hp: 26,
+              mp: 10,
+              tokens: 0,
+              purchasedCards: []
+            }
+            return { profile: defaultProfile }
+          }
+          return state
+        })
       },
       addTokens: (amount: number) => {
         set(state => {
