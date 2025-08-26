@@ -525,7 +525,7 @@ export default function DeckBuilderPage() {
                       <Card
                         key={card.id}
                         className={`p-3 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ${
-                          card.tokenCost ? 'border-2 border-amber-500/50' : ''
+                          card.tokenCost ? 'bg-gradient-to-br from-amber-900/30 to-amber-700/20 border-2 border-amber-500/50' : ''
                         }`}
                       >
                         <div className="flex justify-between items-start mb-2">
@@ -645,9 +645,8 @@ export default function DeckBuilderPage() {
                               <Button
                                 onClick={() => {
                                   if (isCardPurchased(card.id)) {
-                                    // If already purchased, show card details
-                                    setSelectedCard(card)
-                                    setShowCardModal(true)
+                                    // If already purchased, add to deck
+                                    handleAddToDeck(card.id)
                                   } else {
                                     // Enable the token cost display for this card
                                     setEnabledTokenCards(prev => {
@@ -659,7 +658,7 @@ export default function DeckBuilderPage() {
                                 }}
                                 size="sm"
                               >
-                                {isCardPurchased(card.id) ? 'Unlocked' : `Unlock ${card.tokenCost} 🔑`}
+                                {isCardPurchased(card.id) ? 'Add to Deck' : `Unlock ${card.tokenCost} 🔑`}
                               </Button>
                             )
                           ) : (
@@ -1149,7 +1148,7 @@ export default function DeckBuilderPage() {
                     <div className="space-y-4">
                       <div className="text-center p-3 bg-amber-500/20 rounded-lg">
                         <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard.tokenCost} tokens required</p>
-                        <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
+                        <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Token Shop in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
                       </div>
                       <Button
                         onClick={() => {
@@ -1163,7 +1162,7 @@ export default function DeckBuilderPage() {
                         className="w-full"
                         disabled={!profile || (profile.tokens || 0) < (selectedCard.tokenCost || 0)}
                       >
-                        🔓 Enable Token Purchase
+                        🔓 Unlock Card
                       </Button>
                       {enabledTokenCards.has(selectedCard.id) && (
                         <div className="mt-4 text-center">
@@ -1184,7 +1183,7 @@ export default function DeckBuilderPage() {
                               }
                             }}
                           >
-                            🔑 Purchase Card for {selectedCard.tokenCost} Tokens
+                            🔑 Unlock for {selectedCard.tokenCost} Tokens
                           </span>
                         </div>
                       )}

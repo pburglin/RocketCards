@@ -15,6 +15,7 @@ export default function CollectionDetailPage() {
   const [rarityFilter, setRarityFilter] = useState('')
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
+  const [success, setSuccess] = useState('')
   const { addToDeck, selectedDeck, collections, purchaseCardWithTokens, isCardPurchased, profile } = useGameStore()
   const [enabledTokenCards, setEnabledTokenCards] = useState<Set<string>>(new Set())
 
@@ -51,6 +52,12 @@ export default function CollectionDetailPage() {
         </Link>
         <h1 className="text-3xl font-bold">{collectionId ? collectionId.charAt(0).toUpperCase() + collectionId.slice(1) : 'Collection'} Collection</h1>
       </div>
+      
+      {success && (
+        <div className="mb-4 p-3 bg-success/20 border border-success rounded-lg text-success">
+          {success}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="md:col-span-1">
@@ -107,9 +114,11 @@ export default function CollectionDetailPage() {
         <div className="md:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCards.map(card => (
-              <Card 
-                key={card.id} 
-                className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+              <Card
+                key={card.id}
+                className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ${
+                  card.tokenCost ? 'bg-gradient-to-br from-amber-900/30 to-amber-700/20 border-2 border-amber-500/50' : ''
+                }`}
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
                   <img
@@ -147,7 +156,7 @@ export default function CollectionDetailPage() {
                             if (enabledTokenCards.has(card.id)) {
                               if (purchaseCardWithTokens(card.id)) {
                                 // Show success message
-                                alert(`${card.title} unlocked! You can now go to Deck Builder and add this special card to one of your decks.`);
+                                setSuccess(`${card.title} unlocked! You can now add this special card to your deck.`);
                                 // Remove from enabled set
                                 setEnabledTokenCards(prev => {
                                   const newSet = new Set(prev);
@@ -365,7 +374,7 @@ export default function CollectionDetailPage() {
                             onClick={() => {
                               if (purchaseCardWithTokens(selectedCard.id)) {
                                 // Show success message
-                                alert(`${selectedCard.title} unlocked! You can now go to Deck Builder and add this special card to one of your decks.`);
+                                setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
                                 // Close modal
                                 setShowCardModal(false)
                                 // Remove from enabled set

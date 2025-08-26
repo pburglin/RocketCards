@@ -315,7 +315,13 @@ export const useGameStore = create<GameStore>()(
       // Check if a card has been purchased with tokens
       isCardPurchased: (cardId) => {
         const { profile } = get()
-        return profile?.purchasedCards?.includes(cardId) || false
+        // Check both profile state and localStorage for purchased status
+        const profilePurchased = profile?.purchasedCards?.includes(cardId) || false;
+        if (typeof window !== 'undefined') {
+          const purchasedCards = JSON.parse(localStorage.getItem('purchasedCards') || '[]');
+          return profilePurchased || purchasedCards.includes(cardId);
+        }
+        return profilePurchased;
       },
       
       // Match

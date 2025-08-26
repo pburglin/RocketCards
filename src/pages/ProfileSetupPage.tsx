@@ -10,7 +10,7 @@ import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
-  const { profile, saveProfile, collections } = useGameStore()
+  const { profile, saveProfile, collections, purchaseCardWithTokens } = useGameStore()
   const [displayName, setDisplayName] = useState(profile?.displayName || 'Player')
   const [strategy, setStrategy] = useState<'aggressive' | 'balanced' | 'defensive'>(profile?.strategy || 'balanced')
   const [keyStat, setKeyStat] = useState<'strength' | 'intelligence' | 'charisma'>(profile?.keyStat || 'intelligence')
@@ -18,6 +18,8 @@ export default function ProfileSetupPage() {
   const [activeTab, setActiveTab] = useState<'profile' | 'tokens'>('profile')
   const [selectedCard, setSelectedCard] = useState<any>(null)
   const [showCardModal, setShowCardModal] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [error, setError] = useState('')
   
   const stats = calculatePlayerStats(strategy, keyStat)
   
@@ -82,6 +84,18 @@ export default function ProfileSetupPage() {
         </div>
         <h1 className="text-3xl font-bold">Profile {profile ? 'Management' : 'Setup'}</h1>
       </div>
+      
+      {error && (
+        <div className="mb-4 p-3 bg-error/20 border border-error rounded-lg text-error">
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="mb-4 p-3 bg-success/20 border border-success rounded-lg text-success">
+          {success}
+        </div>
+      )}
       
       {profile && (
         <div className="mb-6">
@@ -378,8 +392,16 @@ export default function ProfileSetupPage() {
                           size="sm"
                           disabled={!hasEnoughTokens}
                           className={!hasEnoughTokens ? 'opacity-50 cursor-not-allowed' : ''}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (hasEnoughTokens && profile) {
+                              // Show card details modal for purchase
+                              setSelectedCard(card);
+                              setShowCardModal(true);
+                            }
+                          }}
                         >
-                          {!hasEnoughTokens ? 'Not enough tokens' : 'Purchase in Deck Builder'}
+                          {!hasEnoughTokens ? 'Not enough tokens' : 'Unlock'}
                         </Button>
                       </div>
                     </Card>
@@ -395,8 +417,7 @@ export default function ProfileSetupPage() {
             <div className="mt-8 p-4 bg-surface-light rounded-lg">
               <h3 className="font-bold mb-2">How to Purchase Cards</h3>
               <p className="text-sm text-text-secondary">
-                Special cards can be purchased in the Deck Builder. Look for cards with the 🔑 token cost indicator
-                and click the "Buy" button to purchase them with your tokens.
+                Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.
               </p>
             </div>
           </div>
@@ -520,14 +541,28 @@ export default function ProfileSetupPage() {
                 )}
                 
                 <div className="mt-8">
-                  <div className="flex items-center justify-between p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                    <div>
-                      <div className="font-medium">Token Cost</div>
-                      <div className="text-sm text-text-secondary">Purchase this card with tokens</div>
+                  <div className="space-y-4">
+                    <div className="text-center p-3 bg-amber-500/20 rounded-lg">
+                      <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard?.tokenCost} tokens required</p>
+                      <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
                     </div>
-                    <div className="text-2xl font-bold text-amber-400">
-                      🔑 {selectedCard?.tokenCost}
-                    </div>
+                    <Button
+                      className="w-full"
+                      disabled={!profile || (profile.tokens || 0) < (selectedCard?.tokenCost || 0)}
+                      onClick={() => {
+                        if (purchaseCardWithTokens(selectedCard.id)) {
+                          setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
+                          setTimeout(() => setSuccess(''), 3000);
+                          // Close modal
+                          setShowCardModal(false);
+                        } else {
+                          setError('Failed to unlock card. Please try again.');
+                          setTimeout(() => setError(''), 3000);
+                        }
+                      }}
+                    >
+                      🔓 Unlock Card
+                    </Button>
                   </div>
                 </div>
                 
