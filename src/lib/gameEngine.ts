@@ -9,7 +9,7 @@ import {
 // Constants from .env (would be loaded from environment in real app)
 const GAME_DECK_SIZE = 30
 const GAME_STARTING_HAND = 5
-const GAME_HAND_LIMIT = 7
+const GAME_HAND_LIMIT = 4
 const GAME_CHAMPION_SLOTS = 3
 const GAME_BASE_HP = 24
 const GAME_BASE_MP = 6
@@ -536,18 +536,36 @@ export function endTurn(
   // Draw a card for the active player
   let drawnCardId = null;
   if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
-    const drawnCard = playerState.deck.pop()
-    if (drawnCard) {
-      playerState.hand.push(drawnCard)
-      drawnCardId = drawnCard;
-      startDetails.hand = [...playerState.hand];
+    // Check if player's hand is at maximum capacity
+    if (playerState.hand.length >= GAME_HAND_LIMIT) {
+      // Cannot draw card - hand is full
+      matchState.log.push({
+        message: `Player could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+        turn: matchState.turn
+      });
+    } else {
+      const drawnCard = playerState.deck.pop()
+      if (drawnCard) {
+        playerState.hand.push(drawnCard)
+        drawnCardId = drawnCard;
+        startDetails.hand = [...playerState.hand];
+      }
     }
   } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
-    const drawnCard = opponentState.deck.pop()
-    if (drawnCard) {
-      opponentState.hand.push(drawnCard)
-      drawnCardId = drawnCard;
-      startDetails.hand = [...opponentState.hand];
+    // Check if opponent's hand is at maximum capacity
+    if (opponentState.hand.length >= GAME_HAND_LIMIT) {
+      // Cannot draw card - hand is full
+      matchState.log.push({
+        message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+        turn: matchState.turn
+      });
+    } else {
+      const drawnCard = opponentState.deck.pop()
+      if (drawnCard) {
+        opponentState.hand.push(drawnCard)
+        drawnCardId = drawnCard;
+        startDetails.hand = [...opponentState.hand];
+      }
     }
   }
   

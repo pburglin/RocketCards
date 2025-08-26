@@ -338,7 +338,11 @@ export default function DeckBuilderPage() {
                     key={collection.id}
                     variant={selectedCollection?.id === collection.id ? 'primary' : 'outline'}
                     className="w-full justify-start"
-                    onClick={() => setSelectedCollection(collection)}
+                    onClick={() => {
+                      setSelectedCollection(collection);
+                      // Reset deck name when switching collections
+                      setDeckName(`${collection.name} Deck`);
+                    }}
                   >
                     {collection.name}
                   </Button>
@@ -820,11 +824,15 @@ export default function DeckBuilderPage() {
                     {collections.map(collection => (
                       <button
                         key={collection.id}
-                        onClick={() => setSelectedCollection(collection)}
+                        onClick={() => {
+                          setSelectedCollection(collection);
+                          // Reset deck name when switching collections
+                          setDeckName(`${collection.name} Deck`);
+                        }}
                         className="p-4 rounded-lg bg-surface border border-border hover:bg-surface-light transition-colors"
                       >
                         <div className="h-24 mb-3">
-                          <img 
+                          <img
                             src={`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={collection.name}
                             className="w-full h-full object-cover rounded"
