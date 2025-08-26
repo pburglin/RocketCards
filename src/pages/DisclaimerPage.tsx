@@ -86,6 +86,11 @@ export default function DisclaimerPage() {
               This Disclaimer, together with our Terms of Service and Privacy Policy, constitutes the entire agreement between you and CardWizard regarding your use of our services.
             </p>
             
+            <h2 className="text-2xl font-bold mb-4 mt-8">Sound Effects Attribution</h2>
+            <p className="mb-6">
+              Sound effects provided by Mixkit. Visit <a href="https://mixkit.co/free-sound-effects/game/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://mixkit.co/free-sound-effects/game/</a> for more free game sound effects.
+            </p>
+            
             <h2 className="text-2xl font-bold mb-4 mt-8">Contact Us</h2>
             <p className="mb-6">
               If you have any questions about this Disclaimer, please contact us at:
