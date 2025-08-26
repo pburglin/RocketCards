@@ -225,9 +225,10 @@ export default function CollectionDetailPage() {
                             setShowCardModal(true)
                           }}
                           size="sm"
+                          variant="outline"
+                          disabled
                         >
-                          <Info className="w-4 h-4 mr-2" />
-                          Details
+                          Unlocked
                         </Button>
                       ) : (
                         <Button
