@@ -1112,9 +1112,8 @@ export function playOpponentAI(
     const card = getCardFromCollections(cardToPlay, collections);
     if (card) {
       console.log('Opponent playing card:', card.title, 'Reason:', playReason);
-      const result = playCard(matchState, playerState, opponentState, cardToPlay, collections);
+      const result = playCard(matchState, opponentState, playerState, cardToPlay, collections);
       if (result.success) {
-        matchState.log.push({ message: `Opponent played ${card.title}`, turn: matchState.turn });
         console.log('Opponent card played successfully');
         return {
           matchState: result.matchState,

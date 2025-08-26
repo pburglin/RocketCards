@@ -799,7 +799,8 @@ export default function GamePage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             // Handle champion discard
                             if (areAnimationsEnabled()) {
                               setCardRemovalAnimation(champion.cardId);
@@ -912,7 +913,8 @@ export default function GamePage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
+                            onClick={(e) => {
+                             e.stopPropagation();
                              // Handle creature discard
                              if (areAnimationsEnabled()) {
                                setCardRemovalAnimation(creature.cardId);
