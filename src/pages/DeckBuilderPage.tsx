@@ -618,11 +618,12 @@ export default function DeckBuilderPage() {
                               e.stopPropagation();
                               handleAddToDeck(card.id);
                             }}
-                            variant="outline"
+                            variant="primary"
                             size="sm"
+                            className="bg-primary text-white hover:bg-primary-dark"
                           >
                             <Plus className="w-4 h-4 mr-1" />
-                            Add
+                            Add {getCardCount(card.id) > 0 ? `+${getCardCount(card.id)}` : ''}
                           </Button>
                         </div>
                         
@@ -1096,7 +1097,7 @@ export default function DeckBuilderPage() {
                           })()}
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          {deckCards[selectedCard.id] ? `Add ${getCardCount(selectedCard.id) + 1}` : 'Add to Deck'}
+                          {deckCards[selectedCard.id] ? `Add +${getCardCount(selectedCard.id)}` : 'Add to Deck'}
                         </Button>
                       </div>
                     ) : (

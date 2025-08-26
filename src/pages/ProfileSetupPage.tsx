@@ -343,6 +343,8 @@ export default function ProfileSetupPage() {
                       key={card.id}
                       className={`p-4 cursor-pointer card-hover-effect transition-all duration-300 ${
                         hasEnoughTokens ? 'hover:shadow-lg hover:shadow-primary/20' : 'opacity-70'
+                      } ${
+                        card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                       }`}
                       onClick={() => {
                         // Show card details modal
