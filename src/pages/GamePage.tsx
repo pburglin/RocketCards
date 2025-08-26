@@ -401,9 +401,9 @@ export default function GamePage() {
                     return (
                       <div
                         key={`${cardId}-${index}`}
-                        className={`relative card-hover-effect cursor-pointer bg-surface rounded-lg shadow-lg overflow-hidden ${
+                        className={`relative card-hover-effect cursor-pointer rounded-lg shadow-lg overflow-hidden ${
                           cardAttackAnimation === cardId ? 'animate-zoom' : ''
-                        }`}
+                        } ${card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : 'bg-surface'}`}
                         onClick={() => {
                           setSelectedCard(card)
                           setShowCardModal(true)
@@ -686,9 +686,15 @@ export default function GamePage() {
                   return (
                     <Card
                       key={index}
-                      className={`p-4 ${
+                      className={`p-4 cursor-pointer hover:shadow-lg transition-all duration-200 ${
                         champion?.status?.includes('exhausted') ? 'opacity-50' : ''
-                      } ${cardRemovalAnimation === champion.cardId ? 'animate-removal' : ''}`}
+                      } ${cardRemovalAnimation === champion.cardId ? 'animate-removal' : ''} ${
+                        card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedCard(card)
+                        setShowCardModal(true)
+                      }}
                     >
                       {card && (
                         <div className="relative mb-3">
@@ -812,7 +818,16 @@ export default function GamePage() {
                     }
                     
                     return (
-                      <Card key={index} className={`p-3 bg-surface ${cardRemovalAnimation === creature.cardId ? 'animate-removal' : ''}`}>
+                      <Card
+                        key={index}
+                        className={`p-3 bg-surface cursor-pointer hover:shadow-lg transition-all duration-200 ${cardRemovalAnimation === creature.cardId ? 'animate-removal' : ''} ${
+                          card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedCard(card)
+                          setShowCardModal(true)
+                        }}
+                      >
                         {card && (
                           <div className="relative mb-2">
                             <img
@@ -916,7 +931,16 @@ export default function GamePage() {
                   }
                   
                   return (
-                    <Card key={index} className="p-4">
+                    <Card
+                      key={index}
+                      className={`p-4 cursor-pointer hover:shadow-lg transition-all duration-200 ${
+                        card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedCard(card)
+                        setShowCardModal(true)
+                      }}
+                    >
                       {card && (
                         <div className="relative mb-3">
                           <img
@@ -1021,7 +1045,16 @@ export default function GamePage() {
                     }
                     
                     return (
-                      <Card key={index} className="p-3 bg-surface">
+                      <Card
+                        key={index}
+                        className={`p-3 bg-surface cursor-pointer hover:shadow-lg transition-all duration-200 ${
+                          card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedCard(card)
+                          setShowCardModal(true)
+                        }}
+                      >
                         {card && (
                           <div className="relative mb-2">
                             <img

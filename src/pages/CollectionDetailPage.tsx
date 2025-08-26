@@ -117,7 +117,7 @@ export default function CollectionDetailPage() {
               <Card
                 key={card.id}
                 className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ${
-                  card.tokenCost ? 'bg-gradient-to-br from-amber-900/30 to-amber-700/20 border-2 border-amber-500/50' : ''
+                  card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                 }`}
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
@@ -146,34 +146,35 @@ export default function CollectionDetailPage() {
                         {card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}
                       </span>
                       {card.tokenCost && (
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs border cursor-pointer ${
-                            enabledTokenCards.has(card.id)
-                              ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
-                              : 'bg-surface-light text-text-secondary border-border cursor-not-allowed'
-                          }`}
-                          onClick={() => {
-                            if (enabledTokenCards.has(card.id)) {
-                              if (purchaseCardWithTokens(card.id)) {
-                                // Show success message
-                                setSuccess(`${card.title} unlocked! You can now add this special card to your deck.`);
-                                // Remove from enabled set
-                                setEnabledTokenCards(prev => {
-                                  const newSet = new Set(prev);
-                                  newSet.delete(card.id);
-                                  return newSet;
-                                });
+                        isCardPurchased(card.id) ? (
+                          <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30">
+                            Unlocked
+                          </span>
+                        ) : (
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs border cursor-pointer ${
+                              enabledTokenCards.has(card.id)
+                                ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
+                                : 'bg-surface-light text-text-secondary border-border cursor-not-allowed'
+                            }`}
+                            onClick={() => {
+                              if (enabledTokenCards.has(card.id)) {
+                                if (purchaseCardWithTokens(card.id)) {
+                                  // Show success message
+                                  setSuccess(`${card.title} unlocked! You can now add this special card to your deck.`);
+                                  // Remove from enabled set
+                                  setEnabledTokenCards(prev => {
+                                    const newSet = new Set(prev);
+                                    newSet.delete(card.id);
+                                    return newSet;
+                                  });
+                                }
                               }
-                            }
-                          }}
-                        >
-                          🔑 {card.tokenCost}
-                        </span>
-                      )}
-                      {card.tokenCost && isCardPurchased(card.id) && (
-                        <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30">
-                          Purchased
-                        </span>
+                            }}
+                          >
+                            🔑 {card.tokenCost}
+                          </span>
+                        )
                       )}
                     </div>
                   </div>
@@ -225,8 +226,8 @@ export default function CollectionDetailPage() {
                           }}
                           size="sm"
                         >
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add to Deck
+                          <Info className="w-4 h-4 mr-2" />
+                          Details
                         </Button>
                       ) : (
                         <Button
@@ -347,50 +348,59 @@ export default function CollectionDetailPage() {
                 )}
                 
                 <div className="mt-8">
-                  {selectedCard.tokenCost && !isCardPurchased(selectedCard.id) ? (
-                    <div className="space-y-4">
-                      <div className="text-center p-3 bg-amber-500/20 rounded-lg">
-                        <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard.tokenCost} tokens required</p>
-                        <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
+                  {selectedCard.tokenCost ? (
+                    isCardPurchased(selectedCard.id) ? (
+                      <div className="text-center p-4 bg-success/20 rounded-lg">
+                        <p className="text-success font-medium">✅ Card Already Unlocked</p>
+                        <p className="text-sm text-text-secondary mt-2">
+                          This special card has already been unlocked and is available to be added to your player card decks.
+                        </p>
                       </div>
-                      <Button
-                        onClick={() => {
-                          // Enable the token cost display for this card
-                          setEnabledTokenCards(prev => {
-                            const newSet = new Set(prev);
-                            newSet.add(selectedCard.id);
-                            return newSet;
-                          });
-                        }}
-                        className="w-full"
-                        disabled={!profile || (profile.tokens || 0) < (selectedCard.tokenCost || 0)}
-                      >
-                        🔓 Enable Token Purchase
-                      </Button>
-                      {enabledTokenCards.has(selectedCard.id) && (
-                        <div className="mt-4 text-center">
-                          <span
-                            className="px-4 py-2 rounded-full text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 cursor-pointer inline-block"
-                            onClick={() => {
-                              if (purchaseCardWithTokens(selectedCard.id)) {
-                                // Show success message
-                                setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
-                                // Close modal
-                                setShowCardModal(false)
-                                // Remove from enabled set
-                                setEnabledTokenCards(prev => {
-                                  const newSet = new Set(prev);
-                                  newSet.delete(selectedCard.id);
-                                  return newSet;
-                                });
-                              }
-                            }}
-                          >
-                            🔑 Purchase Card for {selectedCard.tokenCost} Tokens
-                          </span>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="text-center p-3 bg-amber-500/20 rounded-lg">
+                          <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard.tokenCost} tokens required</p>
+                          <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
                         </div>
-                      )}
-                    </div>
+                        <Button
+                          onClick={() => {
+                            // Enable the token cost display for this card
+                            setEnabledTokenCards(prev => {
+                              const newSet = new Set(prev);
+                              newSet.add(selectedCard.id);
+                              return newSet;
+                            });
+                          }}
+                          className="w-full"
+                          disabled={!profile || (profile.tokens || 0) < (selectedCard.tokenCost || 0)}
+                        >
+                          🔓 Enable Token Purchase
+                        </Button>
+                        {enabledTokenCards.has(selectedCard.id) && (
+                          <div className="mt-4 text-center">
+                            <span
+                              className="px-4 py-2 rounded-full text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 cursor-pointer inline-block"
+                              onClick={() => {
+                                if (purchaseCardWithTokens(selectedCard.id)) {
+                                  // Show success message
+                                  setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
+                                  // Close modal
+                                  setShowCardModal(false)
+                                  // Remove from enabled set
+                                  setEnabledTokenCards(prev => {
+                                    const newSet = new Set(prev);
+                                    newSet.delete(selectedCard.id);
+                                    return newSet;
+                                  });
+                                }
+                              }}
+                            >
+                              🔑 Purchase Card for {selectedCard.tokenCost} Tokens
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )
                   ) : (
                     <Button
                       onClick={() => {
