@@ -8,7 +8,7 @@ import {
 
 // Constants from .env (would be loaded from environment in real app)
 const GAME_DECK_SIZE = 30
-const GAME_STARTING_HAND = 5
+const GAME_STARTING_HAND = 3
 const GAME_HAND_LIMIT = 4
 const GAME_CHAMPION_SLOTS = 3
 const GAME_BASE_HP = 24
@@ -79,8 +79,9 @@ export function initializeMatch(options: {
   const playerDeck = [...options.deck.cards]
   shuffleArray(playerDeck, options.seed)
   
-  // Create opponent deck (for now, just copy player deck)
-  const opponentDeck = [...playerDeck]
+  // Create opponent deck (for now, just copy player deck and shuffle it separately)
+  const opponentDeck = [...options.deck.cards]
+  shuffleArray(opponentDeck, options.seed ? options.seed + '_opponent' : undefined)
   
   // Deal starting hands
   const playerHand = playerDeck.splice(0, GAME_STARTING_HAND)

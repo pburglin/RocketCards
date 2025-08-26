@@ -524,9 +524,13 @@ export default function DeckBuilderPage() {
                     {filteredCards.map(card => (
                       <Card
                         key={card.id}
-                        className={`p-3 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ${
+                        className={`p-3 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer ${
                           card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                         }`}
+                        onClick={() => {
+                          setSelectedCard(card)
+                          setShowCardModal(true)
+                        }}
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex items-start space-x-3">
@@ -562,7 +566,8 @@ export default function DeckBuilderPage() {
                                           ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
                                           : 'bg-surface-light text-text-secondary border-border cursor-not-allowed'
                                       }`}
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.stopPropagation();
                                         if (enabledTokenCards.has(card.id)) {
                                           if (purchaseCardWithTokens(card.id)) {
                                             setSuccess(`${card.title} unlocked! You can now add this special card to your deck.`);
@@ -609,15 +614,15 @@ export default function DeckBuilderPage() {
                           </div>
                           
                           <Button
-                            onClick={() => {
-                              setSelectedCard(card)
-                              setShowCardModal(true)
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddToDeck(card.id);
                             }}
                             variant="outline"
                             size="sm"
                           >
-                            <Info className="w-4 h-4 mr-1" />
-                            Details
+                            <Plus className="w-4 h-4 mr-1" />
+                            Add
                           </Button>
                         </div>
                         
@@ -646,7 +651,9 @@ export default function DeckBuilderPage() {
                           return (
                             <Card
                               key={cardId}
-                              className="p-3 bg-surface-light border border-border"
+                              className={`p-3 bg-surface-light border border-border ${
+                                card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
+                              }`}
                             >
                               <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-start space-x-3">

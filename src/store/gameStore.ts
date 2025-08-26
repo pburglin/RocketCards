@@ -163,7 +163,7 @@ export const useGameStore = create<GameStore>()(
         })
       },
       autoBuildDeck: () => {
-        const { selectedCollection, selectedDeck, setSelectedDeck } = get()
+        const { selectedCollection, selectedDeck, setSelectedDeck, profile, isCardPurchased } = get()
         
         if (!selectedCollection) {
           return
@@ -183,18 +183,26 @@ export const useGameStore = create<GameStore>()(
             // Clear current deck
             state.selectedDeck.cards = []
             
-            // Add cards based on rarity with balanced distribution
-            // Exclude token-purchased cards from auto-building
-            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common' && !c.tokenCost)]
-            const rares = [...state.selectedCollection.cards.filter(c => c.rarity === 'rare' && !c.tokenCost)]
+            // Categorize cards based on rarity and whether they're unlocked special cards
+            const unlockedSpecials = [...state.selectedCollection.cards.filter(c => c.tokenCost && isCardPurchased(c.id))]
             const uniques = [...state.selectedCollection.cards.filter(c => c.rarity === 'unique' && !c.tokenCost)]
+            const rares = [...state.selectedCollection.cards.filter(c => c.rarity === 'rare' && !c.tokenCost)]
+            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common' && !c.tokenCost)]
             
             // Shuffle arrays to randomize selection
+            unlockedSpecials.sort(() => Math.random() - 0.5)
             commons.sort(() => Math.random() - 0.5)
             rares.sort(() => Math.random() - 0.5)
             uniques.sort(() => Math.random() - 0.5)
             
-            // Add all uniques first (max 1 copy each)
+            // Add all unlocked special cards first (max 1 copy each)
+            unlockedSpecials.forEach(special => {
+              if (state.selectedDeck && state.selectedDeck.cards.length < 30) {
+                state.selectedDeck.cards.push(special.id)
+              }
+            })
+            
+            // Add all uniques next (max 1 copy each)
             uniques.forEach(unique => {
               if (state.selectedDeck && state.selectedDeck.cards.length < 30) {
                 state.selectedDeck.cards.push(unique.id)
