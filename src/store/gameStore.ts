@@ -18,7 +18,8 @@ import {
   concedeMatch,
   playOpponentAI,
   discardChampion,
-  discardCreature
+  discardCreature,
+  discardHandCard
 } from '../lib/gameEngine'
 import { loadAllCollections, loadCollection } from '../lib/collectionLoader'
 
@@ -67,6 +68,7 @@ interface GameStore {
   concede: () => void
   discardChampion: (championIndex: number) => boolean
   discardCreature: (creatureIndex: number) => boolean
+  discardHandCard: (cardIndex: number) => boolean
   
   // Persistence
   loadGameState: () => void
@@ -465,6 +467,21 @@ export const useGameStore = create<GameStore>()(
           return true
         }
         return false
+// Function to discard a card from hand
+discardHandCard: (cardIndex: number) => {
+  const { matchState, playerState } = get()
+  if (!matchState || !playerState) return false
+  
+  const result = discardHandCard(matchState, playerState, cardIndex)
+  if (result.success) {
+    set({
+      matchState: result.matchState,
+      playerState: result.playerState
+    })
+    return true
+  }
+  return false
+}
       },
       // Persistence
       loadGameState: () => {

@@ -506,6 +506,24 @@ export function endTurn(
     const cardId = playerState.hand.pop()
     if (cardId) {
       playerState.discard.push(cardId)
+      // Add log message for discarded card
+      matchState.log.push({
+        message: `Player discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
+        turn: matchState.turn
+      });
+    }
+  }
+  
+  // Also check opponent hand limit
+  while (opponentState.hand.length > GAME_HAND_LIMIT) {
+    const cardId = opponentState.hand.pop()
+    if (cardId) {
+      opponentState.discard.push(cardId)
+      // Add log message for discarded card
+      matchState.log.push({
+        message: `Opponent discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
+        turn: matchState.turn
+      });
     }
   }
   
@@ -921,14 +939,17 @@ function shuffleArray(array: any[], seed?: string): void {
   // Use seed for deterministic shuffling if provided
   const random = seed ? seededRandom(seed) : Math.random
   
-  // Pick a remaining element...
-  randomIndex = Math.floor(random() * currentIndex);
-  currentIndex -= 1;
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(random() * currentIndex);
+    currentIndex -= 1;
 
-  // And swap it with the current element.
-  temporaryValue = array[currentIndex];
-  array[currentIndex] = array[randomIndex];
-  array[randomIndex] = temporaryValue;
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
 }
 
 function seededRandom(seed: string): () => number {
@@ -1135,6 +1156,32 @@ export function discardChampion(
   
   // Add to log
   matchState.log.push({ message: `Player discarded champion`, turn: matchState.turn });
+  
+  return { success: true, matchState, playerState };
+}
+
+// Function to discard a card from hand
+export function discardHandCard(
+  matchState: MatchState,
+  playerState: PlayerState,
+  cardIndex: number
+): {
+  success: boolean
+  matchState: MatchState
+  playerState: PlayerState
+} {
+  if (cardIndex < 0 || cardIndex >= playerState.hand.length) {
+    return { success: false, matchState, playerState };
+  }
+  
+  const cardId = playerState.hand[cardIndex];
+  
+  // Remove card from hand and add to discard pile
+  playerState.hand.splice(cardIndex, 1);
+  playerState.discard.push(cardId);
+  
+  // Add to log
+  matchState.log.push({ message: `Player discarded card from hand`, turn: matchState.turn });
   
   return { success: true, matchState, playerState };
 }

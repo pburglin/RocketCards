@@ -328,7 +328,7 @@ export default function ProfileSetupPage() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Token Shop</h2>
             <p className="text-text-secondary mb-6">
-              Spend your tokens to purchase exclusive special cards that can be added to your decks.
+              Spend your tokens to unlock exclusive special cards that can be added to your decks.
             </p>
             
             {tokenCards.length > 0 ? (

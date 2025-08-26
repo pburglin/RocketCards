@@ -36,6 +36,7 @@ export default function GamePage() {
     concede,
     discardChampion,
     discardCreature,
+    discardHandCard,
     collections,
     selectedDeck
   } = useGameStore()
@@ -474,6 +475,23 @@ export default function GamePage() {
                             >
                               <Play className="w-4 h-4 mr-2" />
                               Play
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (areAnimationsEnabled()) {
+                                  setCardRemovalAnimation(cardId);
+                                  setTimeout(() => setCardRemovalAnimation(null), 1000);
+                                }
+                                audioService.playDamageSound();
+                                discardHandCard(index);
+                              }}
+                              className="mt-2 w-full"
+                            >
+                              <Trash className="w-4 h-4 mr-2" />
+                              Discard
                             </Button>
                           </div>
                         </div>
