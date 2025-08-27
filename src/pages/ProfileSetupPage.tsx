@@ -70,7 +70,7 @@ export default function ProfileSetupPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8">
       {/* Progress Indicator */}
       <SetupProgressIndicator
         currentStep="profile"
