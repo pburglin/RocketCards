@@ -10,7 +10,7 @@ import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
-  const { profile, saveProfile, collections, purchaseCardWithTokens } = useGameStore()
+  const { profile, saveProfile, collections, purchaseCardWithTokens, isCardPurchased } = useGameStore()
   const [displayName, setDisplayName] = useState(profile?.displayName || 'Player')
   const [strategy, setStrategy] = useState<'aggressive' | 'balanced' | 'defensive'>(profile?.strategy || 'balanced')
   const [keyStat, setKeyStat] = useState<'strength' | 'intelligence' | 'charisma'>(profile?.keyStat || 'intelligence')
@@ -337,12 +337,13 @@ export default function ProfileSetupPage() {
                   // Find the collection for this card
                   const collection = collections.find(c => c.id === card.collection);
                   const hasEnoughTokens = profile && profile.tokens !== undefined && profile.tokens >= (card.tokenCost || 0);
+                  const isPurchased = isCardPurchased(card.id);
                   
                   return (
                     <Card
                       key={card.id}
                       className={`p-4 cursor-pointer card-hover-effect transition-all duration-300 ${
-                        hasEnoughTokens ? 'hover:shadow-lg hover:shadow-primary/20' : 'opacity-70'
+                        hasEnoughTokens && !isPurchased ? 'hover:shadow-lg hover:shadow-primary/20' : 'opacity-70'
                       } ${
                         card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                       }`}
@@ -375,7 +376,7 @@ export default function ProfileSetupPage() {
                                 {card.rarity}
                               </span>
                               <span className="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                                🔑 {card.tokenCost} tokens
+                                {isPurchased ? 'Unlocked' : `🔑 ${card.tokenCost} tokens`}
                               </span>
                             </div>
                           </div>
@@ -390,21 +391,25 @@ export default function ProfileSetupPage() {
                         <div className="text-xs text-text-secondary">
                           {collection?.name}
                         </div>
-                        <Button
-                          size="sm"
-                          disabled={!hasEnoughTokens}
-                          className={!hasEnoughTokens ? 'opacity-50 cursor-not-allowed' : ''}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (hasEnoughTokens && profile) {
-                              // Show card details modal for purchase
-                              setSelectedCard(card);
-                              setShowCardModal(true);
-                            }
-                          }}
-                        >
-                          {!hasEnoughTokens ? 'Not enough tokens' : 'Unlock'}
-                        </Button>
+                        {isPurchased ? (
+                          <span className="text-sm text-success font-medium">Unlocked</span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            disabled={!hasEnoughTokens}
+                            className={!hasEnoughTokens ? 'opacity-50 cursor-not-allowed' : ''}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (hasEnoughTokens && profile) {
+                                // Show card details modal for purchase
+                                setSelectedCard(card);
+                                setShowCardModal(true);
+                              }
+                            }}
+                          >
+                            {!hasEnoughTokens ? 'Not enough tokens' : 'Unlock'}
+                          </Button>
+                        )}
                       </div>
                     </Card>
                   );
@@ -544,27 +549,36 @@ export default function ProfileSetupPage() {
                 
                 <div className="mt-8">
                   <div className="space-y-4">
-                    <div className="text-center p-3 bg-amber-500/20 rounded-lg">
-                      <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard?.tokenCost} tokens required</p>
-                      <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
-                    </div>
-                    <Button
-                      className="w-full"
-                      disabled={!profile || (profile.tokens || 0) < (selectedCard?.tokenCost || 0)}
-                      onClick={() => {
-                        if (purchaseCardWithTokens(selectedCard.id)) {
-                          setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
-                          setTimeout(() => setSuccess(''), 3000);
-                          // Close modal
-                          setShowCardModal(false);
-                        } else {
-                          setError('Failed to unlock card. Please try again.');
-                          setTimeout(() => setError(''), 3000);
-                        }
-                      }}
-                    >
-                      🔓 Unlock Card
-                    </Button>
+                    {isCardPurchased(selectedCard?.id) ? (
+                      <div className="text-center p-3 bg-success/20 rounded-lg">
+                        <p className="text-success font-medium">✅ Already Unlocked</p>
+                        <p className="text-sm text-text-secondary mt-1">This special card has already been unlocked and is available to be added to your player card decks.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="text-center p-3 bg-amber-500/20 rounded-lg">
+                          <p className="text-amber-400 font-medium">🔑 Special Card - {selectedCard?.tokenCost} tokens required</p>
+                          <p className="text-sm text-text-secondary mt-1">Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.</p>
+                        </div>
+                        <Button
+                          className="w-full"
+                          disabled={!profile || (profile.tokens || 0) < (selectedCard?.tokenCost || 0)}
+                          onClick={() => {
+                            if (purchaseCardWithTokens(selectedCard.id)) {
+                              setSuccess(`${selectedCard.title} unlocked! You can now add this special card to your deck.`);
+                              setTimeout(() => setSuccess(''), 3000);
+                              // Close modal
+                              setShowCardModal(false);
+                            } else {
+                              setError('Failed to unlock card. Please try again.');
+                              setTimeout(() => setError(''), 3000);
+                            }
+                          }}
+                        >
+                          🔓 Unlock Card
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
                 
