@@ -467,21 +467,30 @@ export const useGameStore = create<GameStore>()(
           return true
         }
         return false
-// Function to discard a card from hand
-discardHandCard: (cardIndex: number) => {
-  const { matchState, playerState } = get()
-  if (!matchState || !playerState) return false
-  
-  const result = discardHandCard(matchState, playerState, cardIndex)
-  if (result.success) {
-    set({
-      matchState: result.matchState,
-      playerState: result.playerState
-    })
-    return true
-  }
-  return false
-}
+      },
+      // Function to discard a card from hand
+      discardHandCard: (cardIndex: number) => {
+        const { matchState, playerState } = get()
+        if (!matchState || !playerState) return false
+        
+        // Check if card index is valid
+        if (cardIndex < 0 || cardIndex >= playerState.hand.length) {
+          return false
+        }
+        
+        // Directly mutate state using immer
+        set((state) => {
+          if (state.matchState && state.playerState) {
+            const cardId = state.playerState.hand[cardIndex]
+            // Remove card from hand
+            state.playerState.hand.splice(cardIndex, 1)
+            // Add card to discard pile
+            state.playerState.discard.push(cardId)
+            // Add to log
+            state.matchState.log.push({ message: `Player discarded card from hand`, turn: state.matchState.turn })
+          }
+        })
+        return true
       },
       // Persistence
       loadGameState: () => {

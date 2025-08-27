@@ -164,19 +164,24 @@ export function playCard(
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Create deep copies of the input objects to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  const newOpponentState: PlayerState = JSON.parse(JSON.stringify(opponentState));
+  
   // Check if it's the correct player's turn
-  const currentPlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
-  const otherPlayerState = matchState.activePlayer === 'player' ? opponentState : playerState;
+  const currentPlayerState = newMatchState.activePlayer === 'player' ? newPlayerState : newOpponentState;
+  const otherPlayerState = newMatchState.activePlayer === 'player' ? newOpponentState : newPlayerState;
   
   // Check if in main phase
-  if (matchState.phase !== 'main') {
-    return { success: false, matchState, playerState, opponentState }
+  if (newMatchState.phase !== 'main') {
+    return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   // Check if card is in hand
   const cardIndex = currentPlayerState.hand.indexOf(cardId)
   if (cardIndex === -1) {
-    return { success: false, matchState, playerState, opponentState }
+    return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   // Check play limit based on fatigue
@@ -186,18 +191,18 @@ export function playCard(
   if (!canPlay) {
     if (maxPlays <= 0) {
       // Cannot play due to high fatigue
-      matchState.log.push({ message: 'Cannot play card - Fatigue too high', turn: matchState.turn });
-      return { success: false, matchState, playerState, opponentState };
+      newMatchState.log.push({ message: 'Cannot play card - Fatigue too high', turn: newMatchState.turn });
+      return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState };
     } else {
       // Apply penalty for overplay
       currentPlayerState.hp -= 2;
       currentPlayerState.fatigue += 1;
       currentPlayerState.extraPlaysRemaining -= 1;
-      matchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: matchState.turn });
+      newMatchState.log.push({ message: 'Penalty: Overplay - Lost 2 HP and gained 1 Fatigue', turn: newMatchState.turn });
       
       // Immediately end turn
       
-      return { success: false, matchState, playerState, opponentState };
+      return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState };
     }
   }
   
@@ -210,15 +215,15 @@ export function playCard(
   }
   
   if (!card) {
-    return { success: false, matchState, playerState, opponentState }
+    return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   if (currentPlayerState.hp + card.cost.HP < 0) {
-    return { success: false, matchState, playerState, opponentState }
+    return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   if (currentPlayerState.mp + card.cost.MP < 0) {
-    return { success: false, matchState, playerState, opponentState }
+    return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   // Pay costs
@@ -245,7 +250,7 @@ export function playCard(
         maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
         maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
         remainingDuration: typeof card.duration === 'number' ? card.duration : undefined,
-        playedOnTurn: matchState.turn,
+        playedOnTurn: newMatchState.turn,
         canAttack: false // Cannot attack on the turn it's played
       };
       
@@ -255,13 +260,13 @@ export function playCard(
       currentPlayerState.hand.splice(cardIndex, 1);
       
       // Add to log
-      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
+      newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: newMatchState.turn });
     } else {
       // This is a persistent champion - check if player already has a champion
       if (currentPlayerState.champions && currentPlayerState.champions.length > 0) {
         // Player already has a champion, cannot play another one
-        matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play champion - already has one in play`, turn: matchState.turn });
-        return { success: false, matchState, playerState, opponentState };
+        newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play champion - already has one in play`, turn: newMatchState.turn });
+        return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState };
       }
       
       // Add champion to player's champions (only one allowed)
@@ -284,14 +289,14 @@ export function playCard(
       currentPlayerState.hand.splice(cardIndex, 1);
       
       // Add to log
-      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played champion ${card.title}`, turn: matchState.turn });
+      newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played champion ${card.title}`, turn: newMatchState.turn });
     }
   } else if (card.type === 'skills') {
     // This is a skill card - check if player has a champion to attach it to
     if (!currentPlayerState.champions || currentPlayerState.champions.length === 0) {
       // No champion to attach skill to
-      matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play skill card - no champion in play`, turn: matchState.turn });
-      return { success: false, matchState, playerState, opponentState };
+      newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play skill card - no champion in play`, turn: newMatchState.turn });
+      return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState };
     }
     
     // Attach skill to the first champion (since only one champion is allowed)
@@ -301,7 +306,7 @@ export function playCard(
     currentPlayerState.hand.splice(cardIndex, 1);
     
     // Add to log
-    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} attached skill ${card.title} to champion`, turn: matchState.turn });
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} attached skill ${card.title} to champion`, turn: newMatchState.turn });
   } else if (card.duration !== undefined || card.creatureStats !== undefined) {
     // This is a creature card that stays in play
     const instanceId = `${cardId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -318,7 +323,7 @@ export function playCard(
       maxHp: card.creatureStats?.maxHp || (card.creatureStats?.hp || 1),
       maxMp: card.creatureStats?.maxMp || (card.creatureStats?.mp || 0),
       remainingDuration: typeof card.duration === 'number' ? card.duration : undefined,
-      playedOnTurn: matchState.turn,
+      playedOnTurn: newMatchState.turn,
       canAttack: false // Cannot attack on the turn it's played
     };
     
@@ -328,7 +333,7 @@ export function playCard(
     currentPlayerState.hand.splice(cardIndex, 1);
     
     // Add to log
-    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: matchState.turn });
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played creature ${card.title}`, turn: newMatchState.turn });
   } else {
     // Move card from hand to discard (instant effect cards)
     currentPlayerState.hand.splice(cardIndex, 1)
@@ -351,18 +356,18 @@ export function playCard(
       const damageMatch = card.effect.match(/deal (\d+) damage/i);
       if (damageMatch) {
         const damage = parseInt(damageMatch[1]);
-        dealDamage(matchState, currentPlayerState, otherPlayerState, damage, collections, cardId);
+        dealDamage(newMatchState, currentPlayerState, otherPlayerState, damage, collections, cardId);
       }
     }
     
     // Add to log
-    matchState.log.push({ message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played ${card.title}`, turn: matchState.turn });
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} played ${card.title}`, turn: newMatchState.turn });
   }
   
   // Decrement extra plays
   currentPlayerState.extraPlaysRemaining -= 1
   
-  return { success: true, matchState, playerState, opponentState }
+  return { success: true, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
 }
 
 // Function to deal damage, targeting creatures first, then champions, then player HP
@@ -463,168 +468,179 @@ export function endTurn(
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Create deep copies of the input objects to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  const newOpponentState: PlayerState = JSON.parse(JSON.stringify(opponentState));
+  
   // Store the current active player state before processing
-  const currentPlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
-  const maxPlaysAllowed = currentPlayerState.fatigue < 3 ? 2 : currentPlayerState.fatigue <= 5 ? 1 : 0;
-  const cardsPlayedThisTurn = currentPlayerState.extraPlaysRemaining < maxPlaysAllowed;
+  const currentPlayerState = newMatchState.activePlayer === 'player' ? newPlayerState : newOpponentState;
+  const originalPlayerState = newMatchState.activePlayer === 'player' ? playerState : opponentState;
+  const maxPlaysAllowed = originalPlayerState.fatigue < 3 ? 2 : originalPlayerState.fatigue <= 5 ? 1 : 0;
+  const cardsPlayedThisTurn = originalPlayerState.extraPlaysRemaining < maxPlaysAllowed;
   
   // Check duration-based card expiration for both players
-  checkDurationExpiration(matchState, playerState, collections);
-  checkDurationExpiration(matchState, opponentState, collections);
+  checkDurationExpiration(newMatchState, newPlayerState, collections);
+  checkDurationExpiration(newMatchState, newOpponentState, collections);
   
   // Check for creatures with HP or MP at zero or below
-  checkCreatureStats(matchState, playerState, collections);
-  checkCreatureStats(matchState, opponentState, collections);
+  checkCreatureStats(newMatchState, newPlayerState, collections);
+  checkCreatureStats(newMatchState, newOpponentState, collections);
   
   // Check for champions with HP at zero or below
-  checkChampionStats(matchState, playerState, collections);
-  checkChampionStats(matchState, opponentState, collections);
+  checkChampionStats(newMatchState, newPlayerState, collections);
+  checkChampionStats(newMatchState, newOpponentState, collections);
   
   // Enable creatures to attack on subsequent turns
-  if (playerState.creaturesInPlay) {
-    playerState.creaturesInPlay.forEach(creature => {
-      if (creature.playedOnTurn < matchState.turn) {
+  if (newPlayerState.creaturesInPlay) {
+    newPlayerState.creaturesInPlay.forEach(creature => {
+      if (creature.playedOnTurn < newMatchState.turn) {
         creature.canAttack = true;
       }
     });
   }
   
-  if (opponentState.creaturesInPlay) {
-    opponentState.creaturesInPlay.forEach(creature => {
-      if (creature.playedOnTurn < matchState.turn) {
+  if (newOpponentState.creaturesInPlay) {
+    newOpponentState.creaturesInPlay.forEach(creature => {
+      if (creature.playedOnTurn < newMatchState.turn) {
         creature.canAttack = true;
       }
     });
   }
   
   // Combat phase: creatures deal damage to opponent's creatures/player
-  processCombatPhase(matchState, playerState, opponentState, collections);
+  processCombatPhase(newMatchState, newPlayerState, newOpponentState, collections);
   
   // Cleanup phase
   // Discard down to hand limit
-  while (playerState.hand.length > GAME_HAND_LIMIT) {
-    const cardId = playerState.hand.pop()
+  while (newPlayerState.hand.length > GAME_HAND_LIMIT) {
+    const cardId = newPlayerState.hand.pop()
     if (cardId) {
-      playerState.discard.push(cardId)
+      newPlayerState.discard.push(cardId)
       // Add log message for discarded card
-      matchState.log.push({
+      newMatchState.log.push({
         message: `Player discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
-        turn: matchState.turn
+        turn: newMatchState.turn
       });
     }
   }
   
   // Also check opponent hand limit
-  while (opponentState.hand.length > GAME_HAND_LIMIT) {
-    const cardId = opponentState.hand.pop()
+  while (newOpponentState.hand.length > GAME_HAND_LIMIT) {
+    const cardId = newOpponentState.hand.pop()
     if (cardId) {
-      opponentState.discard.push(cardId)
+      newOpponentState.discard.push(cardId)
       // Add log message for discarded card
-      matchState.log.push({
+      newMatchState.log.push({
         message: `Opponent discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
-        turn: matchState.turn
+        turn: newMatchState.turn
       });
     }
   }
   
   // Increment turn
-  matchState.turn += 1
+  newMatchState.turn = newMatchState.turn + 1
   
   // Switch active player
-  const previousPlayer = matchState.activePlayer
-  matchState.activePlayer = matchState.activePlayer === 'player' ? 'opponent' : 'player'
+  const previousPlayer = newMatchState.activePlayer
+  newMatchState.activePlayer = newMatchState.activePlayer === 'player' ? 'opponent' : 'player'
   
   // Perform start phase actions for the new active player (skip separate start phase)
   const startDetails: any = {
     mpRestored: 0,
-    hand: matchState.activePlayer === 'player' ? [...playerState.hand] : [...opponentState.hand],
+    hand: newMatchState.activePlayer === 'player' ? [...newPlayerState.hand] : [...newOpponentState.hand],
     cardDrawn: null
   };
   
   // Restore MP for active player
-  if (matchState.activePlayer === 'player') {
-    const mpBefore = playerState.mp;
-    playerState.mp = Math.min(playerState.mp + 3, 10);
-    startDetails.mpRestored = playerState.mp - mpBefore;
+  if (newMatchState.activePlayer === 'player') {
+    const mpBefore = newPlayerState.mp;
+    newPlayerState.mp = Math.min(newPlayerState.mp + 3, 10);
+    startDetails.mpRestored = newPlayerState.mp - mpBefore;
   } else {
-    const mpBefore = opponentState.mp;
-    opponentState.mp = Math.min(opponentState.mp + 3, 10);
-    startDetails.mpRestored = opponentState.mp - mpBefore;
+    const mpBefore = newOpponentState.mp;
+    newOpponentState.mp = Math.min(newOpponentState.mp + 3, 10);
+    startDetails.mpRestored = newOpponentState.mp - mpBefore;
   }
   
   // Draw a card for the active player
   let drawnCardId = null;
-  if (matchState.activePlayer === 'player' && playerState.deck.length > 0) {
+  if (newMatchState.activePlayer === 'player' && newPlayerState.deck.length > 0) {
     // Check if player's hand is at maximum capacity
-    if (playerState.hand.length >= GAME_HAND_LIMIT) {
+    if (newPlayerState.hand.length >= GAME_HAND_LIMIT) {
       // Cannot draw card - hand is full
-      matchState.log.push({
+      newMatchState.log.push({
         message: `Player could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
-        turn: matchState.turn
+        turn: newMatchState.turn
       });
     } else {
-      const drawnCard = playerState.deck.pop()
+      const drawnCard = newPlayerState.deck.pop()
       if (drawnCard) {
-        playerState.hand.push(drawnCard)
+        newPlayerState.hand.push(drawnCard)
         drawnCardId = drawnCard;
-        startDetails.hand = [...playerState.hand];
+        startDetails.hand = [...newPlayerState.hand];
       }
     }
-  } else if (matchState.activePlayer === 'opponent' && opponentState.deck.length > 0) {
+  } else if (newMatchState.activePlayer === 'opponent' && newOpponentState.deck.length > 0) {
     // Check if opponent's hand is at maximum capacity
-    if (opponentState.hand.length >= GAME_HAND_LIMIT) {
+    if (newOpponentState.hand.length >= GAME_HAND_LIMIT) {
       // Cannot draw card - hand is full
-      matchState.log.push({
+      newMatchState.log.push({
         message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
-        turn: matchState.turn
+        turn: newMatchState.turn
       });
     } else {
-      const drawnCard = opponentState.deck.pop()
+      const drawnCard = newOpponentState.deck.pop()
       if (drawnCard) {
-        opponentState.hand.push(drawnCard)
+        newOpponentState.hand.push(drawnCard)
         drawnCardId = drawnCard;
-        startDetails.hand = [...opponentState.hand];
+        startDetails.hand = [...newOpponentState.hand];
       }
     }
   }
   
   // Reset play limit for active player based on fatigue
-  const activePlayerState = matchState.activePlayer === 'player' ? playerState : opponentState;
-  const maxPlays = activePlayerState.fatigue < 3 ? 2 : activePlayerState.fatigue <= 5 ? 1 : 0;
+  const activePlayerState = newMatchState.activePlayer === 'player' ? newPlayerState : newOpponentState;
+  const originalActivePlayerState = newMatchState.activePlayer === 'player' ? playerState : opponentState;
+  const maxPlays = originalActivePlayerState.fatigue < 3 ? 2 : originalActivePlayerState.fatigue <= 5 ? 1 : 0;
   
-  if (matchState.activePlayer === 'player') {
-    playerState.extraPlaysRemaining = maxPlays;
+  if (newMatchState.activePlayer === 'player') {
+    newPlayerState.extraPlaysRemaining = maxPlays;
   } else {
-    opponentState.extraPlaysRemaining = maxPlays;
+    newOpponentState.extraPlaysRemaining = maxPlays;
   }
   
   // Add log entries for start phase actions
   if (startDetails.mpRestored > 0) {
-    matchState.log.push({
-      message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} restored ${startDetails.mpRestored} MP`,
-      turn: matchState.turn
+    newMatchState.log.push({
+      message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} restored ${startDetails.mpRestored} MP`,
+      turn: newMatchState.turn
     });
   }
   
   if (drawnCardId) {
-    matchState.log.push({
-      message: `${matchState.activePlayer === 'player' ? 'Player' : 'Opponent'} drew a card`,
-      turn: matchState.turn
+    newMatchState.log.push({
+      message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} drew a card`,
+      turn: newMatchState.turn
     });
   }
   
   // Skip to main phase directly
-  matchState.phase = 'main'
+  newMatchState.phase = 'main'
   
   // If the previous player didn't play any cards, decrease their fatigue by 1
   if (!cardsPlayedThisTurn && maxPlaysAllowed > 0) {
-    currentPlayerState.fatigue = Math.max(0, currentPlayerState.fatigue - 1);
+    if (previousPlayer === 'player') {
+      newPlayerState.fatigue = Math.max(0, newPlayerState.fatigue - 1);
+    } else {
+      newOpponentState.fatigue = Math.max(0, newOpponentState.fatigue - 1);
+    }
   }
   
   return {
-    matchState,
-    playerState,
-    opponentState
+    matchState: newMatchState,
+    playerState: newPlayerState,
+    opponentState: newOpponentState
   }
 }
 
@@ -919,14 +935,19 @@ export function concedeMatch(
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Create deep copies of the input objects to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  const newOpponentState: PlayerState = JSON.parse(JSON.stringify(opponentState));
+  
   // Set player HP to 0 to trigger loss
-  playerState.hp = 0
-  matchState.log.push({ message: 'Player conceded the match', turn: matchState.turn })
+  newPlayerState.hp = 0
+  newMatchState.log.push({ message: 'Player conceded the match', turn: newMatchState.turn })
   
   return {
-    matchState,
-    playerState,
-    opponentState
+    matchState: newMatchState,
+    playerState: newPlayerState,
+    opponentState: newOpponentState
   }
 }
 
@@ -1142,21 +1163,25 @@ export function discardChampion(
   matchState: MatchState
   playerState: PlayerState
 } {
-  if (!playerState.champions || championIndex < 0 || championIndex >= playerState.champions.length) {
-    return { success: false, matchState, playerState };
+  // Create deep copies of the input objects to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  
+  if (!newPlayerState.champions || championIndex < 0 || championIndex >= newPlayerState.champions.length) {
+    return { success: false, matchState: newMatchState, playerState: newPlayerState };
   }
   
-  const champion = playerState.champions[championIndex];
+  const champion = newPlayerState.champions[championIndex];
   const cardId = champion.cardId;
   
   // Remove champion from play and add to discard pile
-  playerState.champions.splice(championIndex, 1);
-  playerState.discard.push(cardId);
+  newPlayerState.champions.splice(championIndex, 1);
+  newPlayerState.discard.push(cardId);
   
   // Add to log
-  matchState.log.push({ message: `Player discarded champion`, turn: matchState.turn });
+  newMatchState.log.push({ message: `Player discarded champion`, turn: newMatchState.turn });
   
-  return { success: true, matchState, playerState };
+  return { success: true, matchState: newMatchState, playerState: newPlayerState };
 }
 
 // Function to discard a card from hand
@@ -1195,19 +1220,23 @@ export function discardCreature(
   matchState: MatchState
   playerState: PlayerState
 } {
-  if (!playerState.creaturesInPlay || creatureIndex < 0 || creatureIndex >= playerState.creaturesInPlay.length) {
-    return { success: false, matchState, playerState };
+  // Create deep copies of the input objects to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  
+  if (!newPlayerState.creaturesInPlay || creatureIndex < 0 || creatureIndex >= newPlayerState.creaturesInPlay.length) {
+    return { success: false, matchState: newMatchState, playerState: newPlayerState };
   }
   
-  const creature = playerState.creaturesInPlay[creatureIndex];
+  const creature = newPlayerState.creaturesInPlay[creatureIndex];
   const cardId = creature.cardId;
   
   // Remove creature from play and add to discard pile
-  playerState.creaturesInPlay.splice(creatureIndex, 1);
-  playerState.discard.push(cardId);
+  newPlayerState.creaturesInPlay.splice(creatureIndex, 1);
+  newPlayerState.discard.push(cardId);
   
   // Add to log
-  matchState.log.push({ message: `Player discarded creature`, turn: matchState.turn });
+  newMatchState.log.push({ message: `Player discarded creature`, turn: newMatchState.turn });
   
-  return { success: true, matchState, playerState };
+  return { success: true, matchState: newMatchState, playerState: newPlayerState };
 }

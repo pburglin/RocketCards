@@ -486,7 +486,11 @@ export default function GamePage() {
                                   setTimeout(() => setCardRemovalAnimation(null), 1000);
                                 }
                                 audioService.playDamageSound();
-                                discardHandCard(index);
+                                const success = discardHandCard(index);
+                                if (!success) {
+                                  setPenaltyMessage('Failed to discard card');
+                                  setShowPenalty(true);
+                                }
                               }}
                               className="mt-2 w-full"
                             >
