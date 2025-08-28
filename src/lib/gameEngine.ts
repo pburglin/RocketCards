@@ -70,6 +70,7 @@ export function initializeMatch(options: {
   timedMatch?: boolean
   mulliganEnabled?: boolean
   seed?: string
+  turnInitiative?: 'player' | 'random' | 'opponent'
 }): {
   matchState: MatchState
   playerState: PlayerState
@@ -113,7 +114,8 @@ export function initializeMatch(options: {
     },
     timedMatch: options.timedMatch,
     mulliganEnabled: options.mulliganEnabled,
-    rngSeed: options.seed || generateRandomSeed()
+    rngSeed: options.seed || generateRandomSeed(),
+    turnInitiative: options.turnInitiative
   }
   
   const playerState: PlayerState = {
@@ -541,9 +543,27 @@ export function endTurn(
   // Increment turn
   newMatchState.turn = newMatchState.turn + 1
   
-  // Switch active player
+  // Switch active player based on turn initiative
   const previousPlayer = newMatchState.activePlayer
-  newMatchState.activePlayer = newMatchState.activePlayer === 'player' ? 'opponent' : 'player'
+  if (newMatchState.turnInitiative === 'player') {
+    // Player always starts first in the turn
+    newMatchState.activePlayer = 'player'
+  } else if (newMatchState.turnInitiative === 'opponent') {
+    // Opponent always starts first in the turn
+    newMatchState.activePlayer = 'opponent'
+  } else {
+    // Random - randomly assign who starts each turn
+    // Use the seed and turn number to generate a deterministic random value
+    const seedString = newMatchState.rngSeed + newMatchState.turn;
+    let seedValue = 0;
+    for (let i = 0; i < seedString.length; i++) {
+      seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
+      seedValue |= 0; // Convert to 32bit integer
+    }
+    // Use a simple hash to determine random player (0 or 1)
+    const randomValue = Math.abs(seedValue) % 2;
+    newMatchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
+  }
   
   // Perform start phase actions for the new active player (skip separate start phase)
   const startDetails: any = {

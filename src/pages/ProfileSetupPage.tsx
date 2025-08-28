@@ -422,7 +422,7 @@ export default function ProfileSetupPage() {
             )}
             
             <div className="mt-8 p-4 bg-surface-light rounded-lg">
-              <h3 className="font-bold mb-2">How to Purchase Cards</h3>
+              <h3 className="font-bold mb-2">How to Unlock Cards</h3>
               <p className="text-sm text-text-secondary">
                 Special cards can be unlocked here and in the Deck Builder in exchange for game tokens. Look for cards with the token cost indicator and click the "Unlock" button to purchase them with your tokens.
               </p>

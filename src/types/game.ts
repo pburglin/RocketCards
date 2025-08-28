@@ -2,6 +2,7 @@ export type CardType = 'events' | 'champions' | 'tactics' | 'skills';
 export type CardRarity = 'common' | 'rare' | 'unique';
 export type Strategy = 'aggressive' | 'balanced' | 'defensive';
 export type KeyStat = 'strength' | 'intelligence' | 'charisma';
+export type TurnInitiative = 'player' | 'random' | 'opponent';
 
 export interface Card {
   id: string;
@@ -115,4 +116,5 @@ export interface MatchState {
   rules: MatchRules;
   timedMatch?: boolean;
   mulliganEnabled?: boolean;
+  turnInitiative?: TurnInitiative;
 }

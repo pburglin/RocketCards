@@ -4,7 +4,7 @@ import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Label } from '../components/ui/Label'
 import { useGameStore } from '../store/gameStore'
-import { Gamepad2, User, Settings, Clock, Shuffle } from 'lucide-react'
+import { Gamepad2, User, Settings, Clock, Shuffle, Users } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function PlayLobbyPage() {
@@ -15,6 +15,7 @@ export default function PlayLobbyPage() {
   const [timedMatch, setTimedMatch] = useState(true)
   const [mulliganEnabled, setMulliganEnabled] = useState(true)
   const [seed, setSeed] = useState('')
+  const [turnInitiative, setTurnInitiative] = useState<'player' | 'random' | 'opponent'>('random')
   const [errors, setErrors] = useState<{deck?: string}>({})
   const [showLoading, setShowLoading] = useState(false)
   
@@ -59,7 +60,8 @@ export default function PlayLobbyPage() {
         aiDifficulty,
         timedMatch,
         mulliganEnabled,
-        seed: seed || undefined
+        seed: seed || undefined,
+        turnInitiative
       })
       
       setShowLoading(false);
@@ -219,6 +221,50 @@ export default function PlayLobbyPage() {
                     onChange={(e) => setMulliganEnabled(e.target.checked)}
                     className="toggle toggle-primary"
                   />
+                </div>
+                
+                <div className="p-4 bg-surface-light rounded-lg">
+                  <Label className="mb-2 block">Turn Initiative</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                        turnInitiative === 'player'
+                          ? 'bg-primary text-white'
+                          : 'bg-surface border border-border text-text'
+                      }`}
+                      onClick={() => setTurnInitiative('player')}
+                    >
+                      Player
+                    </button>
+                    <button
+                      type="button"
+                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                        turnInitiative === 'random'
+                          ? 'bg-primary text-white'
+                          : 'bg-surface border border-border text-text'
+                      }`}
+                      onClick={() => setTurnInitiative('random')}
+                    >
+                      Random
+                    </button>
+                    <button
+                      type="button"
+                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                        turnInitiative === 'opponent'
+                          ? 'bg-primary text-white'
+                          : 'bg-surface border border-border text-text'
+                      }`}
+                      onClick={() => setTurnInitiative('opponent')}
+                    >
+                      Opponent
+                    </button>
+                  </div>
+                  <p className="mt-2 text-sm text-text-secondary">
+                    {turnInitiative === 'player' && 'Player always starts first each turn'}
+                    {turnInitiative === 'random' && 'Randomly determine who starts each turn'}
+                    {turnInitiative === 'opponent' && 'Opponent always starts first each turn'}
+                  </p>
                 </div>
               </div>
             </div>

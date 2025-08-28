@@ -61,6 +61,7 @@ interface GameStore {
     timedMatch?: boolean
     mulliganEnabled?: boolean
     seed?: string
+    turnInitiative?: 'player' | 'random' | 'opponent'
   }) => void
   playCard: (cardId: string) => boolean
   endTurn: () => void
@@ -349,7 +350,8 @@ export const useGameStore = create<GameStore>()(
           aiDifficulty: options.aiDifficulty || 'medium',
           timedMatch: options.timedMatch ?? true,
           mulliganEnabled: options.mulliganEnabled ?? true,
-          seed: options.seed
+          seed: options.seed,
+          turnInitiative: options.turnInitiative
         })
         
         set({
