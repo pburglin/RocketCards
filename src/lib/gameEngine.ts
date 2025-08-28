@@ -105,7 +105,7 @@ export function initializeMatch(options: {
   const matchState: MatchState = {
     turn: 1,
     phase: 'main',
-    activePlayer: 'player',
+    activePlayer: 'player', // This will be overridden below based on turnInitiative
     log: [],
     rules: {
       handLimit: GAME_HAND_LIMIT,
@@ -115,7 +115,26 @@ export function initializeMatch(options: {
     timedMatch: options.timedMatch,
     mulliganEnabled: options.mulliganEnabled,
     rngSeed: options.seed || generateRandomSeed(),
-    turnInitiative: options.turnInitiative
+    turnInitiative: options.turnInitiative,
+    currentPlayerInTurn: 'first' // Track which player is currently playing within the turn
+  }
+  
+  // Set the active player based on turn initiative for the first turn
+  if (options.turnInitiative === 'player') {
+    matchState.activePlayer = 'player';
+  } else if (options.turnInitiative === 'opponent') {
+    matchState.activePlayer = 'opponent';
+  } else if (options.turnInitiative === 'random') {
+    // Use the seed to generate a deterministic random value for the first turn
+    const seedString = matchState.rngSeed + matchState.turn;
+    let seedValue = 0;
+    for (let i = 0; i < seedString.length; i++) {
+      seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
+      seedValue |= 0; // Convert to 32bit integer
+    }
+    // Use a simple hash to determine random player (0 or 1)
+    const randomValue = Math.abs(seedValue) % 2;
+    matchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
   }
   
   const playerState: PlayerState = {
@@ -540,29 +559,51 @@ export function endTurn(
     }
   }
   
-  // Increment turn
-  newMatchState.turn = newMatchState.turn + 1
+  // Determine the next player based on currentPlayerInTurn and turnInitiative
+  const previousPlayer = newMatchState.activePlayer;
+  let turnIncremented = false;
   
-  // Switch active player based on turn initiative
-  const previousPlayer = newMatchState.activePlayer
-  if (newMatchState.turnInitiative === 'player') {
-    // Player always starts first in the turn
-    newMatchState.activePlayer = 'player'
-  } else if (newMatchState.turnInitiative === 'opponent') {
-    // Opponent always starts first in the turn
-    newMatchState.activePlayer = 'opponent'
-  } else {
-    // Random - randomly assign who starts each turn
-    // Use the seed and turn number to generate a deterministic random value
-    const seedString = newMatchState.rngSeed + newMatchState.turn;
-    let seedValue = 0;
-    for (let i = 0; i < seedString.length; i++) {
-      seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
-      seedValue |= 0; // Convert to 32bit integer
+  // If this is the first player's turn within the current turn
+  if (newMatchState.currentPlayerInTurn === 'first') {
+    // Switch to the second player within the same turn
+    if (newMatchState.turnInitiative === 'player') {
+      // Player was first, so opponent is second
+      newMatchState.activePlayer = 'opponent';
+    } else if (newMatchState.turnInitiative === 'opponent') {
+      // Opponent was first, so player is second
+      newMatchState.activePlayer = 'player';
+    } else {
+      // Random - determine second player based on who was first
+      // If player was first, opponent is second, and vice versa
+      newMatchState.activePlayer = previousPlayer === 'player' ? 'opponent' : 'player';
     }
-    // Use a simple hash to determine random player (0 or 1)
-    const randomValue = Math.abs(seedValue) % 2;
-    newMatchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
+    newMatchState.currentPlayerInTurn = 'second';
+  } else {
+    // This is the second player's turn, so we complete the turn and start a new one
+    newMatchState.turn = newMatchState.turn + 1;
+    turnIncremented = true;
+    
+    // Determine who starts the next turn based on turnInitiative
+    if (newMatchState.turnInitiative === 'player') {
+      // Player always starts first in the turn
+      newMatchState.activePlayer = 'player';
+    } else if (newMatchState.turnInitiative === 'opponent') {
+      // Opponent always starts first in the turn
+      newMatchState.activePlayer = 'opponent';
+    } else {
+      // Random - randomly assign who starts each turn
+      // Use the seed and turn number to generate a deterministic random value
+      const seedString = newMatchState.rngSeed + newMatchState.turn;
+      let seedValue = 0;
+      for (let i = 0; i < seedString.length; i++) {
+        seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
+        seedValue |= 0; // Convert to 32bit integer
+      }
+      // Use a simple hash to determine random player (0 or 1)
+      const randomValue = Math.abs(seedValue) % 2;
+      newMatchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
+    }
+    newMatchState.currentPlayerInTurn = 'first';
   }
   
   // Perform start phase actions for the new active player (skip separate start phase)
@@ -572,54 +613,71 @@ export function endTurn(
     cardDrawn: null
   };
   
-  // Restore MP for active player
-  if (newMatchState.activePlayer === 'player') {
-    const mpBefore = newPlayerState.mp;
-    newPlayerState.mp = Math.min(newPlayerState.mp + 3, 10);
-    startDetails.mpRestored = newPlayerState.mp - mpBefore;
-  } else {
-    const mpBefore = newOpponentState.mp;
-    newOpponentState.mp = Math.min(newOpponentState.mp + 3, 10);
-    startDetails.mpRestored = newOpponentState.mp - mpBefore;
-  }
-  
-  // Draw a card for the active player
-  let drawnCardId = null;
-  if (newMatchState.activePlayer === 'player' && newPlayerState.deck.length > 0) {
-    // Check if player's hand is at maximum capacity
-    if (newPlayerState.hand.length >= GAME_HAND_LIMIT) {
-      // Cannot draw card - hand is full
-      newMatchState.log.push({
-        message: `Player could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
-        turn: newMatchState.turn
-      });
+  // Restore MP for active player (only when starting a new turn, not when switching players within turn)
+  if (turnIncremented) {
+    if (newMatchState.activePlayer === 'player') {
+      const mpBefore = newPlayerState.mp;
+      newPlayerState.mp = Math.min(newPlayerState.mp + 3, 10);
+      startDetails.mpRestored = newPlayerState.mp - mpBefore;
     } else {
-      const drawnCard = newPlayerState.deck.pop()
-      if (drawnCard) {
-        newPlayerState.hand.push(drawnCard)
-        drawnCardId = drawnCard;
-        startDetails.hand = [...newPlayerState.hand];
+      const mpBefore = newOpponentState.mp;
+      newOpponentState.mp = Math.min(newOpponentState.mp + 3, 10);
+      startDetails.mpRestored = newOpponentState.mp - mpBefore;
+    }
+    
+    // Draw a card for the active player (only when starting a new turn)
+    let drawnCardId = null;
+    if (newMatchState.activePlayer === 'player' && newPlayerState.deck.length > 0) {
+      // Check if player's hand is at maximum capacity
+      if (newPlayerState.hand.length >= GAME_HAND_LIMIT) {
+        // Cannot draw card - hand is full
+        newMatchState.log.push({
+          message: `Player could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+          turn: newMatchState.turn
+        });
+      } else {
+        const drawnCard = newPlayerState.deck.pop()
+        if (drawnCard) {
+          newPlayerState.hand.push(drawnCard)
+          drawnCardId = drawnCard;
+          startDetails.hand = [...newPlayerState.hand];
+        }
+      }
+    } else if (newMatchState.activePlayer === 'opponent' && newOpponentState.deck.length > 0) {
+      // Check if opponent's hand is at maximum capacity
+      if (newOpponentState.hand.length >= GAME_HAND_LIMIT) {
+        // Cannot draw card - hand is full
+        newMatchState.log.push({
+          message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+          turn: newMatchState.turn
+        });
+      } else {
+        const drawnCard = newOpponentState.deck.pop()
+        if (drawnCard) {
+          newOpponentState.hand.push(drawnCard)
+          drawnCardId = drawnCard;
+          startDetails.hand = [...newOpponentState.hand];
+        }
       }
     }
-  } else if (newMatchState.activePlayer === 'opponent' && newOpponentState.deck.length > 0) {
-    // Check if opponent's hand is at maximum capacity
-    if (newOpponentState.hand.length >= GAME_HAND_LIMIT) {
-      // Cannot draw card - hand is full
+    
+    // Add log entries for start phase actions
+    if (startDetails.mpRestored > 0) {
       newMatchState.log.push({
-        message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+        message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} restored ${startDetails.mpRestored} MP`,
         turn: newMatchState.turn
       });
-    } else {
-      const drawnCard = newOpponentState.deck.pop()
-      if (drawnCard) {
-        newOpponentState.hand.push(drawnCard)
-        drawnCardId = drawnCard;
-        startDetails.hand = [...newOpponentState.hand];
-      }
+    }
+    
+    if (drawnCardId) {
+      newMatchState.log.push({
+        message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} drew a card`,
+        turn: newMatchState.turn
+      });
     }
   }
   
-  // Reset play limit for active player based on fatigue
+  // Reset play limit for active player based on fatigue (always reset when player changes)
   const activePlayerState = newMatchState.activePlayer === 'player' ? newPlayerState : newOpponentState;
   const originalActivePlayerState = newMatchState.activePlayer === 'player' ? playerState : opponentState;
   const maxPlays = originalActivePlayerState.fatigue < 3 ? 2 : originalActivePlayerState.fatigue <= 5 ? 1 : 0;
@@ -630,26 +688,11 @@ export function endTurn(
     newOpponentState.extraPlaysRemaining = maxPlays;
   }
   
-  // Add log entries for start phase actions
-  if (startDetails.mpRestored > 0) {
-    newMatchState.log.push({
-      message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} restored ${startDetails.mpRestored} MP`,
-      turn: newMatchState.turn
-    });
-  }
-  
-  if (drawnCardId) {
-    newMatchState.log.push({
-      message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} drew a card`,
-      turn: newMatchState.turn
-    });
-  }
-  
   // Skip to main phase directly
   newMatchState.phase = 'main'
   
-  // If the previous player didn't play any cards, decrease their fatigue by 1
-  if (!cardsPlayedThisTurn && maxPlaysAllowed > 0) {
+  // If the previous player didn't play any cards, decrease their fatigue by 1 (only when completing a full turn)
+  if (turnIncremented && !cardsPlayedThisTurn && maxPlaysAllowed > 0) {
     if (previousPlayer === 'player') {
       newPlayerState.fatigue = Math.max(0, newPlayerState.fatigue - 1);
     } else {
@@ -1104,7 +1147,12 @@ export function playOpponentAI(
   if (opponentState.hand.length === 0 || opponentState.extraPlaysRemaining <= 0) {
     matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
     console.log('Opponent ended their turn - no plays available');
-    return { matchState, playerState, opponentState };
+    // Return the current state - let the calling function handle turn ending
+    return {
+      matchState,
+      playerState,
+      opponentState
+    };
   }
   
   // Evaluate current board state
@@ -1170,7 +1218,12 @@ export function playOpponentAI(
   // If no card was played, end the turn
   matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
   console.log('Opponent ended their turn');
-  return { matchState, playerState, opponentState };
+  // Return the current state - let the calling function handle turn ending
+  return {
+    matchState,
+    playerState,
+    opponentState
+  };
 }
 
 // Function to discard a champion

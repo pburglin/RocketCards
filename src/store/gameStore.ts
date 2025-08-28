@@ -360,24 +360,64 @@ export const useGameStore = create<GameStore>()(
           opponentState: match.opponentState
         })
         
+        // If opponent should play first, trigger AI after a short delay
+        if (match.matchState.activePlayer === 'opponent' && match.matchState.phase === 'main') {
+          setTimeout(() => {
+            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
+            if (currentMatchState && currentPlayerState && currentOpponentState) {
+              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
+              set({
+                matchState: aiResult.matchState,
+                playerState: aiResult.playerState,
+                opponentState: aiResult.opponentState
+              })
+              
+              // Check if the opponent has ended their turn (look for the "Opponent ended their turn" log message)
+              // If so, we need to end the turn again to move to the next player
+              const opponentEndedTurn = aiResult.matchState.log.some(logEntry =>
+                logEntry.message === 'Opponent ended their turn' && logEntry.turn === aiResult.matchState.turn
+              );
+              if (opponentEndedTurn) {
+                // The opponent has ended their turn, so we need to end the turn again
+                setTimeout(() => {
+                  const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
+                  if (finalMatchState && finalPlayerState && finalOpponentState) {
+                    const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
+                    set({
+                      matchState: finalResult.matchState,
+                      playerState: finalResult.playerState,
+                      opponentState: finalResult.opponentState
+                    })
+                  }
+                }, 500)
+              }
+            }
+          }, 500)
+        }
+        
       },
       playCard: (cardId) => {
-        const { matchState, playerState, opponentState, collections } = get()
-        if (!matchState || !playerState || !opponentState) return false
-        
-        const result = playCard(matchState, playerState, opponentState, cardId, collections)
-        if (result.success) {
-          set({
-            matchState: result.matchState,
-            playerState: result.playerState,
-            opponentState: result.opponentState
-          })
-          
-          
-          return true
-        }
-        return false
-      },
+              const { matchState, playerState, opponentState, collections } = get()
+              if (!matchState || !playerState || !opponentState) return false
+              
+              // Check if it's the player's turn
+              if (matchState.activePlayer !== 'player') {
+                return false
+              }
+              
+              const result = playCard(matchState, playerState, opponentState, cardId, collections)
+              if (result.success) {
+                set({
+                  matchState: result.matchState,
+                  playerState: result.playerState,
+                  opponentState: result.opponentState
+                })
+                
+                
+                return true
+              }
+              return false
+            },
       endTurn: () => {
         const { matchState, playerState, opponentState, collections } = get()
         if (!matchState || !playerState || !opponentState) return
@@ -401,6 +441,26 @@ export const useGameStore = create<GameStore>()(
                 playerState: aiResult.playerState,
                 opponentState: aiResult.opponentState
               })
+              
+              // Check if the opponent has ended their turn (look for the "Opponent ended their turn" log message)
+              // If so, we need to end the turn again to move to the next player
+              const opponentEndedTurn = aiResult.matchState.log.some(logEntry =>
+                logEntry.message === 'Opponent ended their turn' && logEntry.turn === aiResult.matchState.turn
+              );
+              if (opponentEndedTurn) {
+                // The opponent has ended their turn, so we need to end the turn again
+                setTimeout(() => {
+                  const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
+                  if (finalMatchState && finalPlayerState && finalOpponentState) {
+                    const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
+                    set({
+                      matchState: finalResult.matchState,
+                      playerState: finalResult.playerState,
+                      opponentState: finalResult.opponentState
+                    })
+                  }
+                }, 500)
+              }
             }
           }, 500)
         }

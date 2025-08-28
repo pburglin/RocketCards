@@ -77,39 +77,46 @@ export default function GamePage() {
   }, [matchState, navigate])
   
   // Timed match countdown
-  useEffect(() => {
-    if (matchState?.timedMatch && matchState.activePlayer === 'player') {
-      // Reset timer to 10 seconds
-      setTimeLeft(10)
-      
-      // Clear any existing timer
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
-      
-      // Start new timer
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            // Time's up - end turn automatically
-            if (timerRef.current) {
-              clearInterval(timerRef.current)
-            }
-            handleEndTurn()
-            return 10 // This will be reset by the useEffect when turn changes
-          }
-          return prev - 1
-        })
-      }, 1000)
-      
-      // Cleanup function
-      return () => {
+    useEffect(() => {
+      if (matchState?.timedMatch && matchState.activePlayer === 'player' && matchState.phase === 'main') {
+        // Reset timer to 10 seconds
+        setTimeLeft(10)
+        
+        // Clear any existing timer
         if (timerRef.current) {
           clearInterval(timerRef.current)
         }
+        
+        // Start new timer
+        timerRef.current = setInterval(() => {
+          setTimeLeft(prev => {
+            if (prev <= 1) {
+              // Time's up - end turn automatically
+              if (timerRef.current) {
+                clearInterval(timerRef.current)
+              }
+              handleEndTurn()
+              return 10 // This will be reset by the useEffect when turn changes
+            }
+            return prev - 1
+          })
+        }, 1000)
+        
+        // Cleanup function
+        return () => {
+          if (timerRef.current) {
+            clearInterval(timerRef.current)
+          }
+        }
+      } else if (matchState?.timedMatch) {
+        // Clear any existing timer when it's not player's turn or not in main phase
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+        }
+        // Reset timer to 10 seconds (but it won't count down)
+        setTimeLeft(10)
       }
-    }
-  }, [matchState?.turn, matchState?.activePlayer, matchState?.timedMatch])
+    }, [matchState?.turn, matchState?.activePlayer, matchState?.timedMatch, matchState?.phase])
   
   // Cleanup timer on unmount
   useEffect(() => {
@@ -276,35 +283,36 @@ export default function GamePage() {
   };
   
   const handlePlayCard = (cardId: string) => {
-    if (matchState?.phase !== 'main') return
-    
-    // Trigger card attack animation if animations are enabled
-    if (areAnimationsEnabled()) {
-      setCardAttackAnimation(cardId);
-      setTimeout(() => setCardAttackAnimation(null), 1000);
-    }
-    
-    // Play card sound
-    audioService.playCardSound();
-    
-    // Check if card can be played
-    const canPlay = playCardAction(cardId)
-    if (!canPlay) {
-      // Check if this is a skill card and there's no champion
-      let card = null;
-      for (const collection of collections) {
-        card = collection.cards.find((c: any) => c.id === cardId);
-        if (card) break;
+      if (matchState?.phase !== 'main') return
+      if (matchState?.activePlayer !== 'player') return // Don't allow playing when it's not player's turn
+      
+      // Trigger card attack animation if animations are enabled
+      if (areAnimationsEnabled()) {
+        setCardAttackAnimation(cardId);
+        setTimeout(() => setCardAttackAnimation(null), 1000);
       }
       
-      if (card && card.type === 'skills' && (!playerState?.champions || playerState.champions.length === 0)) {
-        setPenaltyMessage('Cannot play skill card - no champion in play. Play a champion first.')
-      } else {
-        setPenaltyMessage('Invalid play - check costs and phase')
+      // Play card sound
+      audioService.playCardSound();
+      
+      // Check if card can be played
+      const canPlay = playCardAction(cardId)
+      if (!canPlay) {
+        // Check if this is a skill card and there's no champion
+        let card = null;
+        for (const collection of collections) {
+          card = collection.cards.find((c: any) => c.id === cardId);
+          if (card) break;
+        }
+        
+        if (card && card.type === 'skills' && (!playerState?.champions || playerState.champions.length === 0)) {
+          setPenaltyMessage('Cannot play skill card - no champion in play. Play a champion first.')
+        } else {
+          setPenaltyMessage('Invalid play - check costs and phase')
+        }
+        setShowPenalty(true)
       }
-      setShowPenalty(true)
     }
-  }
   
   const handleEndTurn = () => {
     if (matchState?.phase !== 'main' && matchState?.phase !== 'battle') return
@@ -401,15 +409,21 @@ export default function GamePage() {
                     
                     return (
                       <div
-                        key={`${cardId}-${index}`}
-                        className={`relative card-hover-effect cursor-pointer rounded-lg shadow-lg overflow-hidden ${
-                          cardAttackAnimation === cardId ? 'animate-zoom' : ''
-                        } ${card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : 'bg-surface'}`}
-                        onClick={() => {
-                          setSelectedCard(card)
-                          setShowCardModal(true)
-                        }}
-                      >
+                                              key={`${cardId}-${index}`}
+                                              className={`relative card-hover-effect rounded-lg shadow-lg overflow-hidden ${
+                                                cardAttackAnimation === cardId ? 'animate-zoom' : ''
+                                              } ${card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : 'bg-surface'} ${
+                                                matchState?.activePlayer !== 'player' || matchState?.phase !== 'main'
+                                                  ? 'opacity-50 cursor-not-allowed'
+                                                  : 'cursor-pointer'
+                                              }`}
+                                              onClick={() => {
+                                                if (matchState?.activePlayer === 'player' && matchState?.phase === 'main') {
+                                                  setSelectedCard(card)
+                                                  setShowCardModal(true)
+                                                }
+                                              }}
+                                            >
                         <div className="relative">
                           <img
                             src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
@@ -467,15 +481,16 @@ export default function GamePage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
                           <div className="p-3 w-full">
                             <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePlayCard(cardId);
-                              }}
-                              className="w-full"
-                            >
-                              <Play className="w-4 h-4 mr-2" />
-                              Play
-                            </Button>
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handlePlayCard(cardId);
+                                                      }}
+                                                      className="w-full"
+                                                      disabled={matchState?.activePlayer !== 'player' || matchState?.phase !== 'main'}
+                                                    >
+                                                      <Play className="w-4 h-4 mr-2" />
+                                                      Play
+                                                    </Button>
                             <Button
                               variant="outline"
                               size="sm"
@@ -1216,30 +1231,41 @@ export default function GamePage() {
               Mulligan
             </Button>
             
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={handleEndTurn}
-            >
-              <Flag className="w-5 h-5 mr-2" />
-              End Turn
-            </Button>
+            <Button
+                          variant="outline"
+                          size="lg"
+                          onClick={handleEndTurn}
+                          disabled={matchState?.activePlayer !== 'player'}
+                        >
+                          <Flag className="w-5 h-5 mr-2" />
+                          End Turn
+                        </Button>
           </div>
           
           <div className="text-center">
-            <div className="text-2xl font-bold mb-1">
-              Turn {matchState?.turn}
-            </div>
-            <div className="text-sm text-text-secondary">
-              {matchState?.phase ? matchState.phase.charAt(0).toUpperCase() + matchState.phase.slice(1) : ''} Phase
-            </div>
-            {/* Timed Match Countdown */}
-            {matchState?.timedMatch && (
-              <div className="text-sm text-warning mt-1">
-                Time: {timeLeft}s
-              </div>
-            )}
-          </div>
+                      <div className="text-2xl font-bold mb-1">
+                        Turn {matchState?.turn}
+                      </div>
+                      <div className="text-sm text-text-secondary">
+                        {matchState?.phase ? matchState.phase.charAt(0).toUpperCase() + matchState.phase.slice(1) : ''} Phase
+                      </div>
+                      {matchState?.activePlayer === 'opponent' && (
+                        <div className="text-sm text-warning mt-1 animate-pulse">
+                          Opponent's Turn
+                        </div>
+                      )}
+                      {matchState?.activePlayer === 'player' && (
+                        <div className="text-sm text-success mt-1">
+                          Your Turn
+                        </div>
+                      )}
+                      {/* Timed Match Countdown */}
+                      {matchState?.timedMatch && matchState.activePlayer === 'player' && matchState.phase === 'main' && (
+                        <div className="text-sm text-warning mt-1">
+                          Time: {timeLeft}s
+                        </div>
+                      )}
+                    </div>
           
           <div className="flex space-x-2">
             <Button 
@@ -1381,17 +1407,17 @@ export default function GamePage() {
                 )}
                 
                 <div className="mt-8 flex space-x-4">
-                  <Button 
-                    className="flex-1"
-                    onClick={() => {
-                      handlePlayCard(selectedCard?.id)
-                      setShowCardModal(false)
-                    }}
-                    disabled={matchState?.phase !== 'main'}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Play Card
-                  </Button>
+                  <Button
+                                        className="flex-1"
+                                        onClick={() => {
+                                          handlePlayCard(selectedCard?.id)
+                                          setShowCardModal(false)
+                                        }}
+                                        disabled={matchState?.phase !== 'main' || matchState?.activePlayer !== 'player'}
+                                      >
+                                        <Play className="w-4 h-4 mr-2" />
+                                        Play Card
+                                      </Button>
                   <Button 
                     variant="outline" 
                     className="flex-1"

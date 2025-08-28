@@ -117,4 +117,5 @@ export interface MatchState {
   timedMatch?: boolean;
   mulliganEnabled?: boolean;
   turnInitiative?: TurnInitiative;
+  currentPlayerInTurn?: 'first' | 'second'; // Track which player is currently playing within the turn
 }
