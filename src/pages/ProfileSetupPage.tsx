@@ -295,22 +295,22 @@ export default function ProfileSetupPage() {
             </div>
 
             <div className="mb-8 bg-surface-light p-4 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4">Calculated Stats</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-text-secondary">HP</p>
-                  <p className="text-2xl font-bold text-primary">{stats.hp}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-text-secondary">MP</p>
-                  <p className="text-2xl font-bold text-secondary">{stats.mp}</p>
-                </div>
-              </div>
-              <div className="mt-4">
-                <p className="text-sm text-text-secondary">MP Regen</p>
-                <p className="text-xl font-bold text-accent">{mpRegen}</p>
-              </div>
-            </div>
+                          <h3 className="text-lg font-semibold mb-4">Calculated Stats</h3>
+                          <div className="grid grid-cols-3 gap-4">
+                                          <div className="text-center">
+                                            <p className="text-sm text-text-secondary">HP</p>
+                                            <p className="text-2xl font-bold text-primary">{stats.hp}</p>
+                                          </div>
+                                          <div className="text-center">
+                                            <p className="text-sm text-text-secondary">MP</p>
+                                            <p className="text-2xl font-bold text-secondary">{stats.mp}</p>
+                                          </div>
+                                          <div className="text-center">
+                                            <p className="text-sm text-text-secondary">MP Regen</p>
+                                            <p className="text-2xl font-bold text-accent">{mpRegen}</p>
+                                          </div>
+                                        </div>
+                        </div>
             
             <div className="flex justify-between">
               <Button type="button" variant="outline" onClick={() => navigate(-1)}>
