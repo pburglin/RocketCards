@@ -137,6 +137,13 @@ export function initializeMatch(options: {
     matchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
   }
   
+  // Add log entry for who won initiative on the first turn
+  const initiativeWinner = matchState.activePlayer === 'player' ? 'Player' : 'Opponent';
+  matchState.log.push({
+    message: `${initiativeWinner} won initiative and plays first`,
+    turn: matchState.turn
+  });
+  
   const playerState: PlayerState = {
     id: 'player',
     hp,
@@ -626,6 +633,13 @@ export function endTurn(
       newMatchState.activePlayer = randomValue === 0 ? 'player' : 'opponent';
     }
     newMatchState.currentPlayerInTurn = 'first';
+    
+    // Add log entry for who won initiative on the new turn
+    const initiativeWinner = newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent';
+    newMatchState.log.push({
+      message: `${initiativeWinner} won initiative and plays first`,
+      turn: newMatchState.turn
+    });
   }
   
   // Perform start phase actions for the new active player (skip separate start phase)
