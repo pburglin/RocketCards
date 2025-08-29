@@ -187,11 +187,18 @@ export default function PlayLobbyPage() {
             </div>
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <div>
               <Label className="mb-2 block">Match Settings</Label>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-surface-light rounded-lg">
+                <div
+                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
+                  onClick={() => setTimedMatch(!timedMatch)}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    setTimedMatch(!timedMatch);
+                  }}
+                >
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-text-secondary mr-3" />
                     <div>
@@ -206,8 +213,34 @@ export default function PlayLobbyPage() {
                     className="toggle toggle-primary"
                   />
                 </div>
-                
-                <div className="flex items-center justify-between p-4 bg-surface-light rounded-lg">
+              </div>
+            </div>
+            
+            <div>
+              <Label className="mb-2 block">Seed (Optional)</Label>
+              <input
+                type="text"
+                value={seed}
+                onChange={(e) => setSeed(e.target.value)}
+                placeholder="Custom seed for deterministic gameplay"
+                className="w-full px-4 py-3 bg-surface-light border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <p className="mt-2 text-sm text-text-secondary">
+                Leave empty for random seed
+              </p>
+            </div>
+            
+            <div>
+              <Label className="mb-2 block">Additional Settings</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
+                  onClick={() => setMulliganEnabled(!mulliganEnabled)}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    setMulliganEnabled(!mulliganEnabled);
+                  }}
+                >
                   <div className="flex items-center">
                     <Shuffle className="w-5 h-5 text-text-secondary mr-3" />
                     <div>
@@ -225,10 +258,10 @@ export default function PlayLobbyPage() {
                 
                 <div className="p-4 bg-surface-light rounded-lg">
                   <Label className="mb-2 block">Turn Initiative</Label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1">
                     <button
                       type="button"
-                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
                         turnInitiative === 'player'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -239,7 +272,7 @@ export default function PlayLobbyPage() {
                     </button>
                     <button
                       type="button"
-                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
                         turnInitiative === 'random'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -250,7 +283,7 @@ export default function PlayLobbyPage() {
                     </button>
                     <button
                       type="button"
-                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
                         turnInitiative === 'opponent'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -260,26 +293,12 @@ export default function PlayLobbyPage() {
                       Opponent
                     </button>
                   </div>
-                  <p className="mt-2 text-sm text-text-secondary">
-                    {turnInitiative === 'player' && 'Player always starts first each turn'}
-                    {turnInitiative === 'random' && 'Randomly determine who starts each turn'}
-                    {turnInitiative === 'opponent' && 'Opponent always starts first each turn'}
-                  </p>
                 </div>
               </div>
-            </div>
-            
-            <div>
-              <Label className="mb-2 block">Seed (Optional)</Label>
-              <input
-                type="text"
-                value={seed}
-                onChange={(e) => setSeed(e.target.value)}
-                placeholder="Custom seed for deterministic gameplay"
-                className="w-full px-4 py-3 bg-surface-light border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
-              />
               <p className="mt-2 text-sm text-text-secondary">
-                Leave empty for random seed
+                {turnInitiative === 'player' && 'Player always starts first each turn'}
+                {turnInitiative === 'random' && 'Randomly determine who starts each turn'}
+                {turnInitiative === 'opponent' && 'Opponent always starts first each turn'}
               </p>
             </div>
           </div>

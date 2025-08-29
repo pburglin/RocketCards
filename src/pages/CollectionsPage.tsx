@@ -2,15 +2,18 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
-import { Search, Filter, BookOpen, LayoutGrid, List, Sliders } from 'lucide-react'
+import { Search, Filter, BookOpen, LayoutGrid, List, Sliders, X, Info } from 'lucide-react'
 import { useGameStore } from '../store/gameStore'
 import { loadCollection } from '../lib/collectionLoader'
+import { Card as CardType } from '../types/card'
 
 export default function CollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [rarityFilter, setRarityFilter] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [showCardModal, setShowCardModal] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
   const { collections } = useGameStore()
   const navigate = useNavigate()
 
@@ -20,7 +23,8 @@ export default function CollectionsPage() {
     name: collection.name,
     description: collection.description,
     cards: collection.cards.length,
-    image: `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+    image: `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`,
+    firstCard: collection.cards[0]
   }))
 
   useEffect(() => {
@@ -82,7 +86,10 @@ export default function CollectionsPage() {
               key={collection.id}
               className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
             >
-              <div className="relative h-48 overflow-hidden rounded-t-lg">
+              <div
+                className="relative h-48 overflow-hidden rounded-t-lg cursor-pointer"
+                onClick={() => navigate(`/collections/${collection.id}`)}
+              >
                 <img
                   src={collection.image}
                   alt={collection.name}
@@ -93,7 +100,12 @@ export default function CollectionsPage() {
               
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-xl font-bold">{collection.name}</CardTitle>
+                  <CardTitle
+                    className="text-xl font-bold cursor-pointer hover:text-primary"
+                    onClick={() => navigate(`/collections/${collection.id}`)}
+                  >
+                    {collection.name}
+                  </CardTitle>
                   <span className="px-3 py-1 bg-surface-light rounded-full text-sm">
                     {collection.cards} cards
                   </span>
@@ -102,20 +114,118 @@ export default function CollectionsPage() {
                   {collection.description}
                 </CardDescription>
                 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-end space-x-2">
                   <Button
                     onClick={() => navigate(`/collections/${collection.id}`)}
+                    variant="outline"
                     className="w-full md:w-auto"
                   >
                     <BookOpen className="w-4 h-4 mr-2" />
                     View Collection
                   </Button>
+                  {collection.firstCard && (
+                    <Button
+                      onClick={() => {
+                        setSelectedCard(collection.firstCard);
+                        setShowCardModal(true);
+                      }}
+                      className="w-full md:w-auto"
+                    >
+                      <Info className="w-4 h-4 mr-2" />
+                      Card Details
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
             </Card>
           ))
         }
       </div>
+      
+      {/* Card Details Modal */}
+      {showCardModal && selectedCard && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+            <button
+              onClick={() => setShowCardModal(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="relative h-64 mb-4">
+                  <img
+                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    alt={selectedCard.title}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      selectedCard.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                      selectedCard.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
+                      'bg-accent/20 text-accent'
+                    }`}>
+                      {selectedCard.rarity.charAt(0).toUpperCase() + selectedCard.rarity.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2 mb-4">
+                  {selectedCard.cost.HP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      HP: {selectedCard.cost.HP}
+                    </div>
+                  )}
+                  {selectedCard.cost.MP !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      MP: {selectedCard.cost.MP}
+                    </div>
+                  )}
+                  {selectedCard.cost.fatigue !== 0 && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Fatigue: {selectedCard.cost.fatigue}
+                    </div>
+                  )}
+                  {selectedCard.duration !== undefined && selectedCard.duration !== null && (
+                    <div className="px-3 py-1 bg-surface rounded text-sm">
+                      Duration: {typeof selectedCard.duration === 'number'
+                        ? `${selectedCard.duration} turns`
+                        : selectedCard.duration === 'HP'
+                          ? 'HP-based'
+                          : 'MP-based'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-bold mb-2">{selectedCard.title}</h2>
+                <p className="text-text-secondary mb-4 capitalize">
+                  {selectedCard.type} Card
+                </p>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Effect</h3>
+                  <p className="text-text-secondary">{selectedCard.effect}</p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-text-secondary">{selectedCard.description}</p>
+                </div>
+                
+                {selectedCard.flavor && (
+                  <div className="italic text-text-secondary border-l-2 border-primary pl-4 py-2">
+                    "{selectedCard.flavor}"
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

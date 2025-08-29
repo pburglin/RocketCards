@@ -217,7 +217,7 @@ export default function PlaySetupPage() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="bg-surface p-4 rounded-lg">
                     <p className="text-sm text-text-secondary">HP</p>
                     <p className="text-2xl font-bold text-primary">{profile.hp}</p>
@@ -225,6 +225,12 @@ export default function PlaySetupPage() {
                   <div className="bg-surface p-4 rounded-lg">
                     <p className="text-sm text-text-secondary">MP</p>
                     <p className="text-2xl font-bold text-secondary">{profile.mp}</p>
+                  </div>
+                  <div className="bg-surface p-4 rounded-lg">
+                    <p className="text-sm text-text-secondary">MP Regen</p>
+                    <p className="text-2xl font-bold text-accent">
+                      {profile.strategy === 'aggressive' ? 4 : profile.strategy === 'defensive' ? 2 : 3}
+                    </p>
                   </div>
                 </div>
               </div>

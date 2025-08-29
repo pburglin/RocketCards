@@ -88,11 +88,22 @@ export default function DeckBuilderPage() {
     }
   }, [selectedDeck?.cards.length])
 
-  const filteredCards = (selectedCollection?.cards || []).filter(card => 
-    card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (typeFilter === '' || card.type === typeFilter) &&
-    (rarityFilter === '' || card.rarity === rarityFilter)
-  )
+  const filteredCards = [...(selectedCollection?.cards || [])]
+    .filter(card =>
+      card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (typeFilter === '' || card.type === typeFilter) &&
+      (rarityFilter === '' || card.rarity === rarityFilter)
+    )
+    .sort((a, b) => {
+      // Sort by rarity first: unique > rare > common
+      const rarityOrder: Record<string, number> = { 'unique': 0, 'rare': 1, 'common': 2 };
+      const rarityComparison = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+      if (rarityComparison !== 0) {
+        return rarityComparison;
+      }
+      // Then sort alphabetically by title
+      return a.title.localeCompare(b.title);
+    })
 
   const getCardCount = (cardId: string) => deckCards[cardId] || 0
 
@@ -333,20 +344,22 @@ export default function DeckBuilderPage() {
               </div>
             ) : (
               <div className="space-y-2 mb-6">
-                {collections.map(collection => (
-                  <Button
-                    key={collection.id}
-                    variant={selectedCollection?.id === collection.id ? 'primary' : 'outline'}
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setSelectedCollection(collection);
-                      // Reset deck name when switching collections
-                      setDeckName(`${collection.name} Deck`);
-                    }}
-                  >
-                    {collection.name}
-                  </Button>
-                ))}
+                {[...collections]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(collection => (
+                    <Button
+                      key={collection.id}
+                      variant={selectedCollection?.id === collection.id ? 'primary' : 'outline'}
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setSelectedCollection(collection);
+                        // Reset deck name when switching collections
+                        setDeckName(`${collection.name} Deck`);
+                      }}
+                    >
+                      {collection.name}
+                    </Button>
+                  ))}
               </div>
             )}
             
@@ -645,13 +658,25 @@ export default function DeckBuilderPage() {
                     <h2 className="text-xl font-bold mb-4">Your Deck</h2>
                     {Object.keys(deckCards).length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {Object.entries(deckCards).map(([cardId, count]) => {
-                          const card = selectedCollection.cards.find(c => c.id === cardId)
-                          if (!card) return null
-                          
-                          return (
+                        {Object.entries(deckCards)
+                          .map(([cardId, count]) => {
+                            const card = selectedCollection.cards.find(c => c.id === cardId)
+                            return card ? { card, count } : null
+                          })
+                          .filter((item): item is { card: any; count: number } => item !== null)
+                          .sort((a, b) => {
+                            // Sort by rarity first: unique > rare > common
+                            const rarityOrder: Record<string, number> = { 'unique': 0, 'rare': 1, 'common': 2 };
+                            const rarityComparison = rarityOrder[a.card.rarity] - rarityOrder[b.card.rarity];
+                            if (rarityComparison !== 0) {
+                              return rarityComparison;
+                            }
+                            // Then sort alphabetically by title
+                            return a.card.title.localeCompare(b.card.title);
+                          })
+                          .map(({ card, count }) => (
                             <Card
-                              key={cardId}
+                              key={card.id}
                               className={`p-3 bg-surface-light border border-border ${
                                 card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                               }`}
@@ -684,7 +709,7 @@ export default function DeckBuilderPage() {
                                     x{count}
                                   </span>
                                   <Button
-                                    onClick={() => handleRemoveFromDeck(cardId)}
+                                    onClick={() => handleRemoveFromDeck(card.id)}
                                     variant="outline"
                                     size="sm"
                                     className="p-1 w-8 h-8"
@@ -725,8 +750,7 @@ export default function DeckBuilderPage() {
                                 </span>
                               </div>
                             </Card>
-                          )
-                        })}
+                          ))}
                       </div>
                     ) : (
                       <div className="bg-surface-light p-6 rounded-lg text-center">

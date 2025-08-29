@@ -116,9 +116,13 @@ export default function CollectionDetailPage() {
             {filteredCards.map(card => (
               <Card
                 key={card.id}
-                className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ${
+                className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer ${
                   card.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : ''
                 }`}
+                onClick={() => {
+                  setSelectedCard(card)
+                  setShowCardModal(true)
+                }}
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
                   <img
@@ -157,7 +161,8 @@ export default function CollectionDetailPage() {
                                 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
                                 : 'bg-surface-light text-text-secondary border-border cursor-not-allowed'
                             }`}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (enabledTokenCards.has(card.id)) {
                                 if (purchaseCardWithTokens(card.id)) {
                                   // Show success message
@@ -220,7 +225,8 @@ export default function CollectionDetailPage() {
                     {card.tokenCost ? (
                       isCardPurchased(card.id) ? (
                         <Button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelectedCard(card)
                             setShowCardModal(true)
                           }}
@@ -232,7 +238,8 @@ export default function CollectionDetailPage() {
                         </Button>
                       ) : (
                         <Button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             // Enable the token cost display for this card
                             setEnabledTokenCards(prev => {
                               const newSet = new Set(prev);
@@ -249,7 +256,8 @@ export default function CollectionDetailPage() {
                       )
                     ) : (
                       <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedCard(card)
                           setShowCardModal(true)
                         }}
