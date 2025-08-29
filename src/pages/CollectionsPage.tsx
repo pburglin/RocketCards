@@ -38,6 +38,19 @@ export default function CollectionsPage() {
     }
     initialize()
   }, [])
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to close modals
+      if (e.code === 'Escape' && showCardModal) {
+        setShowCardModal(false);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCardModal]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -81,6 +94,7 @@ export default function CollectionsPage() {
             collection.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             collection.description.toLowerCase().includes(searchTerm.toLowerCase())
           )
+          .sort((a, b) => a.name.localeCompare(b.name))
           .map(collection => (
             <Card
               key={collection.id}
@@ -114,27 +128,14 @@ export default function CollectionsPage() {
                   {collection.description}
                 </CardDescription>
                 
-                <div className="mt-6 flex justify-end space-x-2">
+                <div className="mt-6 flex justify-end">
                   <Button
                     onClick={() => navigate(`/collections/${collection.id}`)}
-                    variant="outline"
                     className="w-full md:w-auto"
                   >
                     <BookOpen className="w-4 h-4 mr-2" />
                     View Collection
                   </Button>
-                  {collection.firstCard && (
-                    <Button
-                      onClick={() => {
-                        setSelectedCard(collection.firstCard);
-                        setShowCardModal(true);
-                      }}
-                      className="w-full md:w-auto"
-                    >
-                      <Info className="w-4 h-4 mr-2" />
-                      Card Details
-                    </Button>
-                  )}
                 </div>
               </CardHeader>
             </Card>

@@ -5,7 +5,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
-import { Shield, Sword, Sparkles, Flame, Star, Coins, X } from 'lucide-react'
+import { Shield, Sword, Sparkles, Flame, Star, Coins, X, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function ProfileSetupPage() {
@@ -376,7 +376,12 @@ export default function ProfileSetupPage() {
                                 {card.rarity}
                               </span>
                               <span className="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                                {isPurchased ? 'Unlocked' : `🔑 ${card.tokenCost} tokens`}
+                                {isPurchased ? (
+                                  <span className="flex items-center">
+                                    <CheckCircle className="w-3 h-3 text-success mr-1" />
+                                    Unlocked
+                                  </span>
+                                ) : `🔑 ${card.tokenCost} tokens`}
                               </span>
                             </div>
                           </div>
@@ -392,7 +397,10 @@ export default function ProfileSetupPage() {
                           {collection?.name}
                         </div>
                         {isPurchased ? (
-                          <span className="text-sm text-success font-medium">Unlocked</span>
+                          <span className="text-sm text-success font-medium flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Unlocked
+                          </span>
                         ) : (
                           <Button
                             size="sm"
@@ -551,7 +559,10 @@ export default function ProfileSetupPage() {
                   <div className="space-y-4">
                     {isCardPurchased(selectedCard?.id) ? (
                       <div className="text-center p-3 bg-success/20 rounded-lg">
-                        <p className="text-success font-medium">✅ Already Unlocked</p>
+                        <p className="text-success font-medium flex items-center justify-center">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Already Unlocked
+                        </p>
                         <p className="text-sm text-text-secondary mt-1">This special card has already been unlocked and is available to be added to your player card decks.</p>
                       </div>
                     ) : (

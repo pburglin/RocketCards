@@ -185,6 +185,8 @@ export function playCard(
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  console.log('playCard called:', { activePlayer: matchState.activePlayer, cardId });
+  
   // Create deep copies of the input objects to avoid direct mutations
   const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
   const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
@@ -194,20 +196,37 @@ export function playCard(
   const currentPlayerState = newMatchState.activePlayer === 'player' ? newPlayerState : newOpponentState;
   const otherPlayerState = newMatchState.activePlayer === 'player' ? newOpponentState : newPlayerState;
   
+  console.log('Current player state:', {
+    id: currentPlayerState.id,
+    hp: currentPlayerState.hp,
+    mp: currentPlayerState.mp,
+    hand: currentPlayerState.hand,
+    extraPlaysRemaining: currentPlayerState.extraPlaysRemaining
+  });
+  
   // Check if in main phase
   if (newMatchState.phase !== 'main') {
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play card - not in main phase`, turn: newMatchState.turn });
     return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   // Check if card is in hand
   const cardIndex = currentPlayerState.hand.indexOf(cardId)
   if (cardIndex === -1) {
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play card - card not in hand`, turn: newMatchState.turn });
     return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   // Check play limit based on fatigue
   const maxPlays = currentPlayerState.fatigue < 3 ? 2 : currentPlayerState.fatigue <= 5 ? 1 : 0;
   const canPlay = currentPlayerState.extraPlaysRemaining > 0 && maxPlays > 0;
+  
+  console.log('Play limit check:', {
+    extraPlaysRemaining: currentPlayerState.extraPlaysRemaining,
+    maxPlays: maxPlays,
+    canPlay: canPlay,
+    fatigue: currentPlayerState.fatigue
+  });
   
   if (!canPlay) {
     if (maxPlays <= 0) {
@@ -236,14 +255,17 @@ export function playCard(
   }
   
   if (!card) {
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play card - card not found in collections`, turn: newMatchState.turn });
     return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   if (currentPlayerState.hp + card.cost.HP < 0) {
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play ${card.title} - HP cost too high (${currentPlayerState.hp + card.cost.HP})`, turn: newMatchState.turn });
     return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
   if (currentPlayerState.mp + card.cost.MP < 0) {
+    newMatchState.log.push({ message: `${newMatchState.activePlayer === 'player' ? 'Player' : 'Opponent'} cannot play ${card.title} - MP cost too high (${currentPlayerState.mp + card.cost.MP})`, turn: newMatchState.turn });
     return { success: false, matchState: newMatchState, playerState: newPlayerState, opponentState: newOpponentState }
   }
   
@@ -647,11 +669,53 @@ export function endTurn(
   } else if (newMatchState.activePlayer === 'opponent' && newOpponentState.deck.length > 0) {
     // Check if opponent's hand is at maximum capacity
     if (newOpponentState.hand.length >= GAME_HAND_LIMIT) {
-      // Cannot draw card - hand is full
-      newMatchState.log.push({
-        message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
-        turn: newMatchState.turn
-      });
+      console.log('Opponent hand is full, checking for playable cards');
+      // Check if opponent has any playable cards
+      const { champions, creatures, effects } = categorizeCards(newOpponentState.hand, collections, newOpponentState);
+      const hasPlayableCards = champions.length > 0 || creatures.length > 0 || effects.length > 0;
+      
+      console.log('Opponent card categorization - Champions:', champions.length, 'Creatures:', creatures.length, 'Effects:', effects.length);
+      
+      if (!hasPlayableCards) {
+        console.log('Opponent has no playable cards, discarding random card');
+        // Opponent has no playable cards, discard a random card to avoid endless loops
+        if (newOpponentState.hand.length > 0) {
+          const randomIndex = Math.floor(Math.random() * newOpponentState.hand.length);
+          const discardedCardId = newOpponentState.hand.splice(randomIndex, 1)[0];
+          newOpponentState.discard.push(discardedCardId);
+          
+          // Find the card title for the log message
+          let cardTitle = "a card";
+          const discardedCard = getCardFromCollections(discardedCardId, collections);
+          if (discardedCard) {
+            cardTitle = discardedCard.title;
+          }
+          
+          newMatchState.log.push({
+            message: `Opponent discarded ${cardTitle} (no playable cards)`,
+            turn: newMatchState.turn
+          });
+          
+          // Now try to draw a card since hand is no longer full
+          const drawnCard = newOpponentState.deck.pop();
+          if (drawnCard) {
+            newOpponentState.hand.push(drawnCard);
+            drawnCardId = drawnCard;
+            startDetails.hand = [...newOpponentState.hand];
+            newMatchState.log.push({
+              message: `Opponent drew a card`,
+              turn: newMatchState.turn
+            });
+          }
+        }
+      } else {
+        console.log('Opponent has playable cards, not discarding');
+        // Cannot draw card - hand is full but has playable cards
+        newMatchState.log.push({
+          message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+          turn: newMatchState.turn
+        });
+      }
     } else {
       const drawnCard = newOpponentState.deck.pop()
       if (drawnCard) {
@@ -1095,11 +1159,17 @@ function categorizeCards(hand: string[], collections: any[], opponentState: Play
   
   hand.forEach(cardId => {
     const card = getCardFromCollections(cardId, collections);
-    if (!card) return;
+    if (!card) {
+      console.log('Card not found in collections:', cardId);
+      return;
+    }
     
     // Check if card is affordable
     const isAffordable = (opponentState.hp + card.cost.HP >= 0) && (opponentState.mp + card.cost.MP >= 0);
-    if (!isAffordable) return;
+    if (!isAffordable) {
+      console.log('Card not affordable:', card.title, 'HP:', opponentState.hp, 'Card HP cost:', card.cost.HP, 'MP:', opponentState.mp, 'Card MP cost:', card.cost.MP);
+      return;
+    }
     
     if (card.type === 'champions') {
       champions.push(cardId);
@@ -1228,7 +1298,7 @@ export function playOpponentAI(
     const card = getCardFromCollections(cardToPlay, collections);
     if (card) {
       console.log('Opponent playing card:', card.title, 'Reason:', playReason);
-      const result = playCard(matchState, opponentState, playerState, cardToPlay, collections);
+      const result = playCard(matchState, playerState, opponentState, cardToPlay, collections);
       if (result.success) {
         console.log('Opponent card played successfully');
         // Update states for next iteration
@@ -1238,6 +1308,7 @@ export function playOpponentAI(
         continue; // Try to play another card
       } else {
         console.log('Failed to play opponent card:', card.title);
+        matchState.log.push({ message: `Opponent failed to play ${card.title}`, turn: matchState.turn });
         // Continue to try next card
       }
     }

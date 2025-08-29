@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/C
 import { Button } from '../components/ui/Button'
 import { useGameStore } from '../store/gameStore'
 import { Card as CardType } from '../types/card'
-import { Plus, Minus, Info, Image as ImageIcon, Filter, X } from 'lucide-react'
+import { Plus, Minus, Info, Image as ImageIcon, Filter, X, CheckCircle } from 'lucide-react'
 import { loadCollection } from '../lib/collectionLoader'
 
 export default function CollectionDetailPage() {
@@ -37,12 +37,34 @@ export default function CollectionDetailPage() {
     
     loadCollectionCards()
   }, [collectionId, collections])
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to close modals
+      if (e.code === 'Escape' && showCardModal) {
+        setShowCardModal(false);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCardModal]);
 
-  const filteredCards = cards.filter(card => 
+  const filteredCards = cards.filter(card =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (typeFilter === '' || card.type === typeFilter) &&
     (rarityFilter === '' || card.rarity === rarityFilter)
-  )
+  ).sort((a, b) => {
+    // Sort by rarity first: unique > rare > common
+    const rarityOrder: Record<string, number> = { 'unique': 0, 'rare': 1, 'common': 2 };
+    const rarityComparison = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+    if (rarityComparison !== 0) {
+      return rarityComparison;
+    }
+    // Then sort alphabetically by title
+    return a.title.localeCompare(b.title);
+  })
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -151,7 +173,8 @@ export default function CollectionDetailPage() {
                       </span>
                       {card.tokenCost && (
                         isCardPurchased(card.id) ? (
-                          <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30">
+                          <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30 flex items-center">
+                            <CheckCircle className="w-3 h-3 mr-1" />
                             Unlocked
                           </span>
                         ) : (
@@ -360,7 +383,10 @@ export default function CollectionDetailPage() {
                   {selectedCard.tokenCost ? (
                     isCardPurchased(selectedCard.id) ? (
                       <div className="text-center p-4 bg-success/20 rounded-lg">
-                        <p className="text-success font-medium">✅ Card Already Unlocked</p>
+                        <p className="text-success font-medium flex items-center">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Card Already Unlocked
+                        </p>
                         <p className="text-sm text-text-secondary mt-2">
                           This special card has already been unlocked and is available to be added to your player card decks.
                         </p>

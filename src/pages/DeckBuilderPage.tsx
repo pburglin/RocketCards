@@ -3,7 +3,7 @@ import { useGameStore } from '../store/gameStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
-import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3, Info } from 'lucide-react'
+import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3, Info, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 
 export default function DeckBuilderPage() {
@@ -76,6 +76,27 @@ export default function DeckBuilderPage() {
       }
     }
   }, [selectedDeck?.cards.length, selectedCollection])
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to close modals
+      if (e.code === 'Escape') {
+        if (showCardModal) {
+          setShowCardModal(false);
+        } else if (showImportModal) {
+          setShowImportModal(false);
+        } else if (showExportModal) {
+          setShowExportModal(false);
+        } else if (deleteConfirmation.show) {
+          setDeleteConfirmation({show: false, deckName: ''});
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCardModal, showImportModal, showExportModal, deleteConfirmation.show]);
 
   // Sync local deckCards state when selectedDeck.cards changes from external sources
   useEffect(() => {
@@ -569,7 +590,8 @@ export default function DeckBuilderPage() {
                                 </span>
                                 {card.tokenCost && (
                                   isCardPurchased(card.id) ? (
-                                    <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30">
+                                    <span className="px-2 py-1 rounded-full text-xs bg-success/20 text-success border border-success/30 flex items-center">
+                                      <CheckCircle className="w-3 h-3 mr-1" />
                                       Unlocked
                                     </span>
                                   ) : (
@@ -1098,7 +1120,10 @@ export default function DeckBuilderPage() {
                   {selectedCard.tokenCost ? (
                     isCardPurchased(selectedCard.id) ? (
                       <div className="text-center p-4 bg-success/20 rounded-lg">
-                        <p className="text-success font-medium">✅ Card Already Unlocked</p>
+                        <p className="text-success font-medium flex items-center">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Card Already Unlocked
+                        </p>
                         <p className="text-sm text-text-secondary mt-2">
                           This special card has already been unlocked and is available to be added to your player card decks.
                         </p>

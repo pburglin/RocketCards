@@ -76,6 +76,30 @@ export default function GamePage() {
     // Let the user click the button to proceed
   }, [matchState, navigate])
   
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Spacebar for End Turn
+      if (e.code === 'Space' && !e.repeat) {
+        e.preventDefault();
+        handleEndTurn();
+      }
+      // Escape to close modals
+      else if (e.code === 'Escape') {
+        if (showCardModal) {
+          setShowCardModal(false);
+        } else if (showSettings) {
+          setShowSettings(false);
+        } else if (showPenalty) {
+          setShowPenalty(false);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCardModal, showSettings, showPenalty, matchState]);
+  
   // Timed match countdown
     useEffect(() => {
       if (matchState?.timedMatch && matchState.activePlayer === 'player' && matchState.phase === 'main') {
