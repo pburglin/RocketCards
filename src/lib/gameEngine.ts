@@ -1143,79 +1143,107 @@ export function playOpponentAI(
     extraPlays: opponentState.extraPlaysRemaining
   });
   
-  // Check if opponent can play cards
-  if (opponentState.hand.length === 0 || opponentState.extraPlaysRemaining <= 0) {
-    matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
-    console.log('Opponent ended their turn - no plays available');
-    // Return the current state - let the calling function handle turn ending
-    return {
-      matchState,
-      playerState,
-      opponentState
-    };
-  }
+  // Keep track of cards we've already tried to avoid infinite loops
+  const triedCards = new Set<string>();
   
-  // Evaluate current board state
-  const boardState = evaluateBoardState(opponentState);
-  const { champions, creatures, effects } = categorizeCards(opponentState.hand, collections, opponentState);
-  
-  console.log('Board state evaluation:', boardState);
-  console.log('Categorized cards - Champions:', champions.length, 'Creatures:', creatures.length, 'Effects:', effects.length);
-  
-  // Strategy: Play cards based on priority
-  let cardToPlay: string | null = null;
-  let playReason = '';
-  
-  // Priority 1: Play champion if none in play
-  if (!boardState.hasChampion && champions.length > 0) {
-    cardToPlay = champions[0];
-    playReason = 'playing champion (priority 1)';
-  }
-  // Priority 2: Play creatures if we have less than 2
-  else if (boardState.creatureCount < 2 && creatures.length > 0) {
-    // Sort creatures by cost (prefer cheaper ones)
-    const sortedCreatures = sortCreaturesByCost(creatures, collections);
-    cardToPlay = sortedCreatures[0];
-    playReason = 'playing creature to build board (priority 2)';
-  }
-  // Priority 3: Play effects/skills once we have sufficient board state
-  else if (boardState.hasChampion && boardState.creatureCount >= 2 && effects.length > 0) {
-    // For now, play a random effect. In the future, this could be more strategic
-    cardToPlay = effects[Math.floor(Math.random() * effects.length)];
-    playReason = 'playing effect with sufficient board state (priority 3)';
-  }
-  // Priority 4: Play additional creatures if we have board state
-  else if (boardState.hasChampion && creatures.length > 0) {
-    const sortedCreatures = sortCreaturesByCost(creatures, collections);
-    cardToPlay = sortedCreatures[0];
-    playReason = 'playing additional creature (priority 4)';
-  }
-  // Priority 5: Play any remaining champions (shouldn't happen normally)
-  else if (champions.length > 0) {
-    cardToPlay = champions[0];
-    playReason = 'playing remaining champion (priority 5)';
-  }
-  
-  // Play the selected card if any
-  if (cardToPlay) {
+  // Continue trying to play cards while opponent can play
+  while (opponentState.hand.length > 0 && opponentState.extraPlaysRemaining > 0) {
+    // Evaluate current board state
+    const boardState = evaluateBoardState(opponentState);
+    const { champions, creatures, effects } = categorizeCards(opponentState.hand, collections, opponentState);
+    
+    console.log('Board state evaluation:', boardState);
+    console.log('Categorized cards - Champions:', champions.length, 'Creatures:', creatures.length, 'Effects:', effects.length);
+    
+    // Strategy: Play cards based on priority
+    let cardToPlay: string | null = null;
+    let playReason = '';
+    
+    // Priority 1: Play champion if none in play
+    if (!boardState.hasChampion && champions.length > 0) {
+      // Try champions in order, skipping already tried ones
+      for (const championId of champions) {
+        if (!triedCards.has(championId)) {
+          cardToPlay = championId;
+          playReason = 'playing champion (priority 1)';
+          break;
+        }
+      }
+    }
+    // Priority 2: Play creatures if we have less than 2
+    else if (boardState.creatureCount < 2 && creatures.length > 0) {
+      // Sort creatures by cost (prefer cheaper ones) and try them
+      const sortedCreatures = sortCreaturesByCost(creatures, collections);
+      for (const creatureId of sortedCreatures) {
+        if (!triedCards.has(creatureId)) {
+          cardToPlay = creatureId;
+          playReason = 'playing creature to build board (priority 2)';
+          break;
+        }
+      }
+    }
+    // Priority 3: Play effects/skills once we have sufficient board state
+    else if (boardState.hasChampion && boardState.creatureCount >= 2 && effects.length > 0) {
+      // Try effects, skipping already tried ones
+      for (const effectId of effects) {
+        if (!triedCards.has(effectId)) {
+          cardToPlay = effectId;
+          playReason = 'playing effect with sufficient board state (priority 3)';
+          break;
+        }
+      }
+    }
+    // Priority 4: Play additional creatures if we have board state
+    else if (boardState.hasChampion && creatures.length > 0) {
+      const sortedCreatures = sortCreaturesByCost(creatures, collections);
+      for (const creatureId of sortedCreatures) {
+        if (!triedCards.has(creatureId)) {
+          cardToPlay = creatureId;
+          playReason = 'playing additional creature (priority 4)';
+          break;
+        }
+      }
+    }
+    // Priority 5: Play any remaining champions (shouldn't happen normally)
+    else if (champions.length > 0) {
+      // Try remaining champions, skipping already tried ones
+      for (const championId of champions) {
+        if (!triedCards.has(championId)) {
+          cardToPlay = championId;
+          playReason = 'playing remaining champion (priority 5)';
+          break;
+        }
+      }
+    }
+    
+    // If no card to play, break the loop
+    if (!cardToPlay) {
+      break;
+    }
+    
+    // Mark this card as tried
+    triedCards.add(cardToPlay);
+    
+    // Play the selected card
     const card = getCardFromCollections(cardToPlay, collections);
     if (card) {
       console.log('Opponent playing card:', card.title, 'Reason:', playReason);
       const result = playCard(matchState, opponentState, playerState, cardToPlay, collections);
       if (result.success) {
         console.log('Opponent card played successfully');
-        return {
-          matchState: result.matchState,
-          playerState: result.playerState,
-          opponentState: result.opponentState
-        };
+        // Update states for next iteration
+        matchState = result.matchState;
+        playerState = result.playerState;
+        opponentState = result.opponentState;
+        continue; // Try to play another card
       } else {
-        console.log('Failed to play opponent card');
+        console.log('Failed to play opponent card:', card.title);
+        // Continue to try next card
       }
     }
   }
   
-  // If no card was played, end the turn
+  // End the turn
   matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
   console.log('Opponent ended their turn');
   // Return the current state - let the calling function handle turn ending

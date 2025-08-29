@@ -366,24 +366,14 @@ export const useGameStore = create<GameStore>()(
             const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
             if (currentMatchState && currentPlayerState && currentOpponentState) {
               const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
-              set({
-                matchState: aiResult.matchState,
-                playerState: aiResult.playerState,
-                opponentState: aiResult.opponentState
-              })
               
-              // Always end the opponent's turn after AI plays
-              const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
-              if (finalMatchState && finalPlayerState && finalOpponentState) {
-                setTimeout(() => {
-                  const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
-                  set({
-                    matchState: finalResult.matchState,
-                    playerState: finalResult.playerState,
-                    opponentState: finalResult.opponentState
-                  })
-                }, 500)
-              }
+              // Always end the opponent's turn after AI plays, in sequence
+              const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
+              set({
+                matchState: endTurnResult.matchState,
+                playerState: endTurnResult.playerState,
+                opponentState: endTurnResult.opponentState
+              })
             }
           }, 500)
         }
@@ -429,24 +419,14 @@ export const useGameStore = create<GameStore>()(
             const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
             if (currentMatchState && currentPlayerState && currentOpponentState) {
               const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
-              set({
-                matchState: aiResult.matchState,
-                playerState: aiResult.playerState,
-                opponentState: aiResult.opponentState
-              })
               
-              // Always end the opponent's turn after AI plays
-              const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
-              if (finalMatchState && finalPlayerState && finalOpponentState) {
-                setTimeout(() => {
-                  const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
-                  set({
-                    matchState: finalResult.matchState,
-                    playerState: finalResult.playerState,
-                    opponentState: finalResult.opponentState
-                  })
-                }, 500)
-              }
+              // Always end the opponent's turn after AI plays, in sequence
+              const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
+              set({
+                matchState: endTurnResult.matchState,
+                playerState: endTurnResult.playerState,
+                opponentState: endTurnResult.opponentState
+              })
             }
           }, 500)
         }

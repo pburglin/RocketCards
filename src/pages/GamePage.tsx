@@ -758,19 +758,37 @@ export default function GamePage() {
                         <CardTitle>{card?.title || champion?.cardId}</CardTitle>
                       </div>
                       {card?.championStats && (
-                        <div className="flex space-x-4 text-xs mt-2">
-                          {card.championStats.ap !== undefined && (
-                            <div>
-                              <span className="text-error">AP: </span>
-                              <span>{card.championStats.ap}</span>
-                            </div>
-                          )}
-                          {card.championStats.dp !== undefined && (
-                            <div>
-                              <span className="text-secondary">DP: </span>
-                              <span>{card.championStats.dp}</span>
-                            </div>
-                          )}
+                        <div className="flex justify-between items-center text-xs mt-2">
+                          <div className="flex space-x-4">
+                            {card.championStats.ap !== undefined && (
+                              <div>
+                                <span className="text-error">AP: </span>
+                                <span>{card.championStats.ap}</span>
+                              </div>
+                            )}
+                            {card.championStats.dp !== undefined && (
+                              <div>
+                                <span className="text-secondary">DP: </span>
+                                <span>{card.championStats.dp}</span>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Handle champion discard
+                              if (areAnimationsEnabled()) {
+                                setCardRemovalAnimation(champion.cardId);
+                                setTimeout(() => setCardRemovalAnimation(null), 1000);
+                              }
+                              audioService.playDamageSound();
+                              discardChampion(index);
+                            }}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
                         </div>
                       )}
                       <CardDescription className="mt-2">
@@ -814,24 +832,6 @@ export default function GamePage() {
                         </div>
                       )}
                       
-                      <div className="mt-4 flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Handle champion discard
-                            if (areAnimationsEnabled()) {
-                              setCardRemovalAnimation(champion.cardId);
-                              setTimeout(() => setCardRemovalAnimation(null), 1000);
-                            }
-                            audioService.playDamageSound();
-                            discardChampion(index);
-                          }}
-                        >
-                          <Trash className="w-4 h-4" />
-                        </Button>
-                      </div>
                     </Card>
                   );
                 })
@@ -896,19 +896,44 @@ export default function GamePage() {
                           )}
                         </div>
                         {card?.creatureStats && (
-                          <div className="flex space-x-4 text-xs mb-2">
-                            {card.creatureStats.ap !== undefined && (
-                              <div>
-                                <span className="text-error">AP: </span>
-                                <span>{card.creatureStats.ap}</span>
-                              </div>
-                            )}
-                            {card.creatureStats.dp !== undefined && (
-                              <div>
-                                <span className="text-secondary">DP: </span>
-                                <span>{card.creatureStats.dp}</span>
-                              </div>
-                            )}
+                          <div className="flex justify-between items-center text-xs mb-2">
+                            <div className="flex space-x-4">
+                              {card.creatureStats.ap !== undefined && (
+                                <div>
+                                  <span className="text-error">AP: </span>
+                                  <span>{card.creatureStats.ap}</span>
+                                </div>
+                              )}
+                              {card.creatureStats.dp !== undefined && (
+                                <div>
+                                  <span className="text-secondary">DP: </span>
+                                  <span>{card.creatureStats.dp}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
+                              }`}>
+                                {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                 e.stopPropagation();
+                                 // Handle creature discard
+                                 if (areAnimationsEnabled()) {
+                                   setCardRemovalAnimation(creature.cardId);
+                                   setTimeout(() => setCardRemovalAnimation(null), 1000);
+                                 }
+                                 audioService.playDamageSound();
+                                 discardCreature(index);
+                               }}
+                              >
+                                <Trash className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         )}
                         <div className="flex space-x-4 text-xs">
@@ -920,31 +945,6 @@ export default function GamePage() {
                             <span className="text-secondary">MP: </span>
                             <span>{creature.currentMp}/{creature.maxMp}</span>
                           </div>
-                        </div>
-                        <div className="mt-1">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
-                          }`}>
-                            {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
-                          </span>
-                        </div>
-                        <div className="mt-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                             e.stopPropagation();
-                             // Handle creature discard
-                             if (areAnimationsEnabled()) {
-                               setCardRemovalAnimation(creature.cardId);
-                               setTimeout(() => setCardRemovalAnimation(null), 1000);
-                             }
-                             audioService.playDamageSound();
-                             discardCreature(index);
-                           }}
-                          >
-                            <Trash className="w-4 h-4" />
-                          </Button>
                         </div>
                       </Card>
                     );
@@ -1124,19 +1124,26 @@ export default function GamePage() {
                           )}
                         </div>
                         {card?.creatureStats && (
-                          <div className="flex space-x-4 text-xs mb-2">
-                            {card.creatureStats.ap !== undefined && (
-                              <div>
-                                <span className="text-error">AP: </span>
-                                <span>{card.creatureStats.ap}</span>
-                              </div>
-                            )}
-                            {card.creatureStats.dp !== undefined && (
-                              <div>
-                                <span className="text-secondary">DP: </span>
-                                <span>{card.creatureStats.dp}</span>
-                              </div>
-                            )}
+                          <div className="flex justify-between items-center text-xs mb-2">
+                            <div className="flex space-x-4">
+                              {card.creatureStats.ap !== undefined && (
+                                <div>
+                                  <span className="text-error">AP: </span>
+                                  <span>{card.creatureStats.ap}</span>
+                                </div>
+                              )}
+                              {card.creatureStats.dp !== undefined && (
+                                <div>
+                                  <span className="text-secondary">DP: </span>
+                                  <span>{card.creatureStats.dp}</span>
+                                </div>
+                              )}
+                            </div>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
+                            }`}>
+                              {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
+                            </span>
                           </div>
                         )}
                         <div className="flex space-x-4 text-xs">
@@ -1148,13 +1155,6 @@ export default function GamePage() {
                             <span className="text-secondary">MP: </span>
                             <span>{creature.currentMp}/{creature.maxMp}</span>
                           </div>
-                        </div>
-                        <div className="mt-1">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            creature.canAttack ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
-                          }`}>
-                            {creature.canAttack ? 'Can Attack' : 'Cannot Attack'}
-                          </span>
                         </div>
                       </Card>
                     );
