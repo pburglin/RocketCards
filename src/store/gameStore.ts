@@ -62,6 +62,12 @@ interface GameStore {
     mulliganEnabled?: boolean
     seed?: string
     turnInitiative?: 'player' | 'random' | 'opponent'
+    startingHp?: number
+    maxHp?: number
+    startingMp?: number
+    maxMp?: number
+    startingHand?: number
+    maxHand?: number
   }) => void
   playCard: (cardId: string) => boolean
   endTurn: () => void
@@ -351,7 +357,13 @@ export const useGameStore = create<GameStore>()(
           timedMatch: options.timedMatch ?? true,
           mulliganEnabled: options.mulliganEnabled ?? true,
           seed: options.seed,
-          turnInitiative: options.turnInitiative
+          turnInitiative: options.turnInitiative,
+          startingHp: options.startingHp,
+          maxHp: options.maxHp,
+          startingMp: options.startingMp,
+          maxMp: options.maxMp,
+          startingHand: options.startingHand,
+          maxHand: options.maxHand
         })
         
         set({

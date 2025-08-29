@@ -71,6 +71,12 @@ export function initializeMatch(options: {
   mulliganEnabled?: boolean
   seed?: string
   turnInitiative?: 'player' | 'random' | 'opponent'
+  startingHp?: number
+  maxHp?: number
+  startingMp?: number
+  maxMp?: number
+  startingHand?: number
+  maxHand?: number
 }): {
   matchState: MatchState
   playerState: PlayerState
@@ -85,14 +91,20 @@ export function initializeMatch(options: {
   shuffleArray(opponentDeck, options.seed ? options.seed + '_opponent' : undefined)
   
   // Deal starting hands
-  const playerHand = playerDeck.splice(0, GAME_STARTING_HAND)
-  const opponentHand = opponentDeck.splice(0, GAME_STARTING_HAND)
+  const playerHand = playerDeck.splice(0, options.startingHand ?? GAME_STARTING_HAND)
+  const opponentHand = opponentDeck.splice(0, options.startingHand ?? GAME_STARTING_HAND)
   
   // Calculate player stats
-  const { hp, mp } = calculatePlayerStats(
-    options.playerProfile.strategy,
-    options.playerProfile.keyStat
-  )
+  const { hp, mp } = {
+    hp: options.startingHp ?? calculatePlayerStats(
+      options.playerProfile.strategy,
+      options.playerProfile.keyStat
+    ).hp,
+    mp: options.startingMp ?? calculatePlayerStats(
+      options.playerProfile.strategy,
+      options.playerProfile.keyStat
+    ).mp
+  }
   
   // Calculate MP regen based on strategy
   let mpRegen = 3 // balanced
@@ -108,7 +120,7 @@ export function initializeMatch(options: {
     activePlayer: 'player', // This will be overridden below based on turnInitiative
     log: [],
     rules: {
-      handLimit: GAME_HAND_LIMIT,
+      handLimit: options.maxHand ?? GAME_HAND_LIMIT,
       championSlots: GAME_CHAMPION_SLOTS,
       playLimitPerTurn: 1
     },

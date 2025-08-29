@@ -16,6 +16,13 @@ export default function PlayLobbyPage() {
   const [mulliganEnabled, setMulliganEnabled] = useState(true)
   const [seed, setSeed] = useState('')
   const [turnInitiative, setTurnInitiative] = useState<'player' | 'random' | 'opponent'>('random')
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
+  const [startingHp, setStartingHp] = useState(28)
+  const [maxHp, setMaxHp] = useState(30)
+  const [startingMp, setStartingMp] = useState(6)
+  const [maxMp, setMaxMp] = useState(10)
+  const [startingHand, setStartingHand] = useState(3)
+  const [maxHand, setMaxHand] = useState(4)
   const [errors, setErrors] = useState<{deck?: string}>({})
   const [showLoading, setShowLoading] = useState(false)
   
@@ -61,7 +68,13 @@ export default function PlayLobbyPage() {
         timedMatch,
         mulliganEnabled,
         seed: seed || undefined,
-        turnInitiative
+        turnInitiative,
+        startingHp,
+        maxHp,
+        startingMp,
+        maxMp,
+        startingHand,
+        maxHand
       })
       
       setShowLoading(false);
@@ -144,11 +157,11 @@ export default function PlayLobbyPage() {
                 </div>
               </Card>
               
-              <Card 
+              <Card
                 className={`p-4 border ${
                   opponent === 'pvp' ? 'border-primary bg-primary/5' : 'border-border'
-                }`}
-                onClick={() => setOpponent('pvp')}
+                } opacity-50 cursor-not-allowed`}
+                onClick={() => {}}
               >
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gradient-to-br from-accent to-surface rounded-full flex items-center justify-center mr-4">
@@ -190,72 +203,8 @@ export default function PlayLobbyPage() {
           <div className="space-y-6">
             <div>
               <Label className="mb-2 block">Match Settings</Label>
-              <div className="space-y-4">
-                <div
-                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
-                  onClick={() => setTimedMatch(!timedMatch)}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setTimedMatch(!timedMatch);
-                  }}
-                >
-                  <div className="flex items-center">
-                    <Clock className="w-5 h-5 text-text-secondary mr-3" />
-                    <div>
-                      <p className="font-medium">Timed Match</p>
-                      <p className="text-sm text-text-secondary">10 seconds per turn</p>
-                    </div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={timedMatch}
-                    onChange={(e) => setTimedMatch(e.target.checked)}
-                    className="toggle toggle-primary"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <Label className="mb-2 block">Seed (Optional)</Label>
-              <input
-                type="text"
-                value={seed}
-                onChange={(e) => setSeed(e.target.value)}
-                placeholder="Custom seed for deterministic gameplay"
-                className="w-full px-4 py-3 bg-surface-light border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <p className="mt-2 text-sm text-text-secondary">
-                Leave empty for random seed
-              </p>
-            </div>
-            
-            <div>
-              <Label className="mb-2 block">Additional Settings</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div
-                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
-                  onClick={() => setMulliganEnabled(!mulliganEnabled)}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setMulliganEnabled(!mulliganEnabled);
-                  }}
-                >
-                  <div className="flex items-center">
-                    <Shuffle className="w-5 h-5 text-text-secondary mr-3" />
-                    <div>
-                      <p className="font-medium">Mulligan</p>
-                      <p className="text-sm text-text-secondary">First turn only</p>
-                    </div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={mulliganEnabled}
-                    onChange={(e) => setMulliganEnabled(e.target.checked)}
-                    className="toggle toggle-primary"
-                  />
-                </div>
-                
+              <div className="grid grid-cols-2 gap-4">
+                {/* Turn Initiative */}
                 <div className="p-4 bg-surface-light rounded-lg">
                   <Label className="mb-2 block">Turn Initiative</Label>
                   <div className="grid grid-cols-3 gap-1">
@@ -293,13 +242,196 @@ export default function PlayLobbyPage() {
                       Opponent
                     </button>
                   </div>
+                  <p className="mt-2 text-xs text-text-secondary">
+                    {turnInitiative === 'player' && 'Player starts first'}
+                    {turnInitiative === 'random' && 'Random start'}
+                    {turnInitiative === 'opponent' && 'Opponent starts first'}
+                  </p>
+                </div>
+                
+                {/* Seed */}
+                <div className="p-4 bg-surface-light rounded-lg">
+                  <Label className="mb-2 block">Seed (Optional)</Label>
+                  <input
+                    type="text"
+                    value={seed}
+                    onChange={(e) => setSeed(e.target.value)}
+                    placeholder="Custom seed"
+                    className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <p className="mt-1 text-xs text-text-secondary">
+                    Leave empty for random
+                  </p>
+                </div>
+                
+                {/* Timed Match */}
+                <div
+                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
+                  onClick={() => setTimedMatch(!timedMatch)}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    setTimedMatch(!timedMatch);
+                  }}
+                >
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 text-text-secondary mr-2" />
+                    <div>
+                      <p className="font-medium text-sm">Timed Match</p>
+                      <p className="text-xs text-text-secondary">10s per turn</p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={timedMatch}
+                    onChange={(e) => setTimedMatch(e.target.checked)}
+                    className="toggle toggle-primary toggle-sm"
+                  />
+                </div>
+                
+                {/* Mulligan */}
+                <div
+                  className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
+                  onClick={() => setMulliganEnabled(!mulliganEnabled)}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    setMulliganEnabled(!mulliganEnabled);
+                  }}
+                >
+                  <div className="flex items-center">
+                    <Shuffle className="w-4 h-4 text-text-secondary mr-2" />
+                    <div>
+                      <p className="font-medium text-sm">Mulligan</p>
+                      <p className="text-xs text-text-secondary">First turn</p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={mulliganEnabled}
+                    onChange={(e) => setMulliganEnabled(e.target.checked)}
+                    className="toggle toggle-primary toggle-sm"
+                  />
                 </div>
               </div>
-              <p className="mt-2 text-sm text-text-secondary">
-                {turnInitiative === 'player' && 'Player always starts first each turn'}
-                {turnInitiative === 'random' && 'Randomly determine who starts each turn'}
-                {turnInitiative === 'opponent' && 'Opponent always starts first each turn'}
-              </p>
+              
+              {/* Advanced Settings */}
+              <div className="border-t border-border pt-6">
+                <button
+                  type="button"
+                  className="flex items-center text-text-secondary hover:text-text transition-colors"
+                  onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  <span className="font-medium">Advanced Game Settings</span>
+                  <svg
+                    className={`w-4 h-4 ml-2 transition-transform ${showAdvancedSettings ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showAdvancedSettings && (
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Starting HP</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={startingHp}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 28;
+                          setStartingHp(Math.max(1, Math.min(100, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 28</p>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Max HP</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={maxHp}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 30;
+                          setMaxHp(Math.max(1, Math.min(100, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 30</p>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Starting MP</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="20"
+                        value={startingMp}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 6;
+                          setStartingMp(Math.max(1, Math.min(20, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 6</p>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Max MP</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="20"
+                        value={maxMp}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 10;
+                          setMaxMp(Math.max(1, Math.min(20, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 10</p>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Starting Hand</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="8"
+                        value={startingHand}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 3;
+                          setStartingHand(Math.max(1, Math.min(8, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 3 cards</p>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-light rounded-lg">
+                      <Label className="mb-2 block">Max Cards in Hand</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="8"
+                        value={maxHand}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 4;
+                          setMaxHand(Math.max(1, Math.min(8, value)));
+                        }}
+                        className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <p className="mt-1 text-xs text-text-secondary">Default: 4 cards</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
