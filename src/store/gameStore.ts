@@ -372,23 +372,16 @@ export const useGameStore = create<GameStore>()(
                 opponentState: aiResult.opponentState
               })
               
-              // Check if the opponent has ended their turn (look for the "Opponent ended their turn" log message)
-              // If so, we need to end the turn again to move to the next player
-              const opponentEndedTurn = aiResult.matchState.log.some(logEntry =>
-                logEntry.message === 'Opponent ended their turn' && logEntry.turn === aiResult.matchState.turn
-              );
-              if (opponentEndedTurn) {
-                // The opponent has ended their turn, so we need to end the turn again
+              // Always end the opponent's turn after AI plays
+              const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
+              if (finalMatchState && finalPlayerState && finalOpponentState) {
                 setTimeout(() => {
-                  const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
-                  if (finalMatchState && finalPlayerState && finalOpponentState) {
-                    const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
-                    set({
-                      matchState: finalResult.matchState,
-                      playerState: finalResult.playerState,
-                      opponentState: finalResult.opponentState
-                    })
-                  }
+                  const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
+                  set({
+                    matchState: finalResult.matchState,
+                    playerState: finalResult.playerState,
+                    opponentState: finalResult.opponentState
+                  })
                 }, 500)
               }
             }
@@ -442,23 +435,16 @@ export const useGameStore = create<GameStore>()(
                 opponentState: aiResult.opponentState
               })
               
-              // Check if the opponent has ended their turn (look for the "Opponent ended their turn" log message)
-              // If so, we need to end the turn again to move to the next player
-              const opponentEndedTurn = aiResult.matchState.log.some(logEntry =>
-                logEntry.message === 'Opponent ended their turn' && logEntry.turn === aiResult.matchState.turn
-              );
-              if (opponentEndedTurn) {
-                // The opponent has ended their turn, so we need to end the turn again
+              // Always end the opponent's turn after AI plays
+              const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
+              if (finalMatchState && finalPlayerState && finalOpponentState) {
                 setTimeout(() => {
-                  const { matchState: finalMatchState, playerState: finalPlayerState, opponentState: finalOpponentState, collections: finalCollections } = get()
-                  if (finalMatchState && finalPlayerState && finalOpponentState) {
-                    const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
-                    set({
-                      matchState: finalResult.matchState,
-                      playerState: finalResult.playerState,
-                      opponentState: finalResult.opponentState
-                    })
-                  }
+                  const finalResult = endTurn(finalMatchState, finalPlayerState, finalOpponentState, finalCollections)
+                  set({
+                    matchState: finalResult.matchState,
+                    playerState: finalResult.playerState,
+                    opponentState: finalResult.opponentState
+                  })
                 }, 500)
               }
             }

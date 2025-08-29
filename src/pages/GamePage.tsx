@@ -1235,7 +1235,6 @@ export default function GamePage() {
                           variant="outline"
                           size="lg"
                           onClick={handleEndTurn}
-                          disabled={matchState?.activePlayer !== 'player'}
                         >
                           <Flag className="w-5 h-5 mr-2" />
                           End Turn
