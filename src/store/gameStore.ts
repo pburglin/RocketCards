@@ -389,14 +389,14 @@ export const useGameStore = create<GameStore>()(
               }
               
               const result = playCard(matchState, playerState, opponentState, cardId, collections)
+              // Always update state to reflect the latest log messages, even if play failed
+              set({
+                matchState: result.matchState,
+                playerState: result.playerState,
+                opponentState: result.opponentState
+              })
+              
               if (result.success) {
-                set({
-                  matchState: result.matchState,
-                  playerState: result.playerState,
-                  opponentState: result.opponentState
-                })
-                
-                
                 return true
               }
               return false

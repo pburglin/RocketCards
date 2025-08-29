@@ -322,19 +322,63 @@ export default function GamePage() {
       // Check if card can be played
       const canPlay = playCardAction(cardId)
       if (!canPlay) {
-        // Check if this is a skill card and there's no champion
-        let card = null;
-        for (const collection of collections) {
-          card = collection.cards.find((c: any) => c.id === cardId);
-          if (card) break;
+        // Check the most recent log entries for specific error messages
+        let errorMessage = 'Invalid play - check costs and phase';
+        
+        if (matchState?.log && matchState.log.length > 0) {
+          // Get the most recent log entries (last 3 entries should be enough)
+          const recentLogs = matchState.log.slice(-3);
+          
+          // Look for specific error messages in reverse order (most recent first)
+          for (let i = recentLogs.length - 1; i >= 0; i--) {
+            const logEntry = recentLogs[i];
+            if (logEntry.message.includes('cannot play skill card - no champion in play')) {
+              errorMessage = 'Cannot play skill card - no champion in play. Play a champion first.';
+              break;
+            } else if (logEntry.message.includes('Cannot play card - Fatigue too high')) {
+              errorMessage = 'Cannot play card - Fatigue too high. End your turn to reduce fatigue.';
+              break;
+            } else if (logEntry.message.includes('HP cost too high')) {
+              errorMessage = 'Cannot play card - HP cost too high. You would have negative HP.';
+              break;
+            } else if (logEntry.message.includes('MP cost too high')) {
+              errorMessage = 'Cannot play card - MP cost too high. You would have negative MP.';
+              break;
+            } else if (logEntry.message.includes('card not in hand')) {
+              errorMessage = 'Cannot play card - card not in hand.';
+              break;
+            } else if (logEntry.message.includes('card not found in collections')) {
+              errorMessage = 'Cannot play card - card not found.';
+              break;
+            } else if (logEntry.message.includes('not in main phase')) {
+              errorMessage = 'Cannot play card - not in main phase.';
+              break;
+            } else if (logEntry.message.includes('cannot play champion - already has one in play')) {
+              errorMessage = 'Cannot play champion - you already have a champion in play.';
+              break;
+            } else if (logEntry.message.includes('cannot play skill card - no champion in play')) {
+              errorMessage = 'Cannot play skill card - no champion in play. Play a champion first.';
+              break;
+            }
+          }
         }
         
-        if (card && card.type === 'skills' && (!playerState?.champions || playerState.champions.length === 0)) {
-          setPenaltyMessage('Cannot play skill card - no champion in play. Play a champion first.')
-        } else {
-          setPenaltyMessage('Invalid play - check costs and phase')
+        // Fallback to specific checks if no log message found
+        if (errorMessage === 'Invalid play - check costs and phase') {
+          // Check if this is a skill card and there's no champion
+          let card = null;
+          for (const collection of collections) {
+            card = collection.cards.find((c: any) => c.id === cardId);
+            if (card) break;
+          }
+          
+          if (card && card.type === 'skills' && (!playerState?.champions || playerState.champions.length === 0)) {
+            errorMessage = 'Cannot play skill card - no champion in play. Play a champion first.';
+          }
         }
-        setShowPenalty(true)
+        
+        setPenaltyMessage(errorMessage);
+        setShowPenalty(true);
       }
     }
   
