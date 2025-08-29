@@ -106,6 +106,10 @@ export function initializeMatch(options: {
     ).mp
   }
   
+  // Calculate max stats
+  const maxHp = options.maxHp ?? 30;
+  const maxMp = options.maxMp ?? 10;
+  
   // Calculate MP regen based on strategy
   let mpRegen = 3 // balanced
   if (options.playerProfile.strategy === 'aggressive') {
@@ -160,6 +164,8 @@ export function initializeMatch(options: {
     id: 'player',
     hp,
     mp,
+    maxHp,
+    maxMp,
     fatigue: 0,
     hand: playerHand,
     deck: playerDeck,
@@ -174,6 +180,8 @@ export function initializeMatch(options: {
     id: 'opponent',
     hp,
     mp,
+    maxHp,
+    maxMp,
     fatigue: 0,
     hand: opponentHand,
     deck: opponentDeck,
@@ -575,26 +583,26 @@ export function endTurn(
   
   // Cleanup phase
   // Discard down to hand limit
-  while (newPlayerState.hand.length > GAME_HAND_LIMIT) {
+  while (newPlayerState.hand.length > newMatchState.rules.handLimit) {
     const cardId = newPlayerState.hand.pop()
     if (cardId) {
       newPlayerState.discard.push(cardId)
       // Add log message for discarded card
       newMatchState.log.push({
-        message: `Player discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
+        message: `Player discarded card due to hand limit (${newMatchState.rules.handLimit} cards)`,
         turn: newMatchState.turn
       });
     }
   }
   
   // Also check opponent hand limit
-  while (newOpponentState.hand.length > GAME_HAND_LIMIT) {
+  while (newOpponentState.hand.length > newMatchState.rules.handLimit) {
     const cardId = newOpponentState.hand.pop()
     if (cardId) {
       newOpponentState.discard.push(cardId)
       // Add log message for discarded card
       newMatchState.log.push({
-        message: `Opponent discarded card due to hand limit (${GAME_HAND_LIMIT} cards)`,
+        message: `Opponent discarded card due to hand limit (${newMatchState.rules.handLimit} cards)`,
         turn: newMatchState.turn
       });
     }
@@ -678,10 +686,10 @@ export function endTurn(
   let drawnCardId = null;
   if (newMatchState.activePlayer === 'player' && newPlayerState.deck.length > 0) {
     // Check if player's hand is at maximum capacity
-    if (newPlayerState.hand.length >= GAME_HAND_LIMIT) {
+    if (newPlayerState.hand.length >= newMatchState.rules.handLimit) {
       // Cannot draw card - hand is full
       newMatchState.log.push({
-        message: `Player could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+        message: `Player could not draw a card - hand limit reached (${newMatchState.rules.handLimit} cards)`,
         turn: newMatchState.turn
       });
     } else {
@@ -694,7 +702,7 @@ export function endTurn(
     }
   } else if (newMatchState.activePlayer === 'opponent' && newOpponentState.deck.length > 0) {
     // Check if opponent's hand is at maximum capacity
-    if (newOpponentState.hand.length >= GAME_HAND_LIMIT) {
+    if (newOpponentState.hand.length >= newMatchState.rules.handLimit) {
       console.log('Opponent hand is full, checking for playable cards');
       // Check if opponent has any playable cards
       const { champions, creatures, effects } = categorizeCards(newOpponentState.hand, collections, newOpponentState);
@@ -738,7 +746,7 @@ export function endTurn(
         console.log('Opponent has playable cards, not discarding');
         // Cannot draw card - hand is full but has playable cards
         newMatchState.log.push({
-          message: `Opponent could not draw a card - hand limit reached (${GAME_HAND_LIMIT} cards)`,
+          message: `Opponent could not draw a card - hand limit reached (${newMatchState.rules.handLimit} cards)`,
           turn: newMatchState.turn
         });
       }

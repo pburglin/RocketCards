@@ -734,10 +734,10 @@ export default function GamePage() {
             <div className="w-full bg-surface rounded-full h-4">
               <div
                 className={`h-4 rounded-full bg-error ${barAnimations.opponentHp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${((opponentState?.hp || 0) / 30) * 100}%` }}
+                style={{ width: `${opponentState?.hp !== undefined && opponentState?.maxHp !== undefined ? Math.min(100, Math.max(0, (opponentState.hp / opponentState.maxHp) * 100)) : 0}%` }}
               />
             </div>
-            <span className="ml-3 font-bold">{opponentState?.hp}</span>
+            <span className="ml-3 font-bold">{opponentState?.hp}/{opponentState?.maxHp}</span>
           </div>
         </div>
         
@@ -747,10 +747,10 @@ export default function GamePage() {
             <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
                 className={`h-4 rounded-full bg-secondary ${barAnimations.opponentMp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${Math.min(100, Math.max(0, ((opponentState?.mp || 0) / 10) * 100))}%` }}
+                style={{ width: `${opponentState?.mp !== undefined && opponentState?.maxMp !== undefined ? Math.min(100, Math.max(0, (opponentState.mp / opponentState.maxMp) * 100)) : 0}%` }}
               />
             </div>
-            <span className="ml-3 font-bold">{opponentState?.mp}</span>
+            <span className="ml-3 font-bold">{opponentState?.mp}/{opponentState?.maxMp}</span>
           </div>
         </div>
         
@@ -1242,10 +1242,10 @@ export default function GamePage() {
             <div className="w-full bg-surface rounded-full h-4">
               <div
                 className={`h-4 rounded-full bg-error ${barAnimations.playerHp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${((playerState?.hp || 0) / 30) * 100}%` }}
+                style={{ width: `${playerState?.hp !== undefined && playerState?.maxHp !== undefined ? Math.min(100, Math.max(0, (playerState.hp / playerState.maxHp) * 100)) : 0}%` }}
               />
             </div>
-            <span className="ml-3 font-bold">{playerState?.hp}</span>
+            <span className="ml-3 font-bold">{playerState?.hp}/{playerState?.maxHp}</span>
           </div>
         </div>
         
@@ -1255,10 +1255,10 @@ export default function GamePage() {
             <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
               <div
                 className={`h-4 rounded-full bg-secondary ${barAnimations.playerMp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${Math.min(100, Math.max(0, ((playerState?.mp || 0) / 10) * 100))}%` }}
+                style={{ width: `${playerState?.mp !== undefined && playerState?.maxMp !== undefined ? Math.min(100, Math.max(0, (playerState.mp / playerState.maxMp) * 100)) : 0}%` }}
               />
             </div>
-            <span className="ml-3 font-bold">{playerState?.mp}</span>
+            <span className="ml-3 font-bold">{playerState?.mp}/{playerState?.maxMp}</span>
           </div>
         </div>
         

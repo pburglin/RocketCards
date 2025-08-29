@@ -22,9 +22,16 @@ export default function ResultsPage() {
     return () => clearTimeout(timer)
   }, [])
   
-  // Play victory or defeat sound when page loads
   const isPlayerWinner = (playerState?.hp || 0) > (opponentState?.hp || 0)
-  
+
+  // If no match state, redirect to play
+  useEffect(() => {
+    if (!matchState) {
+      navigate('/play')
+    }
+  }, [matchState, navigate])
+
+  // Play victory or defeat sound when page loads
   useEffect(() => {
     // Stop background music first
     audioService.stopBackgroundMusic();
@@ -35,14 +42,7 @@ export default function ResultsPage() {
     } else {
       audioService.playDefeatSound();
     }
-  }, []);
-
-  // If no match state, redirect to play
-  useEffect(() => {
-    if (!matchState) {
-      navigate('/play')
-    }
-  }, [matchState, navigate])
+  }, [isPlayerWinner]);
 
   const handlePlayAgain = () => {
     clearGameState()
@@ -58,19 +58,6 @@ export default function ResultsPage() {
   const totalTurns = matchState?.turn || 0
   const playerHp = playerState?.hp || 0
   const opponentHp = opponentState?.hp || 0
-  
-  // Play victory or defeat sound when page loads
-  useEffect(() => {
-    // Stop background music first
-    audioService.stopBackgroundMusic();
-    
-    // Play victory or defeat sound
-    if (isPlayerWinner) {
-      audioService.playVictorySound();
-    } else {
-      audioService.playDefeatSound();
-    }
-  }, [isPlayerWinner]);
   
   // Award tokens when player wins
   useEffect(() => {

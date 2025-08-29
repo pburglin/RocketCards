@@ -74,6 +74,8 @@ export interface PlayerState {
   id: 'player' | 'opponent';
   hp: number;
   mp: number;
+  maxHp: number;
+  maxMp: number;
   fatigue: number;
   hand: string[];
   deck: string[];

@@ -343,7 +343,12 @@ export default function PlayLobbyPage() {
                         value={startingHp}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 28;
-                          setStartingHp(Math.max(1, Math.min(100, value)));
+                          const newStartingHp = Math.max(1, Math.min(100, value));
+                          setStartingHp(newStartingHp);
+                          // Auto-adjust max HP if starting HP is higher
+                          if (newStartingHp > maxHp) {
+                            setMaxHp(newStartingHp);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
@@ -359,7 +364,12 @@ export default function PlayLobbyPage() {
                         value={maxHp}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 30;
-                          setMaxHp(Math.max(1, Math.min(100, value)));
+                          const newMaxHp = Math.max(1, Math.min(100, value));
+                          setMaxHp(newMaxHp);
+                          // Ensure max HP is not less than starting HP
+                          if (newMaxHp < startingHp) {
+                            setStartingHp(newMaxHp);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
@@ -375,7 +385,12 @@ export default function PlayLobbyPage() {
                         value={startingMp}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 6;
-                          setStartingMp(Math.max(1, Math.min(20, value)));
+                          const newStartingMp = Math.max(1, Math.min(20, value));
+                          setStartingMp(newStartingMp);
+                          // Auto-adjust max MP if starting MP is higher
+                          if (newStartingMp > maxMp) {
+                            setMaxMp(newStartingMp);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
@@ -391,7 +406,12 @@ export default function PlayLobbyPage() {
                         value={maxMp}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 10;
-                          setMaxMp(Math.max(1, Math.min(20, value)));
+                          const newMaxMp = Math.max(1, Math.min(20, value));
+                          setMaxMp(newMaxMp);
+                          // Ensure max MP is not less than starting MP
+                          if (newMaxMp < startingMp) {
+                            setStartingMp(newMaxMp);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
@@ -407,7 +427,12 @@ export default function PlayLobbyPage() {
                         value={startingHand}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 3;
-                          setStartingHand(Math.max(1, Math.min(8, value)));
+                          const newStartingHand = Math.max(1, Math.min(8, value));
+                          setStartingHand(newStartingHand);
+                          // Auto-adjust max hand if starting hand is higher
+                          if (newStartingHand > maxHand) {
+                            setMaxHand(newStartingHand);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
@@ -423,7 +448,12 @@ export default function PlayLobbyPage() {
                         value={maxHand}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 4;
-                          setMaxHand(Math.max(1, Math.min(8, value)));
+                          const newMaxHand = Math.max(1, Math.min(8, value));
+                          setMaxHand(newMaxHand);
+                          // Ensure max hand is not less than starting hand
+                          if (newMaxHand < startingHand) {
+                            setStartingHand(newMaxHand);
+                          }
                         }}
                         className="w-full px-3 py-2 bg-surface border border-border rounded text-text text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                       />
