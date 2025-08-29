@@ -3,6 +3,7 @@ import { Gamepad2, Sparkles, Crown, Zap, ArrowRight, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { loadAllCollections } from '../lib/collectionLoader'
 import { CardCollection } from '../types/game'
+import { imageCacheService } from '../lib/imageCacheService'
 
 interface CollectionDisplay {
   id: string
@@ -134,10 +135,15 @@ export default function LandingPage() {
                 <div className={`absolute inset-0 bg-gradient-to-br ${collection.gradient} opacity-10 group-hover:opacity-20 transition-opacity`} />
                 <div className="relative p-6">
                   <div className="relative h-48 rounded-xl overflow-hidden mb-6">
-                    <img 
-                      src={`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                    <img
+                      src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
+                           `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                       alt={collection.name}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                      onLoad={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        imageCacheService.cacheImage(img.src);
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
                     <div className="absolute bottom-4 left-4 right-4">

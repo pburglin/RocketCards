@@ -6,6 +6,7 @@ import { useGameStore } from '../store/gameStore'
 import { Card as CardType } from '../types/card'
 import { Plus, Minus, Info, Image as ImageIcon, Filter, X, CheckCircle } from 'lucide-react'
 import { loadCollection } from '../lib/collectionLoader'
+import { imageCacheService } from '../lib/imageCacheService'
 
 export default function CollectionDetailPage() {
   const { collectionId } = useParams<{collectionId: string}>()
@@ -148,11 +149,18 @@ export default function CollectionDetailPage() {
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
                   <img
-                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
+                         `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                     alt={card.title}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
-                      e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+                      const img = e.currentTarget;
+                      const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
+                      img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                    }}
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      imageCacheService.cacheImage(img.src);
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
@@ -313,10 +321,15 @@ export default function CollectionDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="relative h-64 mb-4">
-                  <img 
-                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                  <img
+                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
+                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      imageCacheService.cacheImage(img.src);
+                    }}
                   />
                   <div className="absolute top-2 right-2">
                     <span className={`px-3 py-1 rounded-full text-xs ${

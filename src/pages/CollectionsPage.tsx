@@ -6,6 +6,7 @@ import { Search, Filter, BookOpen, LayoutGrid, List, Sliders, X, Info } from 'lu
 import { useGameStore } from '../store/gameStore'
 import { loadCollection } from '../lib/collectionLoader'
 import { Card as CardType } from '../types/card'
+import { imageCacheService } from '../lib/imageCacheService'
 
 export default function CollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -23,7 +24,8 @@ export default function CollectionsPage() {
     name: collection.name,
     description: collection.description,
     cards: collection.cards.length,
-    image: `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`,
+    image: imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
+            `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`,
     firstCard: collection.cards[0]
   }))
 
@@ -158,9 +160,14 @@ export default function CollectionsPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
+                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      imageCacheService.cacheImage(img.src);
+                    }}
                   />
                   <div className="absolute top-2 right-2">
                     <span className={`px-3 py-1 rounded-full text-xs ${

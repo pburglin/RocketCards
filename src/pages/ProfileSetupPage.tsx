@@ -7,6 +7,7 @@ import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
 import { Shield, Sword, Sparkles, Flame, Star, Coins, X, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
+import { imageCacheService } from '../lib/imageCacheService'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
@@ -357,11 +358,18 @@ export default function ProfileSetupPage() {
                         <div className="flex items-start space-x-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                             <img
-                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                              src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`) ||
+                                   `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
                               alt={card.title}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.currentTarget.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
+                                const img = e.currentTarget;
+                                const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`;
+                                img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                              }}
+                              onLoad={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                imageCacheService.cacheImage(img.src);
                               }}
                             />
                           </div>
@@ -454,9 +462,14 @@ export default function ProfileSetupPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
+                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard?.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      imageCacheService.cacheImage(img.src);
+                    }}
                   />
                   <div className="absolute top-2 right-2">
                     <span className={`px-3 py-1 rounded-full text-xs ${
