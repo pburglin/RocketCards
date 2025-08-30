@@ -705,37 +705,9 @@ export default function GamePage() {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
-      <div className="flex items-center justify-between mb-4 sm:mb-8">
-        <div className="flex items-center">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-3 sm:mr-4">
-            <Gamepad className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Game</h1>
-        </div>
-        
-        <div className="flex space-x-2">
-          <Button 
-            onClick={() => setShowSettings(true)}
-            variant="outline"
-            size="sm"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
-          <Button 
-            onClick={handleConcede}
-            variant="outline"
-            size="sm"
-            className="text-error border-error hover:bg-error/10"
-          >
-            <Hand className="w-4 h-4 mr-2" />
-            Concede
-          </Button>
-        </div>
-      </div>
       
       {/* Opponent Resources */}
-      <div className="grid grid-cols-1 gap-2 mb-3 sm:mb-4">
+      <div className="grid grid-cols-1 gap-2 mb-2 sm:mb-4">
         <div className="bg-surface-light p-2 rounded-lg">
           <div className="grid grid-cols-3 gap-4">
             <div className={`${opponentHpAnimation ? 'animate-damage' : ''}`}>
@@ -784,7 +756,7 @@ export default function GamePage() {
       </div>
       
       {/* Battlefield */}
-      <div className="bg-surface-light p-3 rounded-lg mb-4">
+      <div className="bg-surface-light p-3 rounded-lg mb-2 sm:mb-4">
         <h2 className="text-lg font-bold mb-3">Battlefield</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
@@ -1289,7 +1261,7 @@ export default function GamePage() {
       </div>
       
       {/* Player Resources */}
-      <div className="grid grid-cols-1 gap-3 mb-4">
+      <div className="grid grid-cols-1 gap-3 mb-2 sm:mb-4">
         <div className="bg-surface-light p-2 rounded-lg">
           <div className="grid grid-cols-3 gap-4">
             <div className={`${playerHpAnimation ? 'animate-damage' : ''}`}>
@@ -1354,16 +1326,17 @@ export default function GamePage() {
               className={matchState?.mulliganEnabled ? '' : 'hidden'}
             >
               <RotateCw className="w-5 h-5 mr-2" />
-              Mulligan
+              <span className='hidden sm:flex'>Mulligan</span>              
             </Button>
             
             <Button
               variant="outline"
               size="sm"
+              className="sm:flex text-primary border-primary"
               onClick={handleEndTurn}
             >
               <Flag className="w-5 h-5 mr-2" />
-              End Turn
+              <span className='hidden sm:flex'>End Turn</span>
             </Button>
           </div>
           
@@ -1394,20 +1367,20 @@ export default function GamePage() {
               variant="outline"
               size="sm"
               onClick={handleConcede}
-              className="hidden sm:flex text-error border-error hover:bg-error/10"
+              className="sm:flex text-error border-error hover:bg-error/10"
             >
               <Hand className="w-5 h-5 mr-2" />
-              Concede
+              <span className='hidden sm:flex'>Concede</span>
             </Button>
             
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowSettings(true)}
-              className="hidden sm:flex"
+              className="sm:flex"
             >
               <Settings className="w-5 h-5 mr-2" />
-              Settings
+              <span className='hidden sm:flex'>Settings</span>
             </Button>
           </div>
         </div>
