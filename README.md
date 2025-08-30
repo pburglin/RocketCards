@@ -152,8 +152,11 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/your-feature`)
 5. Create a new Pull Request
 
-## License
+## License & Attributions
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Sound effects from Mixkit - https://mixkit.co/free-sound-effects/game/
+### Attributions
+
+- Sound effects provided by Mixkit. Visit [https://mixkit.co/free-sound-effects/game/](https://mixkit.co/free-sound-effects/game/) for more free game sound effects.
+- Card images generated using AI technology provided by pollinations.ai. All card artwork and visual elements are created through AI generation services.

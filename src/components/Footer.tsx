@@ -1,4 +1,4 @@
-import { Github, Twitter, Linkedin, Mail } from 'lucide-react'
+import { Github, Mail } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -16,35 +16,17 @@ export default function Footer() {
               Choose your card collection, build your deck and strategy, then battle opponents with dynamic effects resolved by cutting-edge AI models.
             </p>
             <div className="flex space-x-4">
-              <a 
-                href="https://github.com/rocketcards" 
-                target="_blank" 
+              <a
+                href="https://github.com/pburglin/RocketCards"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5 text-text-secondary hover:text-primary" />
               </a>
-              <a 
-                href="https://twitter.com/rocketcards" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5 text-text-secondary hover:text-primary" />
-              </a>
-              <a 
-                href="https://linkedin.com/company/rocketcards" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5 text-text-secondary hover:text-primary" />
-              </a>
-              <a 
-                href="mailto:contact@rocketcards.com"
+              <a
+                href="https://github.com/pburglin/RocketCards/issues"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
                 aria-label="Email"
               >

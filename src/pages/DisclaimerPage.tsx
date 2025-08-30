@@ -98,11 +98,11 @@ export default function DisclaimerPage() {
             
             <h2 className="text-2xl font-bold mb-4 mt-8">Contact Us</h2>
             <p className="mb-6">
-              If you have any questions about this Disclaimer, please contact us at:
+              If you have any questions about this Disclaimer, or if you'd like to report bugs or suggest new cards and card collections, please visit our GitHub issues page:
               <br />
-              <strong>Email:</strong> legal@rocketcards.com
-              <br />
-              <strong>Address:</strong> RocketCards Legal Department, 123 Game Street, Digital City, DC 12345
+              <a href="https://github.com/pburglin/RocketCards/issues" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                https://github.com/pburglin/RocketCards/issues
+              </a>
             </p>
           </div>
         </div>
