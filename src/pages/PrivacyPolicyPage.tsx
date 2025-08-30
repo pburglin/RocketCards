@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
             </p>
             
             <p className="mb-6">
-              CardWizard ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our card game platform and related services.
+              RocketCards ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our card game platform and related services.
             </p>
             
             <h2 className="text-2xl font-bold mb-4 mt-8">Information We Collect</h2>
@@ -106,9 +106,9 @@ export default function PrivacyPolicyPage() {
             <p className="mb-6">
               If you have any questions about this Privacy Policy, please contact us at:
               <br />
-              <strong>Email:</strong> privacy@cardwizard.com
+              <strong>Email:</strong> privacy@rocketcards.com
               <br />
-              <strong>Address:</strong> CardWizard Legal Department, 123 Game Street, Digital City, DC 12345
+              <strong>Address:</strong> RocketCards Legal Department, 123 Game Street, Digital City, DC 12345
             </p>
           </div>
         </div>

@@ -296,7 +296,7 @@ export default function DeckBuilderPage() {
               <span className="text-white text-xs font-bold">!</span>
             </div>
             <p className="text-info font-medium">
-              You need to create a deck to play. Select a collection below and build your 30-card deck.
+              You need to create a deck to play. Select a collection below and build your 30-card deck. Review cards in detail to select one by one to build your strategy, or just click "Auto-build" then "Save Deck" and you will be all set with a default deck.
             </p>
           </div>
         </div>

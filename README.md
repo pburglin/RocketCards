@@ -1,10 +1,10 @@
-# CardWizard - Browser-Based Card Game Platform
+# RocketCards - Browser-Based Card Game Platform
 
-CardWizard is a browser-based online card game platform where players choose a themed card collection (Fantasy, Politics, Monsters, Anime, etc.), set a player profile, build a deck, and battle an AI or human opponent. Game state and round effects are resolved in collaboration with a configurable LLM via an OpenAI Completions-compatible API.
+RocketCards is a browser-based online card game platform where players choose a themed card collection (Fantasy, Politics, Monsters, Anime, etc.), set a player profile, build a deck, and battle an AI or human opponent. Game state and round effects are resolved in collaboration with a configurable LLM via an OpenAI Completions-compatible API.
 
 ## Overview
 
-CardWizard combines classic card game strategy with cutting-edge AI to create dynamic, ever-evolving gameplay experiences. The platform features:
+RocketCards combines classic card game strategy with cutting-edge AI to create dynamic, ever-evolving gameplay experiences. The platform features:
 
 - Multiple themed card collections with unique mechanics
 - Deep customization through player profiles and deck building

@@ -18,7 +18,7 @@ export default function CookiePolicyPage() {
             </p>
             
             <p className="mb-6">
-              This Cookie Policy explains how CardWizard ("we," "our," or "us") uses cookies and similar tracking technologies when you visit our website and use our services.
+              This Cookie Policy explains how RocketCards ("we," "our," or "us") uses cookies and similar tracking technologies when you visit our website and use our services.
             </p>
             
             <h2 className="text-2xl font-bold mb-4 mt-8">What Are Cookies?</h2>
@@ -85,9 +85,9 @@ export default function CookiePolicyPage() {
             <p className="mb-6">
               If you have any questions about this Cookie Policy, please contact us at:
               <br />
-              <strong>Email:</strong> privacy@cardwizard.com
+              <strong>Email:</strong> privacy@rocketcards.com
               <br />
-              <strong>Address:</strong> CardWizard Legal Department, 123 Game Street, Digital City, DC 12345
+              <strong>Address:</strong> RocketCards Legal Department, 123 Game Street, Digital City, DC 12345
             </p>
           </div>
         </div>

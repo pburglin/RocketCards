@@ -547,7 +547,7 @@ export const useGameStore = create<GameStore>()(
       }
     })),
     {
-      name: 'cardwizard-storage',
+      name: 'rocketcards-storage',
     }
   )
 )

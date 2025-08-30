@@ -75,9 +75,9 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl text-text-secondary mb-10 max-w-2xl mx-auto">
-              CardWizard combines classic card game strategy with cutting-edge AI to create dynamic, 
-              ever-evolving gameplay experiences. Build your deck, choose your collection, and battle opponents 
-              with effects resolved by advanced language models.
+              RocketCards combines classic card game strategy with cutting-edge AI to create dynamic,
+              ever-evolving gameplay experiences. Choose a card collection, build your deck, and battle opponents
+              with effects resolved by advanced AI models.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -184,7 +184,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-secondary to-accent">
-                Why CardWizard Stands Out
+                Why RocketCards Stands Out
               </span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto">

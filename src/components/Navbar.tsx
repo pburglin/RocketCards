@@ -30,7 +30,7 @@ export default function Navbar() {
               <Gamepad2 className="w-6 h-6 text-white" />
             </div>
           </div>
-          <span className="text-2xl font-bold text-gradient">CardWizard</span>
+          <span className="text-2xl font-bold text-gradient">RocketCards</span>
         </Link>
 
         {/* Desktop Navigation */}

@@ -10,14 +10,14 @@ export default function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">CW</span>
               </div>
-              <span className="text-2xl font-bold text-gradient">CardWizard</span>
+              <span className="text-2xl font-bold text-gradient">RocketCards</span>
             </div>
             <p className="text-text-secondary max-w-2xl mb-4">
-              A revolutionary card game platform where strategy meets AI. Build your deck, choose your collection, and battle opponents with dynamic effects resolved by cutting-edge language models.
+              Choose your card collection, build your deck and strategy, then battle opponents with dynamic effects resolved by cutting-edge AI models.
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://github.com/cardwizard" 
+                href="https://github.com/rocketcards" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
@@ -26,7 +26,7 @@ export default function Footer() {
                 <Github className="w-5 h-5 text-text-secondary hover:text-primary" />
               </a>
               <a 
-                href="https://twitter.com/cardwizard" 
+                href="https://twitter.com/rocketcards" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
@@ -35,7 +35,7 @@ export default function Footer() {
                 <Twitter className="w-5 h-5 text-text-secondary hover:text-primary" />
               </a>
               <a 
-                href="https://linkedin.com/company/cardwizard" 
+                href="https://linkedin.com/company/rocketcards" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
@@ -44,7 +44,7 @@ export default function Footer() {
                 <Linkedin className="w-5 h-5 text-text-secondary hover:text-primary" />
               </a>
               <a 
-                href="mailto:contact@cardwizard.com"
+                href="mailto:contact@rocketcards.com"
                 className="p-2 rounded-full bg-surface-light hover:bg-primary/20 transition-colors"
                 aria-label="Email"
               >
@@ -91,7 +91,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-border mt-8 pt-6 text-center text-text-secondary">
-          <p>&copy; {new Date().getFullYear()} CardWizard. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} RocketCards. All rights reserved.</p>
           <p className="mt-2 text-sm">Crafted with precision and passion for card game enthusiasts worldwide.</p>
         </div>
       </div>

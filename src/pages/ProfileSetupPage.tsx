@@ -30,7 +30,17 @@ export default function ProfileSetupPage() {
   // Get all token-purchasable cards
   const tokenCards = collections.flatMap(collection =>
     collection.cards.filter(card => card.tokenCost)
-  )
+  ).sort((a, b) => {
+    // Sort by unlocked/locked status first
+    const aIsPurchased = isCardPurchased(a.id);
+    const bIsPurchased = isCardPurchased(b.id);
+    
+    if (aIsPurchased && !bIsPurchased) return -1;
+    if (!aIsPurchased && bIsPurchased) return 1;
+    
+    // Then sort alphabetically by title within each group
+    return a.title.localeCompare(b.title);
+  })
   
   // Initialize form with existing profile data
   useEffect(() => {

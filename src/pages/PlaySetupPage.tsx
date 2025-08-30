@@ -68,9 +68,9 @@ export default function PlaySetupPage() {
           <AlertCircle className="w-16 h-16 text-accent mx-auto mb-6" />
           <h2 className="text-2xl font-bold mb-4">Build Your First Deck</h2>
           <p className="text-text-secondary mb-8 max-w-md mx-auto">
-            You need to create a deck of cards before you can play the game.
-            Visit the Deck Builder to create your first 30-card deck.
-          </p>
+          You need to create a deck of cards before you can play the game.
+          Visit the Deck Builder to create your first 30-card deck. Review cards in detail to select one by one to build your strategy, or just click "Auto-build" then "Save Deck" and you will be all set with a default deck.
+        </p>
           <Button onClick={handleBuildDeck} className="px-8 py-3">
             <LayoutGrid className="w-5 h-5 mr-2" />
             Go to Deck Builder
