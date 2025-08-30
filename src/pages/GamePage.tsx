@@ -711,7 +711,7 @@ export default function GamePage() {
         <div className="bg-surface-light p-2 rounded-lg">
           <div className="grid grid-cols-3 gap-4">
             <div className={`${opponentHpAnimation ? 'animate-damage' : ''}`}>
-              <h3 className="text-xs text-text-secondary mb-1">Opponent's HP</h3>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent HP</h3>
               <div className="flex items-center">
                 <div className="w-full bg-surface rounded-full h-2">
                   <div
@@ -724,7 +724,7 @@ export default function GamePage() {
             </div>
             
             <div>
-              <h3 className="text-xs text-text-secondary mb-1">Opponent's MP</h3>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent MP</h3>
               <div className="flex items-center">
                 <div className="w-full bg-surface rounded-full h-2 overflow-hidden">
                   <div
@@ -737,7 +737,7 @@ export default function GamePage() {
             </div>
             
             <div>
-              <h3 className="text-xs text-text-secondary mb-1">Opponent's Fatigue</h3>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent Fatigue</h3>
               <div className="flex items-center">
                 <div className="w-full bg-surface rounded-full h-2">
                   <div
