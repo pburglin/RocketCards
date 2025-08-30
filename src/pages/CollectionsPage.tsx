@@ -147,8 +147,15 @@ export default function CollectionsPage() {
       
       {/* Card Details Modal */}
       {showCardModal && selectedCard && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto scrollable-touch"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCardModal(false)
+            }
+          }}
+        >
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative my-8 md:my-0">
             <button
               onClick={() => setShowCardModal(false)}
               className="absolute top-4 right-4 text-text-secondary hover:text-white"

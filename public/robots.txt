@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Protect sensitive routes
+Disallow: /api/
+Disallow: /.env
+Disallow: /.env.example
+Disallow: /src/
+
+# Crawl-delay for better server performance
+Crawl-delay: 10
+
+Sitemap: https://rocketcards.netlify.app/sitemap.xml

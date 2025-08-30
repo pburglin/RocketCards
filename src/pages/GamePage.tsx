@@ -704,13 +704,13 @@ export default function GamePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
+      <div className="flex items-center justify-between mb-4 sm:mb-8">
         <div className="flex items-center">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-4">
-            <Gamepad className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+            <Gamepad className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
-          <h1 className="text-3xl font-bold">Game</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Game</h1>
         </div>
         
         <div className="flex space-x-2">
@@ -735,57 +735,61 @@ export default function GamePage() {
       </div>
       
       {/* Opponent Resources */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className={`bg-surface-light p-4 rounded-lg ${opponentHpAnimation ? 'animate-damage' : ''}`}>
-          <h3 className="text-sm text-text-secondary mb-2">Opponent HP</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
-              <div
-                className={`h-4 rounded-full bg-error ${barAnimations.opponentHp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${opponentState?.hp !== undefined && opponentState?.maxHp !== undefined ? Math.min(100, Math.max(0, (opponentState.hp / opponentState.maxHp) * 100)) : 0}%` }}
-              />
+      <div className="grid grid-cols-1 gap-2 mb-3 sm:mb-4">
+        <div className="bg-surface-light p-2 rounded-lg">
+          <div className="grid grid-cols-3 gap-4">
+            <div className={`${opponentHpAnimation ? 'animate-damage' : ''}`}>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent's HP</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full bg-error ${barAnimations.opponentHp ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${opponentState?.hp !== undefined && opponentState?.maxHp !== undefined ? Math.min(100, Math.max(0, (opponentState.hp / opponentState.maxHp) * 100)) : 0}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{opponentState?.hp}/{opponentState?.maxHp}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{opponentState?.hp}/{opponentState?.maxHp}</span>
-          </div>
-        </div>
-        
-        <div className="bg-surface-light p-4 rounded-lg">
-          <h3 className="text-sm text-text-secondary mb-2">Opponent MP</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
-              <div
-                className={`h-4 rounded-full bg-secondary ${barAnimations.opponentMp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${opponentState?.mp !== undefined && opponentState?.maxMp !== undefined ? Math.min(100, Math.max(0, (opponentState.mp / opponentState.maxMp) * 100)) : 0}%` }}
-              />
+            
+            <div>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent's MP</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`h-2 rounded-full bg-secondary ${barAnimations.opponentMp ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${opponentState?.mp !== undefined && opponentState?.maxMp !== undefined ? Math.min(100, Math.max(0, (opponentState.mp / opponentState.maxMp) * 100)) : 0}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{opponentState?.mp}/{opponentState?.maxMp}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{opponentState?.mp}/{opponentState?.maxMp}</span>
-          </div>
-        </div>
-        
-        <div className="bg-surface-light p-4 rounded-lg">
-          <h3 className="text-sm text-text-secondary mb-2">Opponent Fatigue</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
-              <div
-                className={`h-4 rounded-full ${
-                  (opponentState?.fatigue || 0) < 3 ? 'bg-success' :
-                  (opponentState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
-                } ${barAnimations.opponentFatigue ? 'animate-bar-change' : ''}`}
-                style={{ width: `${((opponentState?.fatigue || 0) / 10) * 100}%` }}
-              />
+            
+            <div>
+              <h3 className="text-xs text-text-secondary mb-1">Opponent's Fatigue</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      (opponentState?.fatigue || 0) < 3 ? 'bg-success' :
+                      (opponentState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
+                    } ${barAnimations.opponentFatigue ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${((opponentState?.fatigue || 0) / 10) * 100}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{opponentState?.fatigue}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{opponentState?.fatigue}</span>
           </div>
         </div>
       </div>
       
       {/* Battlefield */}
-      <div className="bg-surface-light p-6 rounded-lg mb-8">
-        <h2 className="text-2xl font-bold mb-6">Battlefield</h2>
+      <div className="bg-surface-light p-3 rounded-lg mb-4">
+        <h2 className="text-lg font-bold mb-3">Battlefield</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
           <div>
-            <h3 className="text-lg font-bold mb-4">Your Champion</h3>
+            <h3 className="text-md font-bold mb-3">Your Champion</h3>
             <div className="grid grid-cols-1 gap-4">
               {playerState?.champions && playerState.champions.length > 0 ? (
                 playerState.champions.map((champion, index) => {
@@ -934,8 +938,8 @@ export default function GamePage() {
             
             {/* Player Creatures */}
             {playerState?.creaturesInPlay && playerState.creaturesInPlay.length > 0 && (
-              <div className="mt-6">
-                <h4 className="text-md font-bold mb-3">Your Creatures</h4>
+              <div className="mt-4">
+                <h4 className="text-sm font-bold mb-2">Your Creatures</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {playerState.creaturesInPlay.map((creature, index) => {
                     // Find the card to get title and details
@@ -1055,7 +1059,7 @@ export default function GamePage() {
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px border-l-2 border-dashed border-border transform -translate-x-1/2"></div>
           
           <div className="md:pl-8">
-            <h3 className="text-lg font-bold mb-4">Opponent Champion</h3>
+            <h3 className="text-md font-bold mb-3">Opponent Champion</h3>
             <div className="grid grid-cols-1 gap-4">
               {opponentState?.champions && opponentState.champions.length > 0 ? (
                 opponentState.champions.map((champion, index) => {
@@ -1183,8 +1187,8 @@ export default function GamePage() {
             
             {/* Opponent Creatures */}
             {opponentState?.creaturesInPlay && opponentState.creaturesInPlay.length > 0 && (
-              <div className="mt-6">
-                <h4 className="text-md font-bold mb-3">Opponent Creatures</h4>
+              <div className="mt-4">
+                <h4 className="text-sm font-bold mb-2">Opponent Creatures</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {opponentState.creaturesInPlay.map((creature, index) => {
                     // Find the card to get title and details
@@ -1285,46 +1289,50 @@ export default function GamePage() {
       </div>
       
       {/* Player Resources */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className={`bg-surface-light p-4 rounded-lg ${playerHpAnimation ? 'animate-damage' : ''}`}>
-          <h3 className="text-sm text-text-secondary mb-2">Your HP</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
-              <div
-                className={`h-4 rounded-full bg-error ${barAnimations.playerHp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${playerState?.hp !== undefined && playerState?.maxHp !== undefined ? Math.min(100, Math.max(0, (playerState.hp / playerState.maxHp) * 100)) : 0}%` }}
-              />
+      <div className="grid grid-cols-1 gap-3 mb-4">
+        <div className="bg-surface-light p-2 rounded-lg">
+          <div className="grid grid-cols-3 gap-4">
+            <div className={`${playerHpAnimation ? 'animate-damage' : ''}`}>
+              <h3 className="text-xs text-text-secondary mb-1">Your HP</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full bg-error ${barAnimations.playerHp ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${playerState?.hp !== undefined && playerState?.maxHp !== undefined ? Math.min(100, Math.max(0, (playerState.hp / playerState.maxHp) * 100)) : 0}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{playerState?.hp}/{playerState?.maxHp}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{playerState?.hp}/{playerState?.maxHp}</span>
-          </div>
-        </div>
-        
-        <div className="bg-surface-light p-4 rounded-lg">
-          <h3 className="text-sm text-text-secondary mb-2">Your MP</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4 overflow-hidden">
-              <div
-                className={`h-4 rounded-full bg-secondary ${barAnimations.playerMp ? 'animate-bar-change' : ''}`}
-                style={{ width: `${playerState?.mp !== undefined && playerState?.maxMp !== undefined ? Math.min(100, Math.max(0, (playerState.mp / playerState.maxMp) * 100)) : 0}%` }}
-              />
+            
+            <div>
+              <h3 className="text-xs text-text-secondary mb-1">Your MP</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`h-2 rounded-full bg-secondary ${barAnimations.playerMp ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${playerState?.mp !== undefined && playerState?.maxMp !== undefined ? Math.min(100, Math.max(0, (playerState.mp / playerState.maxMp) * 100)) : 0}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{playerState?.mp}/{playerState?.maxMp}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{playerState?.mp}/{playerState?.maxMp}</span>
-          </div>
-        </div>
-        
-        <div className="bg-surface-light p-4 rounded-lg">
-          <h3 className="text-sm text-text-secondary mb-2">Your Fatigue</h3>
-          <div className="flex items-center">
-            <div className="w-full bg-surface rounded-full h-4">
-              <div
-                className={`h-4 rounded-full ${
-                  (playerState?.fatigue || 0) < 3 ? 'bg-success' :
-                  (playerState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
-                } ${barAnimations.playerFatigue ? 'animate-bar-change' : ''}`}
-                style={{ width: `${((playerState?.fatigue || 0) / 10) * 100}%` }}
-              />
+            
+            <div>
+              <h3 className="text-xs text-text-secondary mb-1">Your Fatigue</h3>
+              <div className="flex items-center">
+                <div className="w-full bg-surface rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      (playerState?.fatigue || 0) < 3 ? 'bg-success' :
+                      (playerState?.fatigue || 0) <= 5 ? 'bg-warning' : 'bg-error'
+                    } ${barAnimations.playerFatigue ? 'animate-bar-change' : ''}`}
+                    style={{ width: `${((playerState?.fatigue || 0) / 10) * 100}%` }}
+                  />
+                </div>
+                <span className="ml-2 text-xs font-bold">{playerState?.fatigue}</span>
+              </div>
             </div>
-            <span className="ml-3 font-bold">{playerState?.fatigue}</span>
           </div>
         </div>
       </div>
@@ -1333,12 +1341,12 @@ export default function GamePage() {
       {renderPhase()}
       
       {/* Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-surface border-t border-border p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-surface border-t border-border p-2 sm:p-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              size="lg"
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => {
                 // Handle mulligan
               }}
@@ -1350,55 +1358,53 @@ export default function GamePage() {
             </Button>
             
             <Button
-                          variant="outline"
-                          size="lg"
-                          onClick={handleEndTurn}
-                        >
-                          <Flag className="w-5 h-5 mr-2" />
-                          End Turn
-                        </Button>
+              variant="outline"
+              size="sm"
+              onClick={handleEndTurn}
+            >
+              <Flag className="w-5 h-5 mr-2" />
+              End Turn
+            </Button>
           </div>
           
           <div className="text-center">
-                      <div className="text-2xl font-bold mb-1">
-                        Turn {matchState?.turn}
-                      </div>
-                      <div className="text-sm text-text-secondary">
-                        {matchState?.phase ? matchState.phase.charAt(0).toUpperCase() + matchState.phase.slice(1) : ''} Phase
-                      </div>
-                      {matchState?.activePlayer === 'opponent' && (
-                        <div className="text-sm text-warning mt-1 animate-pulse">
-                          Opponent's Turn
-                        </div>
-                      )}
-                      {matchState?.activePlayer === 'player' && (
-                        <div className="text-sm text-success mt-1">
-                          Your Turn
-                        </div>
-                      )}
-                      {/* Timed Match Countdown */}
-                      {matchState?.timedMatch && matchState.activePlayer === 'player' && matchState.phase === 'main' && (
-                        <div className="text-sm text-warning mt-1">
-                          Time: {timeLeft}s
-                        </div>
-                      )}
-                    </div>
+            <div className="text-md sm:text-xl font-bold mb-1">
+              Turn {matchState?.turn}
+            </div>
+            {matchState?.activePlayer === 'opponent' && (
+              <div className="text-xs sm:text-sm text-warning mt-1 animate-pulse">
+                Opponent's Turn
+              </div>
+            )}
+            {matchState?.activePlayer === 'player' && (
+              <div className="text-xs sm:text-sm text-success mt-1">
+                Your Turn
+              </div>
+            )}
+            {/* Timed Match Countdown */}
+            {matchState?.timedMatch && matchState.activePlayer === 'player' && matchState.phase === 'main' && (
+              <div className="text-xs sm:text-sm text-warning mt-1">
+                Time: {timeLeft}s
+              </div>
+            )}
+          </div>
           
           <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              size="lg"
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleConcede}
-              className="text-error border-error hover:bg-error/10"
+              className="hidden sm:flex text-error border-error hover:bg-error/10"
             >
               <Hand className="w-5 h-5 mr-2" />
               Concede
             </Button>
             
-            <Button 
-              variant="outline" 
-              size="lg"
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setShowSettings(true)}
+              className="hidden sm:flex"
             >
               <Settings className="w-5 h-5 mr-2" />
               Settings
@@ -1409,8 +1415,16 @@ export default function GamePage() {
       
       {/* Card Details Modal */}
       {showCardModal && selectedCard && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative">
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto scrollable-touch"
+          onClick={(e) => {
+            // Close modal when clicking on the backdrop (outside the modal content)
+            if (e.target === e.currentTarget) {
+              setShowCardModal(false)
+            }
+          }}
+        >
+          <div className="bg-surface-light rounded-xl p-6 max-w-2xl w-full relative my-8 md:my-0">
             <button 
               onClick={() => setShowCardModal(false)}
               className="absolute top-4 right-4 text-text-secondary hover:text-white"
@@ -1556,8 +1570,15 @@ export default function GamePage() {
       
       {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative">
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto scrollable-touch"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowSettings(false)
+            }
+          }}
+        >
+          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative my-8 md:my-0">
             <button 
               onClick={() => setShowSettings(false)}
               className="absolute top-4 right-4 text-text-secondary hover:text-white"
@@ -1652,8 +1673,15 @@ export default function GamePage() {
       
       {/* Penalty Modal */}
       {showPenalty && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative">
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto scrollable-touch"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowPenalty(false)
+            }
+          }}
+        >
+          <div className="bg-surface-light rounded-xl p-6 max-w-md w-full relative my-8 md:my-0">
             <button 
               onClick={() => setShowPenalty(false)}
               className="absolute top-4 right-4 text-text-secondary hover:text-white"

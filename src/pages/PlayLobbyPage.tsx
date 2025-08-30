@@ -99,7 +99,7 @@ export default function PlayLobbyPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 py-6 max-w-3xl">
       {/* Progress Indicator */}
       <SetupProgressIndicator
         currentStep="play"
@@ -107,16 +107,16 @@ export default function PlayLobbyPage() {
         hasDeck={decks.length > 0}
       />
       
-      <div className="flex items-center mb-8">
-        <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mr-4">
-          <Gamepad2 className="w-6 h-6 text-white" />
+      <div className="flex items-center mb-6">
+        <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+          <Gamepad2 className="w-5 h-5 text-white" />
         </div>
-        <h1 className="text-3xl font-bold">Play Lobby</h1>
+        <h1 className="text-2xl font-bold">Play Lobby</h1>
       </div>
       
-      <Card className="p-6">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-6">Start a New Match</h2>
+      <Card className="p-4 sm:p-6">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Start a New Match</h2>
           
           <div className="mb-6">
             <Label className="mb-2 block">Select Deck</Label>
@@ -139,15 +139,15 @@ export default function PlayLobbyPage() {
           
           <div className="mb-6">
             <Label className="mb-2 block">Opponent</Label>
-            <div className="grid grid-cols-2 gap-4">
-              <Card 
+            <div className="grid grid-cols-1 gap-4">
+              <Card
                 className={`p-4 border ${
                   opponent === 'ai' ? 'border-primary bg-primary/5' : 'border-border'
                 }`}
                 onClick={() => setOpponent('ai')}
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-secondary to-surface rounded-full flex items-center justify-center mr-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-secondary to-surface rounded-full flex items-center justify-center mr-4 flex-shrink-0">
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -164,7 +164,7 @@ export default function PlayLobbyPage() {
                 onClick={() => {}}
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-accent to-surface rounded-full flex items-center justify-center mr-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-accent to-surface rounded-full flex items-center justify-center mr-4 flex-shrink-0">
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -179,9 +179,9 @@ export default function PlayLobbyPage() {
           {opponent === 'ai' && (
             <div className="mb-6">
               <Label className="mb-2 block">AI Difficulty</Label>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {['easy', 'medium', 'hard'].map((level) => (
-                  <Card 
+                  <Card
                     key={level}
                     className={`p-4 border ${
                       aiDifficulty === level ? 'border-primary bg-primary/5' : 'border-border'
@@ -203,14 +203,14 @@ export default function PlayLobbyPage() {
           <div className="space-y-6">
             <div>
               <Label className="mb-2 block">Match Settings</Label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {/* Turn Initiative */}
                 <div className="p-4 bg-surface-light rounded-lg">
                   <Label className="mb-2 block">Turn Initiative</Label>
-                  <div className="grid grid-cols-3 gap-1">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                      className={`px-2 py-3 text-xs sm:text-sm rounded transition-colors ${
                         turnInitiative === 'player'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -221,7 +221,7 @@ export default function PlayLobbyPage() {
                     </button>
                     <button
                       type="button"
-                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                      className={`px-2 py-3 text-xs sm:text-sm rounded transition-colors ${
                         turnInitiative === 'random'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -232,7 +232,7 @@ export default function PlayLobbyPage() {
                     </button>
                     <button
                       type="button"
-                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                      className={`px-2 py-3 text-xs sm:text-sm rounded transition-colors ${
                         turnInitiative === 'opponent'
                           ? 'bg-primary text-white'
                           : 'bg-surface border border-border text-text'
@@ -333,7 +333,7 @@ export default function PlayLobbyPage() {
                 </button>
                 
                 {showAdvancedSettings && (
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="mt-4 grid grid-cols-1 gap-4">
                     <div className="p-4 bg-surface-light rounded-lg">
                       <Label className="mb-2 block">Starting HP</Label>
                       <input
@@ -466,17 +466,18 @@ export default function PlayLobbyPage() {
           </div>
         </div>
         
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-6 sm:mt-8">
           <Button
             variant="outline"
             onClick={() => navigate('/play-setup')}
+            className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
           >
             Back to Setup
           </Button>
           <Button
             onClick={handleStartMatch}
             disabled={!selectedDeck}
-            className="px-8 py-3"
+            className="px-6 py-2 text-sm sm:px-8 sm:py-3 sm:text-base"
           >
             Start Match
           </Button>
@@ -485,8 +486,15 @@ export default function PlayLobbyPage() {
       
       {/* Loading Animation Modal */}
       {showLoading && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="text-center animate-fade-in-up">
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in overflow-y-auto scrollable-touch"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowLoading(false)
+            }
+          }}
+        >
+          <div className="text-center animate-fade-in-up my-8 md:my-0">
             <div className="w-24 h-24 mx-auto mb-6 relative">
               <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-75"></div>
               <div className="absolute inset-2 rounded-full border-4 border-secondary animate-spin"></div>
