@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-text flex flex-col">
-      <Navbar />
+      {location.pathname !== '/game' && <Navbar />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
                   <Route path="/" element={<LandingPage />} />
