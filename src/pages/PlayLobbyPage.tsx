@@ -265,13 +265,8 @@ export default function PlayLobbyPage() {
                 </div>
                 
                 {/* Timed Match */}
-                <div
+                <label
                   className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
-                  onClick={() => setTimedMatch(!timedMatch)}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setTimedMatch(!timedMatch);
-                  }}
                 >
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 text-text-secondary mr-2" />
@@ -280,22 +275,20 @@ export default function PlayLobbyPage() {
                       <p className="text-xs text-text-secondary">10s per turn</p>
                     </div>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={timedMatch}
-                    onChange={(e) => setTimedMatch(e.target.checked)}
-                    className="toggle toggle-primary toggle-sm"
-                  />
-                </div>
+                  <div className="relative inline-block w-9 h-5 align-middle select-none">
+                    <input
+                      type="checkbox"
+                      checked={timedMatch}
+                      onChange={(e) => setTimedMatch(e.target.checked)}
+                      className="toggle toggle-primary toggle-sm absolute opacity-0 w-0 h-0"
+                    />
+                    <div className="toggle-slider rounded-full"></div>
+                  </div>
+                </label>
                 
                 {/* Mulligan */}
-                <div
+                <label
                   className="flex items-center justify-between p-4 bg-surface-light rounded-lg cursor-pointer touch-manipulation"
-                  onClick={() => setMulliganEnabled(!mulliganEnabled)}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setMulliganEnabled(!mulliganEnabled);
-                  }}
                 >
                   <div className="flex items-center">
                     <Shuffle className="w-4 h-4 text-text-secondary mr-2" />
@@ -304,13 +297,16 @@ export default function PlayLobbyPage() {
                       <p className="text-xs text-text-secondary">First turn</p>
                     </div>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={mulliganEnabled}
-                    onChange={(e) => setMulliganEnabled(e.target.checked)}
-                    className="toggle toggle-primary toggle-sm"
-                  />
-                </div>
+                  <div className="relative inline-block w-9 h-5 align-middle select-none">
+                    <input
+                      type="checkbox"
+                      checked={mulliganEnabled}
+                      onChange={(e) => setMulliganEnabled(e.target.checked)}
+                      className="toggle toggle-primary toggle-sm absolute opacity-0 w-0 h-0"
+                    />
+                    <div className="toggle-slider rounded-full"></div>
+                  </div>
+                </label>
               </div>
               
               {/* Advanced Settings */}

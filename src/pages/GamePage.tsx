@@ -1567,11 +1567,14 @@ export default function GamePage() {
                   <h3 className="font-medium">Animations</h3>
                   <p className="text-sm text-text-secondary">Enable card and effect animations</p>
                 </div>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="toggle toggle-primary"
-                />
+                <label className="relative inline-block w-9 h-5 align-middle select-none">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+                  />
+                  <div className="toggle-slider rounded-full"></div>
+                </label>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
@@ -1579,11 +1582,14 @@ export default function GamePage() {
                   <h3 className="font-medium">Timed Matches</h3>
                   <p className="text-sm text-text-secondary">10 seconds per turn</p>
                 </div>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="toggle toggle-primary"
-                />
+                <label className="relative inline-block w-9 h-5 align-middle select-none">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+                  />
+                  <div className="toggle-slider rounded-full"></div>
+                </label>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
@@ -1591,28 +1597,31 @@ export default function GamePage() {
                   <h3 className="font-medium">Sound Effects</h3>
                   <p className="text-sm text-text-secondary">Card plays and effects</p>
                 </div>
-                <input
-                  type="checkbox"
-                  defaultChecked={isSoundEffectsEnabled()}
-                  onChange={(e) => {
-                    // Update localStorage settings
-                    const settings = localStorage.getItem('userSettings');
-                    let parsedSettings = { general: { soundEffects: true } };
-                    if (settings) {
-                      try {
-                        parsedSettings = JSON.parse(settings);
-                      } catch (error) {
-                        // Use default settings if parsing fails
+                <label className="relative inline-block w-9 h-5 align-middle select-none">
+                  <input
+                    type="checkbox"
+                    defaultChecked={isSoundEffectsEnabled()}
+                    onChange={(e) => {
+                      // Update localStorage settings
+                      const settings = localStorage.getItem('userSettings');
+                      let parsedSettings = { general: { soundEffects: true } };
+                      if (settings) {
+                        try {
+                          parsedSettings = JSON.parse(settings);
+                        } catch (error) {
+                          // Use default settings if parsing fails
+                        }
                       }
-                    }
-                    parsedSettings.general = {
-                      ...parsedSettings.general,
-                      soundEffects: e.target.checked
-                    };
-                    localStorage.setItem('userSettings', JSON.stringify(parsedSettings));
-                  }}
-                  className="toggle toggle-primary"
-                />
+                      parsedSettings.general = {
+                        ...parsedSettings.general,
+                        soundEffects: e.target.checked
+                      };
+                      localStorage.setItem('userSettings', JSON.stringify(parsedSettings));
+                    }}
+                    className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+                  />
+                  <div className="toggle-slider rounded-full"></div>
+                </label>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
@@ -1620,11 +1629,14 @@ export default function GamePage() {
                   <h3 className="font-medium">Dark Mode</h3>
                   <p className="text-sm text-text-secondary">Use dark color scheme</p>
                 </div>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="toggle toggle-primary"
-                />
+                <label className="relative inline-block w-9 h-5 align-middle select-none">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+                  />
+                  <div className="toggle-slider rounded-full"></div>
+                </label>
               </div>
             </div>
             

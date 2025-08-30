@@ -116,12 +116,15 @@ export default function SettingsPage() {
               <div className="font-medium">Animations</div>
               <div className="text-sm text-text-secondary">Enable card and effect animations</div>
             </div>
-            <input
-              type="checkbox"
-              checked={generalSettings.animations}
-              onChange={(e) => setGeneralSettings({...generalSettings, animations: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={generalSettings.animations}
+                onChange={(e) => setGeneralSettings({...generalSettings, animations: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
           
           <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
@@ -129,12 +132,15 @@ export default function SettingsPage() {
               <div className="font-medium">Auto-save Progress</div>
               <div className="text-sm text-text-secondary">Automatically save game progress</div>
             </div>
-            <input
-              type="checkbox"
-              checked={generalSettings.autoSave}
-              onChange={(e) => setGeneralSettings({...generalSettings, autoSave: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={generalSettings.autoSave}
+                onChange={(e) => setGeneralSettings({...generalSettings, autoSave: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
           
           <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
@@ -142,12 +148,15 @@ export default function SettingsPage() {
               <div className="font-medium">Sound Effects</div>
               <div className="text-sm text-text-secondary">Card plays and game effects</div>
             </div>
-            <input
-              type="checkbox"
-              checked={generalSettings.soundEffects}
-              onChange={(e) => setGeneralSettings({...generalSettings, soundEffects: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={generalSettings.soundEffects}
+                onChange={(e) => setGeneralSettings({...generalSettings, soundEffects: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
         </div>
       </Card>
@@ -170,12 +179,15 @@ export default function SettingsPage() {
               <div className="font-medium">Email Notifications</div>
               <div className="text-sm text-text-secondary">Receive updates via email</div>
             </div>
-            <input
-              type="checkbox"
-              checked={notificationSettings.email}
-              onChange={(e) => setNotificationSettings({...notificationSettings, email: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={notificationSettings.email}
+                onChange={(e) => setNotificationSettings({...notificationSettings, email: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
           
           <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
@@ -183,12 +195,15 @@ export default function SettingsPage() {
               <div className="font-medium">Push Notifications</div>
               <div className="text-sm text-text-secondary">Receive push notifications</div>
             </div>
-            <input
-              type="checkbox"
-              checked={notificationSettings.push}
-              onChange={(e) => setNotificationSettings({...notificationSettings, push: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={notificationSettings.push}
+                onChange={(e) => setNotificationSettings({...notificationSettings, push: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
         </div>
       </Card>
@@ -207,12 +222,15 @@ export default function SettingsPage() {
               <div className="font-medium">Game Updates</div>
               <div className="text-sm text-text-secondary">New cards, collections, and features</div>
             </div>
-            <input
-              type="checkbox"
-              checked={notificationSettings.gameUpdates}
-              onChange={(e) => setNotificationSettings({...notificationSettings, gameUpdates: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={notificationSettings.gameUpdates}
+                onChange={(e) => setNotificationSettings({...notificationSettings, gameUpdates: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
           
           <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
@@ -220,12 +238,15 @@ export default function SettingsPage() {
               <div className="font-medium">Friend Requests</div>
               <div className="text-sm text-text-secondary">When someone sends you a friend request</div>
             </div>
-            <input
-              type="checkbox"
-              checked={notificationSettings.friendRequests}
-              onChange={(e) => setNotificationSettings({...notificationSettings, friendRequests: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={notificationSettings.friendRequests}
+                onChange={(e) => setNotificationSettings({...notificationSettings, friendRequests: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
           
           <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
@@ -233,12 +254,15 @@ export default function SettingsPage() {
               <div className="font-medium">Achievements</div>
               <div className="text-sm text-text-secondary">When you unlock new achievements</div>
             </div>
-            <input
-              type="checkbox"
-              checked={notificationSettings.achievements}
-              onChange={(e) => setNotificationSettings({...notificationSettings, achievements: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={notificationSettings.achievements}
+                onChange={(e) => setNotificationSettings({...notificationSettings, achievements: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
         </div>
       </Card>
@@ -293,12 +317,15 @@ export default function SettingsPage() {
               <div className="font-medium">Show Online Status</div>
               <div className="text-sm text-text-secondary">Let friends see when you're online</div>
             </div>
-            <input
-              type="checkbox"
-              checked={privacySettings.showOnlineStatus}
-              onChange={(e) => setPrivacySettings({...privacySettings, showOnlineStatus: e.target.checked})}
-              className="toggle toggle-primary"
-            />
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={privacySettings.showOnlineStatus}
+                onChange={(e) => setPrivacySettings({...privacySettings, showOnlineStatus: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
           </div>
         </div>
       </Card>
