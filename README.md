@@ -1,5 +1,7 @@
 # RocketCards - Browser-Based Card Game Platform
 
+[https://rocketcards.netlify.app/](https://rocketcards.netlify.app/)
+
 RocketCards is a browser-based online card game platform where players choose a themed card collection (Fantasy, Politics, Monsters, Anime, etc.), set a player profile, build a deck, and battle an AI or human opponent. Game state and round effects are resolved in collaboration with a configurable LLM via an OpenAI Completions-compatible API.
 
 ## Overview
