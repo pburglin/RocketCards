@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { Gamepad2, User, Layout } from 'lucide-react'
@@ -8,23 +8,70 @@ import { Button } from '../components/ui/Button'
 
 export default function PlayFlow() {
   const navigate = useNavigate()
-  const { profile, decks } = useGameStore()
+  const { profile, decks, collections, selectedCollection, setSelectedCollection, createBasicDeck, saveDeck, basicDeckCreated, setBasicDeckCreated } = useGameStore()
   const hasProfile = !!profile
   const hasDeck = decks.length > 0
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
+    console.log('PlayFlow useEffect triggered', { hasProfile, hasDeck, basicDeckCreated, collectionsLength: collections.length, selectedCollection });
+    
     // Check if user has completed all prerequisites
-    if (hasProfile && hasDeck) {
+    if (hasProfile && hasDeck && !basicDeckCreated) {
       // All prerequisites met, go to play lobby
+      console.log('Navigating to /play - has profile and deck');
       navigate('/play')
     } else if (!hasProfile) {
       // No profile, go to profile setup
+      console.log('Navigating to /profile - no profile');
       navigate('/profile')
-    } else if (hasProfile && !hasDeck) {
-      // Has profile but no deck, go to deck builder
-      navigate('/deck-builder')
+    } else if (hasProfile && !hasDeck && !basicDeckCreated) {
+      // Has profile but no deck, automatically create a basic deck
+      console.log('Creating basic deck - has profile but no deck');
+      if (collections.length > 0 && !selectedCollection) {
+        console.log('Setting selected collection');
+        setSelectedCollection(collections[0])
+      }
+      
+      if (selectedCollection) {
+        console.log('Creating and saving basic deck');
+        createBasicDeck()
+        saveDeck(`${selectedCollection.name} Basic Deck`)
+        setBasicDeckCreated(true)
+        // After a short delay, navigate to play
+        // Start progress bar animation
+        setProgress(0);
+        const interval = setInterval(() => {
+          setProgress(prev => {
+            if (prev >= 100) {
+              clearInterval(interval);
+              return 100;
+            }
+            return prev + 20; // Update every 100ms for 5 seconds = 100% / 50 updates = 2% per update
+          });
+        }, 100);
+        
+        setTimeout(() => {
+          console.log('Timeout completed, navigating to /play');
+          setBasicDeckCreated(false);
+          setProgress(0);
+          navigate('/play');
+        }, 5000)
+      }
+    } else if (basicDeckCreated) {
+      console.log('Basic deck created, showing notification');
+      // Keep showing the notification and don't navigate until timeout
     }
-  }, [hasProfile, hasDeck, navigate])
+  }, [hasProfile, hasDeck, navigate, collections, selectedCollection, setSelectedCollection, createBasicDeck, saveDeck, setBasicDeckCreated, basicDeckCreated])
+
+  // Reset the basic deck created flag when component unmounts
+  useEffect(() => {
+    return () => {
+      if (basicDeckCreated) {
+        setBasicDeckCreated(false)
+      }
+    }
+  }, [basicDeckCreated, setBasicDeckCreated])
 
   const getCurrentStep = () => {
     if (!hasProfile) return 'profile'
@@ -47,6 +94,24 @@ export default function PlayFlow() {
         <h1 className="text-3xl font-bold">Getting Started</h1>
       </div>
 
+      {basicDeckCreated && (
+        <div className="mb-6 p-4 bg-info/20 border border-info rounded-lg">
+          <div className="flex items-center mb-3">
+            <div className="w-5 h-5 bg-info rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-xs font-bold">!</span>
+            </div>
+            <p className="text-info font-medium">Basic Deck Created!</p>
+          </div>
+          <p className="text-info/80 text-sm mb-4">A basic deck has been automatically created for you. Redirecting to play...</p>
+          <div className="w-full bg-surface rounded-full h-2">
+            <div
+              className="h-2 rounded-full bg-info transition-all duration-100 ease-linear"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <Card className="p-8 text-center">
         <div className="mb-6">
           {getCurrentStep() === 'profile' && (
@@ -59,30 +124,41 @@ export default function PlayFlow() {
             </>
           )}
           
-          {getCurrentStep() === 'deck' && (
+          {getCurrentStep() === 'deck' && !basicDeckCreated && (
             <>
               <Layout className="w-16 h-16 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-4">Build Your First Deck</h2>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                You need to create a deck of cards before you can play the game. 
+                You need to create a deck of cards before you can play the game.
                 Visit the Deck Builder to create your first 30-card deck.
+              </p>
+            </>
+          )}
+          
+          {getCurrentStep() === 'deck' && basicDeckCreated && (
+            <>
+              <Layout className="w-16 h-16 text-primary mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-4">Creating Basic Deck</h2>
+              <p className="text-text-secondary mb-6 max-w-md mx-auto">
+                Creating a basic deck with common cards for you to get started...
               </p>
             </>
           )}
         </div>
         
         <div className="flex justify-center space-x-4">
-          <Button 
+          <Button
             onClick={() => {
               if (getCurrentStep() === 'profile') {
                 navigate('/profile')
-              } else if (getCurrentStep() === 'deck') {
+              } else if (getCurrentStep() === 'deck' && !basicDeckCreated) {
                 navigate('/deck-builder')
               }
             }}
             className="px-8 py-3"
+            disabled={basicDeckCreated}
           >
-            Continue to {getCurrentStep() === 'profile' ? 'Profile Setup' : 'Deck Builder'}
+            {basicDeckCreated ? 'Creating Deck...' : `Continue to ${getCurrentStep() === 'profile' ? 'Profile Setup' : 'Deck Builder'}`}
           </Button>
         </div>
       </Card>

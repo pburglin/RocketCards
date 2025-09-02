@@ -67,6 +67,7 @@ export function initializeMatch(options: {
   deck: Deck
   opponentType: 'ai' | 'pvp'
   aiDifficulty?: 'easy' | 'medium' | 'hard'
+  collections?: any[] // Add collections parameter
   timedMatch?: boolean
   mulliganEnabled?: boolean
   seed?: string
@@ -82,13 +83,166 @@ export function initializeMatch(options: {
   playerState: PlayerState
   opponentState: PlayerState
 } {
+  // Helper function to create a deck without special cards (no tokenCost)
+  const createDeckWithoutSpecialCards = (cards: any[]): string[] => {
+    // Filter out special cards (those with tokenCost) and get only common/rare/unique cards without tokenCost
+    const nonSpecialCards = cards.filter(card => !card.tokenCost);
+    const deck: string[] = [];
+    
+    // Categorize cards by rarity
+    const commons = nonSpecialCards.filter(card => card.rarity === 'common');
+    const rares = nonSpecialCards.filter(card => card.rarity === 'rare');
+    const uniques = nonSpecialCards.filter(card => card.rarity === 'unique');
+    
+    // Shuffle arrays to randomize selection
+    commons.sort(() => Math.random() - 0.5);
+    rares.sort(() => Math.random() - 0.5);
+    uniques.sort(() => Math.random() - 0.5);
+    
+    // Add all uniques first (max 1 copy each)
+    uniques.forEach(unique => {
+      if (deck.length < 30) {
+        deck.push(unique.id);
+      }
+    });
+    
+    // Add rares (max 2 copies each) but respect the 30 card limit
+    rares.forEach(rare => {
+      if (deck.length < 30) {
+        deck.push(rare.id);
+        if (deck.length < 30) {
+          deck.push(rare.id);
+        }
+      }
+    });
+    
+    // Fill with commons (unlimited copies, aiming for 30 total cards)
+    const targetDeckSize = 30;
+    const remainingSlots = targetDeckSize - deck.length;
+    
+    // Add commons to fill the deck with balanced distribution
+    if (commons.length > 0 && remainingSlots > 0) {
+      // Distribute commons evenly with some randomness
+      for (let i = 0; i < remainingSlots; i++) {
+        const commonIndex = i % commons.length;
+        deck.push(commons[commonIndex].id);
+      }
+    }
+    
+    // If we have more than 30 cards, trim to 30
+    if (deck.length > 30) {
+      return deck.slice(0, 30);
+    }
+    
+    return deck;
+  };
+  
+  // Helper function to create a deck with all special cards from a collection
+  const createDeckWithAllSpecialCards = (cards: any[]): string[] => {
+    const deck: string[] = [];
+    
+    // Get all special cards (those with tokenCost)
+    const specialCards = cards.filter(card => card.tokenCost);
+    
+    // Add all special cards first (max 1 copy each)
+    specialCards.forEach(special => {
+      if (deck.length < 30) {
+        deck.push(special.id);
+      }
+    });
+    
+    // If we don't have 30 cards, fill with non-special cards
+    if (deck.length < 30) {
+      const nonSpecialCards = cards.filter(card => !card.tokenCost);
+      const commons = nonSpecialCards.filter(card => card.rarity === 'common');
+      const rares = nonSpecialCards.filter(card => card.rarity === 'rare');
+      const uniques = nonSpecialCards.filter(card => card.rarity === 'unique');
+      
+      // Shuffle to randomize
+      commons.sort(() => Math.random() - 0.5);
+      rares.sort(() => Math.random() - 0.5);
+      uniques.sort(() => Math.random() - 0.5);
+      
+      // Add uniques
+      uniques.forEach(unique => {
+        if (deck.length < 30) {
+          deck.push(unique.id);
+        }
+      });
+      
+      // Add rares (2 copies each)
+      rares.forEach(rare => {
+        if (deck.length < 30) {
+          deck.push(rare.id);
+          if (deck.length < 30) {
+            deck.push(rare.id);
+          }
+        }
+      });
+      
+      // Fill with commons
+      const remainingSlots = 30 - deck.length;
+      if (commons.length > 0 && remainingSlots > 0) {
+        for (let i = 0; i < remainingSlots; i++) {
+          const commonIndex = i % commons.length;
+          deck.push(commons[commonIndex].id);
+        }
+      }
+    }
+    
+    // If we have more than 30 cards, trim to 30
+    if (deck.length > 30) {
+      return deck.slice(0, 30);
+    }
+    
+    return deck;
+  };
   // Shuffle player deck
   const playerDeck = [...options.deck.cards]
   shuffleArray(playerDeck, options.seed)
   
-  // Create opponent deck (for now, just copy player deck and shuffle it separately)
-  const opponentDeck = [...options.deck.cards]
-  shuffleArray(opponentDeck, options.seed ? options.seed + '_opponent' : undefined)
+  // Create opponent deck based on AI difficulty
+  let opponentDeck: string[] = [];
+  
+  if (options.opponentType === 'ai' && options.collections) {
+    // For AI opponents, create different decks based on difficulty
+    if (options.aiDifficulty === 'easy') {
+      // Low difficulty: opponent uses deck without special cards
+      // Find the collection that matches the player's deck
+      const playerCollection = options.collections.find(collection =>
+        collection.cards.some((card: any) => options.deck.cards.includes(card.id))
+      );
+      
+      if (playerCollection) {
+        opponentDeck = createDeckWithoutSpecialCards(playerCollection.cards);
+      } else {
+        // Fallback to copying player deck
+        opponentDeck = [...options.deck.cards];
+      }
+    } else if (options.aiDifficulty === 'hard') {
+      // High difficulty: opponent uses deck with all special cards for selected collection
+      // Find the collection that matches the player's deck
+      const playerCollection = options.collections.find(collection =>
+        collection.cards.some((card: any) => options.deck.cards.includes(card.id))
+      );
+      
+      if (playerCollection) {
+        opponentDeck = createDeckWithAllSpecialCards(playerCollection.cards);
+      } else {
+        // Fallback to copying player deck
+        opponentDeck = [...options.deck.cards];
+      }
+    } else {
+      // Medium difficulty: copy player deck
+      opponentDeck = [...options.deck.cards];
+    }
+  } else {
+    // For PvP or when collections not available, copy player deck
+    opponentDeck = [...options.deck.cards];
+  }
+  
+  shuffleArray(playerDeck, options.seed);
+  shuffleArray(opponentDeck, options.seed ? options.seed + '_opponent' : undefined);
   
   // Deal starting hands
   const playerHand = playerDeck.splice(0, options.startingHand ?? GAME_STARTING_HAND)

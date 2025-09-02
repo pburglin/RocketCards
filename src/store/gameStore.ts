@@ -38,6 +38,7 @@ interface GameStore {
   saveDeck: (name: string) => void
   deleteDeck: (name: string) => void
   autoBuildDeck: () => void
+  createBasicDeck: () => void
   setSelectedDeck: (deck: Deck) => void
   
   // Profile
@@ -76,6 +77,8 @@ interface GameStore {
   discardChampion: (championIndex: number) => boolean
   discardCreature: (creatureIndex: number) => boolean
   discardHandCard: (cardIndex: number) => boolean
+  basicDeckCreated: boolean
+  setBasicDeckCreated: (created: boolean) => void
   
   // Persistence
   loadGameState: () => void
@@ -252,7 +255,57 @@ export const useGameStore = create<GameStore>()(
           }
         })
       },
+      
+      createBasicDeck: () => {
+        const { selectedCollection, selectedDeck, setSelectedDeck } = get()
+        
+        if (!selectedCollection) {
+          return
+        }
+        
+        // If no selected deck, create a new one with collection name
+        if (!selectedDeck) {
+          const newDeck: Deck = {
+            name: `${selectedCollection.name} Basic Deck`,
+            cards: []
+          }
+          setSelectedDeck(newDeck)
+        }
+        
+        set(state => {
+          if (state.selectedDeck && state.selectedCollection) {
+            // Clear current deck
+            state.selectedDeck.cards = []
+            
+            // Get only common cards that are not special (no tokenCost)
+            const commons = [...state.selectedCollection.cards.filter(c => c.rarity === 'common' && !c.tokenCost)]
+            
+            // Shuffle commons to randomize selection
+            commons.sort(() => Math.random() - 0.5)
+            
+            // Fill with commons (unlimited copies, aiming for 30 total cards)
+            const targetDeckSize = 30
+            if (state.selectedDeck) {
+              // Add commons to fill the deck with balanced distribution
+              if (commons.length > 0) {
+                // Distribute commons evenly with some randomness
+                for (let i = 0; i < targetDeckSize; i++) {
+                  const commonIndex = i % commons.length
+                  if (state.selectedDeck) {
+                    state.selectedDeck.cards.push(commons[commonIndex].id)
+                  }
+                }
+              }
+            }
+          }
+        })
+      },
+      
       setSelectedDeck: (deck) => set({ selectedDeck: deck }),
+      
+      // Add a flag to track if a basic deck was just created
+      setBasicDeckCreated: (created: boolean) => set({ basicDeckCreated: created }),
+      basicDeckCreated: false,
       
       // Profile
       profile: null,
@@ -363,7 +416,8 @@ export const useGameStore = create<GameStore>()(
           startingMp: options.startingMp,
           maxMp: options.maxMp,
           startingHand: options.startingHand,
-          maxHand: options.maxHand
+          maxHand: options.maxHand,
+          collections: get().collections // Pass collections for AI difficulty logic
         })
         
         set({
