@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { loadAllCollections } from '../lib/collectionLoader'
 import { CardCollection } from '../types/game'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCollectionImageUrl } from '../lib/cardImageUtils'
 
 interface CollectionDisplay {
   id: string
@@ -11,6 +12,7 @@ interface CollectionDisplay {
   description: string
   cards: number
   gradient: string
+  image: string
 }
 
 export default function LandingPage() {
@@ -26,7 +28,7 @@ export default function LandingPage() {
   useEffect(() => {
     const loadCollections = async () => {
       const loadedCollections = await loadAllCollections()
-      const displayCollections: CollectionDisplay[] = loadedCollections.map((collection, index) => {
+      const displayCollections: CollectionDisplay[] = await Promise.all(loadedCollections.map(async (collection, index) => {
         const gradients = [
           'from-indigo-500 to-purple-600',
           'from-blue-500 to-cyan-600',
@@ -34,14 +36,23 @@ export default function LandingPage() {
           'from-pink-500 to-rose-600',
           'from-green-500 to-emerald-600'
         ]
+        let imageUrl = '';
+        try {
+          imageUrl = await getCollectionImageUrl(collection.id, 128, 128);
+        } catch (error) {
+          console.error(`Failed to load image for collection ${collection.id}:`, error);
+          // Fallback to pollinations.ai URL
+          imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
+        }
         return {
           id: collection.id,
           name: collection.name,
           description: collection.description,
           cards: collection.cards.length,
-          gradient: gradients[index % gradients.length]
+          gradient: gradients[index % gradients.length],
+          image: imageUrl
         }
-      })
+      }))
       setCollections(displayCollections.slice(0, 4))
     }
     loadCollections()
@@ -136,10 +147,18 @@ export default function LandingPage() {
                 <div className="relative p-6">
                   <div className="relative h-48 rounded-xl overflow-hidden mb-6">
                     <img
-                      src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                           `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                      src={collection.image}
                       alt={collection.name}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                      onError={async (e) => {
+                        const img = e.currentTarget;
+                        try {
+                          const fallbackUrl = await getCollectionImageUrl(collection.id, 128, 128);
+                          img.src = fallbackUrl;
+                        } catch (error) {
+                          console.error(`Failed to load fallback image for collection ${collection.id}:`, error);
+                        }
+                      }}
                       onLoad={(e) => {
                         const img = e.target as HTMLImageElement;
                         imageCacheService.cacheImage(img.src);

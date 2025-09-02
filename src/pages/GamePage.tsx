@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { audioService } from '../lib/audioService'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCardImageUrl } from '../lib/cardImageUtils'
 import {
   Card,
   CardHeader,
@@ -495,14 +496,13 @@ export default function GamePage() {
                                             >
                         <div className="relative">
                           <img
-                            src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                 `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={card?.title || cardId}
                             className="w-full h-32 object-cover"
-                            onError={(e) => {
+                            onError={async (e) => {
                               const img = e.currentTarget;
-                              const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || cardId || 'card')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                              img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                              const fallbackUrl = await getCardImageUrl(card?.id || cardId, card?.description || card?.title || 'card', 128, 128);
+                              img.src = fallbackUrl;
                             }}
                             onLoad={(e) => {
                               const img = e.target as HTMLImageElement;
@@ -788,14 +788,13 @@ export default function GamePage() {
                       {card && (
                         <div className="relative mb-3">
                           <img
-                            src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                 `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={card?.title || champion?.cardId}
                             className="w-full h-24 object-cover rounded"
-                            onError={(e) => {
+                            onError={async (e) => {
                               const img = e.currentTarget;
-                              const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || champion?.cardId || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                              img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                              const fallbackUrl = await getCardImageUrl(card?.id || champion?.cardId, card?.description || card?.title || 'champion', 128, 128);
+                              img.src = fallbackUrl;
                             }}
                             onLoad={(e) => {
                               const img = e.target as HTMLImageElement;
@@ -872,14 +871,13 @@ export default function GamePage() {
                                     <>
                                       <div className="flex items-center mb-1">
                                         <img
-                                          src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`) ||
-                                               `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
+                                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
                                           alt={skillCard?.title || skillId}
                                           className="w-8 h-8 object-cover rounded mr-2"
-                                          onError={(e) => {
+                                          onError={async (e) => {
                                             const img = e.currentTarget;
-                                            const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.title || skillId || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`;
-                                            img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                            const fallbackUrl = await getCardImageUrl(skillCard?.id || skillId, skillCard?.description || skillCard?.title || 'skill', 32, 32);
+                                            img.src = fallbackUrl;
                                           }}
                                           onLoad={(e) => {
                                             const img = e.target as HTMLImageElement;
@@ -935,14 +933,13 @@ export default function GamePage() {
                         {card && (
                           <div className="relative mb-2">
                             <img
-                              src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                   `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                               alt={card?.title || creature.cardId}
                               className="w-full h-20 object-cover rounded"
-                              onError={(e) => {
+                              onError={async (e) => {
                                 const img = e.currentTarget;
-                                const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || creature.cardId || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                                img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                const fallbackUrl = await getCardImageUrl(card?.id || creature.cardId, card?.description || card?.title || 'creature', 128, 128);
+                                img.src = fallbackUrl;
                               }}
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
@@ -1056,14 +1053,13 @@ export default function GamePage() {
                       {card && (
                         <div className="relative mb-3">
                           <img
-                            src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                 `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={card?.title || champion?.cardId}
                             className="w-full h-24 object-cover rounded"
-                            onError={(e) => {
+                            onError={async (e) => {
                               const img = e.currentTarget;
-                              const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || champion?.cardId || 'champion')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                              img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                              const fallbackUrl = await getCardImageUrl(card?.id || champion?.cardId, card?.description || card?.title || 'champion', 128, 128);
+                              img.src = fallbackUrl;
                             }}
                             onLoad={(e) => {
                               const img = e.target as HTMLImageElement;
@@ -1122,14 +1118,13 @@ export default function GamePage() {
                                     <>
                                       <div className="flex items-center mb-1">
                                         <img
-                                          src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`) ||
-                                               `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
+                                          src={`https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.description || skillCard?.title || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`}
                                           alt={skillCard?.title || skillId}
                                           className="w-8 h-8 object-cover rounded mr-2"
-                                          onError={(e) => {
+                                          onError={async (e) => {
                                             const img = e.currentTarget;
-                                            const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(skillCard?.title || skillId || 'skill')}?width=32&height=32&nologo=true&private=true&safe=true&seed=1`;
-                                            img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                            const fallbackUrl = await getCardImageUrl(skillCard?.id || skillId, skillCard?.description || skillCard?.title || 'skill', 32, 32);
+                                            img.src = fallbackUrl;
                                           }}
                                           onLoad={(e) => {
                                             const img = e.target as HTMLImageElement;
@@ -1184,14 +1179,13 @@ export default function GamePage() {
                         {card && (
                           <div className="relative mb-2">
                             <img
-                              src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                   `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                              src={`https://image.pollinations.ai/prompt/${encodeURIComponent(card?.description || card?.title || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                               alt={card?.title || creature.cardId}
                               className="w-full h-20 object-cover rounded"
-                              onError={(e) => {
+                              onError={async (e) => {
                                 const img = e.currentTarget;
-                                const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card?.title || creature.cardId || 'creature')}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                                img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                const fallbackUrl = await getCardImageUrl(card?.id || creature.cardId, card?.description || card?.title || 'creature', 128, 128);
+                                img.src = fallbackUrl;
                               }}
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
@@ -1409,10 +1403,14 @@ export default function GamePage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard?.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onError={async (e) => {
+                      const img = e.currentTarget;
+                      const fallbackUrl = await getCardImageUrl(selectedCard?.id, selectedCard?.description, 256, 256);
+                      img.src = fallbackUrl;
+                    }}
                     onLoad={(e) => {
                       const img = e.target as HTMLImageElement;
                       imageCacheService.cacheImage(img.src);

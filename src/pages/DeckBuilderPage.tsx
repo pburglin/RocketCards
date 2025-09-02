@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3, Info, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCardImageUrl, getCollectionImageUrl } from '../lib/cardImageUtils'
 
 export default function DeckBuilderPage() {
   const navigate = useNavigate()
@@ -42,6 +43,8 @@ export default function DeckBuilderPage() {
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<any | null>(null)
   const [enabledTokenCards, setEnabledTokenCards] = useState<Set<string>>(new Set())
+  const [cardImageUrls, setCardImageUrls] = useState<Record<string, string>>({})
+  const [collectionImageUrls, setCollectionImageUrls] = useState<Record<string, string>>({})
   
   useEffect(() => {
     // Check if user came from Play Lobby (no decks exist)
@@ -77,6 +80,48 @@ export default function DeckBuilderPage() {
       }
     }
   }, [selectedDeck?.cards.length, selectedCollection])
+
+  // Load collection images
+  useEffect(() => {
+    const loadCollectionImages = async () => {
+      const newImageUrls: Record<string, string> = {}
+      for (const collection of collections) {
+        try {
+          newImageUrls[collection.name] = await getCollectionImageUrl(collection.name, 128, 128)
+        } catch (error) {
+          // Fallback to pollinations.ai URL
+          newImageUrls[collection.name] = `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+        }
+      }
+      setCollectionImageUrls(newImageUrls)
+    }
+
+    if (collections.length > 0) {
+      loadCollectionImages()
+    }
+  }, [collections])
+
+  // Load card images for available cards
+  useEffect(() => {
+    const loadCardImages = async () => {
+      if (!selectedCollection) return;
+      
+      const newImageUrls: Record<string, string> = {}
+      for (const card of selectedCollection.cards) {
+        try {
+          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 64, 64)
+        } catch (error) {
+          // Fallback to pollinations.ai URL
+          newImageUrls[card.id] = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
+        }
+      }
+      setCardImageUrls(newImageUrls)
+    }
+
+    if (selectedCollection) {
+      loadCardImages()
+    }
+  }, [selectedCollection])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -571,14 +616,13 @@ export default function DeckBuilderPage() {
                           <div className="flex items-start space-x-3">
                             <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                               <img
-                                src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`) ||
-                                     `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                                src={cardImageUrls[card.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
                                 alt={card.title}
                                 className="w-full h-full object-cover"
-                                onError={(e) => {
+                                onError={async (e) => {
                                   const img = e.currentTarget;
-                                  const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`;
-                                  img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                  const fallbackUrl = await getCardImageUrl(card.id, card.description, 64, 64);
+                                  img.src = fallbackUrl;
                                 }}
                                 onLoad={(e) => {
                                   const img = e.target as HTMLImageElement;
@@ -715,14 +759,13 @@ export default function DeckBuilderPage() {
                                 <div className="flex items-start space-x-3">
                                   <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                                     <img
-                                      src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`) ||
-                                           `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                                      src={cardImageUrls[card.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
                                       alt={card.title}
                                       className="w-full h-full object-cover"
-                                      onError={(e) => {
+                                      onError={async (e) => {
                                         const img = e.currentTarget;
-                                        const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`;
-                                        img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
+                                        const fallbackUrl = await getCardImageUrl(card.id, card.description, 64, 64);
+                                        img.src = fallbackUrl;
                                       }}
                                       onLoad={(e) => {
                                         const img = e.target as HTMLImageElement;
@@ -820,10 +863,14 @@ export default function DeckBuilderPage() {
                       >
                         <div className="h-24 mb-3">
                           <img
-                            src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                                 `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                            src={collectionImageUrls[collection.name] || `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={collection.name}
                             className="w-full h-full object-cover rounded"
+                            onError={async (e) => {
+                              const img = e.currentTarget;
+                              const fallbackUrl = await getCollectionImageUrl(collection.name, 128, 128);
+                              img.src = fallbackUrl;
+                            }}
                             onLoad={(e) => {
                               const img = e.target as HTMLImageElement;
                               imageCacheService.cacheImage(img.src);
@@ -1099,10 +1146,14 @@ export default function DeckBuilderPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={cardImageUrls[selectedCard.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onError={async (e) => {
+                      const img = e.currentTarget;
+                      const fallbackUrl = await getCardImageUrl(selectedCard.id, selectedCard.description, 256, 256);
+                      img.src = fallbackUrl;
+                    }}
                     onLoad={(e) => {
                       const img = e.target as HTMLImageElement;
                       imageCacheService.cacheImage(img.src);

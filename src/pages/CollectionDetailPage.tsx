@@ -7,6 +7,7 @@ import { Card as CardType } from '../types/card'
 import { Plus, Minus, Info, Image as ImageIcon, Filter, X, CheckCircle } from 'lucide-react'
 import { loadCollection } from '../lib/collectionLoader'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCardImageUrl } from '../lib/cardImageUtils'
 
 export default function CollectionDetailPage() {
   const { collectionId } = useParams<{collectionId: string}>()
@@ -19,6 +20,7 @@ export default function CollectionDetailPage() {
   const [success, setSuccess] = useState('')
   const { addToDeck, selectedDeck, collections, purchaseCardWithTokens, isCardPurchased, profile } = useGameStore()
   const [enabledTokenCards, setEnabledTokenCards] = useState<Set<string>>(new Set())
+  const [cardImageUrls, setCardImageUrls] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (!collectionId) return
@@ -38,6 +40,27 @@ export default function CollectionDetailPage() {
     
     loadCollectionCards()
   }, [collectionId, collections])
+
+  // Load card images
+  useEffect(() => {
+    const loadCardImages = async () => {
+      const newImageUrls: Record<string, string> = {}
+      for (const card of cards) {
+        try {
+          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 128, 128)
+        } catch (error) {
+          console.error(`Failed to load image for card ${card.id}:`, error)
+          // Use getCardImageUrl which handles local fallback automatically
+          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 128, 128)
+        }
+      }
+      setCardImageUrls(newImageUrls)
+    }
+
+    if (cards.length > 0) {
+      loadCardImages()
+    }
+  }, [cards])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -149,18 +172,17 @@ export default function CollectionDetailPage() {
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
+                    src={cardImageUrls[card.id]}
                     alt={card.title}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
+                    onError={async (e) => {
                       const img = e.currentTarget;
-                      const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`;
-                      img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
-                    }}
-                    onLoad={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      imageCacheService.cacheImage(img.src);
+                      try {
+                        const fallbackUrl = await getCardImageUrl(card.id, card.description, 128, 128);
+                        img.src = fallbackUrl;
+                      } catch (error) {
+                        console.error(`Failed to load fallback image for card ${card.id}:`, error);
+                      }
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
@@ -329,19 +351,23 @@ export default function CollectionDetailPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={cardImageUrls[selectedCard.id]}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
-                    onLoad={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      imageCacheService.cacheImage(img.src);
+                    onError={async (e) => {
+                      const img = e.currentTarget;
+                      try {
+                        const fallbackUrl = await getCardImageUrl(selectedCard.id, selectedCard.description, 256, 256);
+                        img.src = fallbackUrl;
+                      } catch (error) {
+                        console.error(`Failed to load fallback image for card ${selectedCard.id}:`, error);
+                      }
                     }}
                   />
                   <div className="absolute top-2 right-2">
                     <span className={`px-3 py-1 rounded-full text-xs ${
-                      selectedCard.rarity === 'common' ? 'bg-surface text-text-secondary' : 
-                      selectedCard.rarity === 'rare' ? 'bg-secondary/20 text-secondary' : 
+                      selectedCard.rarity === 'common' ? 'bg-surface text-text-secondary' :
+                      selectedCard.rarity === 'rare' ? 'bg-secondary/20 text-secondary' :
                       'bg-accent/20 text-accent'
                     }`}>
                       {selectedCard.rarity.charAt(0).toUpperCase() + selectedCard.rarity.slice(1)}

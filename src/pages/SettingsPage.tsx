@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Settings, Palette, Bell, Shield, User, Gamepad2, LogOut, Save, X } from 'lucide-react'
 import { Button } from '../components/ui/Button'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription
 } from '../components/ui/Card'
 
 export default function SettingsPage() {
@@ -433,10 +433,12 @@ export default function SettingsPage() {
                   {activeSection === 'privacy' && 'Control your privacy and security settings'}
                 </p>
               </div>
-              <Button onClick={handleSave}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </Button>
+              {activeSection !== 'admin' && (
+                <Button onClick={handleSave}>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Changes
+                </Button>
+              )}
             </div>
             
             {activeSection === 'general' && renderGeneralSettings()}

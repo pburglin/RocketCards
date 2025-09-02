@@ -1,5 +1,6 @@
 // Image caching service for aggressive caching of AI-generated images
 // This service provides caching mechanisms to reduce API calls and improve performance
+import { localImageService } from './localImageService'
 
 class ImageCacheService {
   private cache: Map<string, string> = new Map()
@@ -98,6 +99,42 @@ class ImageCacheService {
     })
 
     this.pendingRequests.set(url, requestPromise)
+    return await requestPromise
+  }
+
+  // Get card image with local fallback - checks local images first, then cache, then external
+  public async getCardImageUrl(cardId: string, description: string, width: number = 256, height: number = 256): Promise<string> {
+    // First check if local image exists
+    const localImagePath = await localImageService.checkLocalImage(cardId)
+    if (localImagePath) {
+      return localImagePath
+    }
+
+    // Generate pollinations.ai URL
+    const pollinationsUrl = localImageService.generatePollinationsUrl(description, width, height)
+    
+    // Check if already cached
+    const cachedUrl = this.getCachedImage(pollinationsUrl)
+    if (cachedUrl) {
+      return cachedUrl
+    }
+
+    // Check if request is already pending
+    const pendingRequest = this.pendingRequests.get(pollinationsUrl)
+    if (pendingRequest) {
+      return await pendingRequest
+    }
+
+    // Create new request promise
+    const requestPromise = new Promise<string>((resolve) => {
+      this.cacheImage(pollinationsUrl)
+      this.preloadImage(pollinationsUrl).then(() => {
+        this.pendingRequests.delete(pollinationsUrl)
+        resolve(pollinationsUrl)
+      })
+    })
+
+    this.pendingRequests.set(pollinationsUrl, requestPromise)
     return await requestPromise
   }
 

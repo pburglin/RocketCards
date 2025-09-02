@@ -154,6 +154,63 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/your-feature`)
 5. Create a new Pull Request
 
+## Image Export CLI
+
+### Overview
+
+The RocketCards Image Export CLI tool allows you to download all card images from pollinations.ai to your local filesystem for offline use. This helps reduce API dependency and improves loading performance.
+
+### Usage
+
+```bash
+# Export all images with default settings
+npm run export-images
+
+# Export with custom delay and retry settings
+npm run export-images -- --delay 2000 --retries 5
+
+# Export specific collections only
+npm run export-images -- --collections fantasy,monsters
+
+# Export to custom directory
+npm run export-images -- --output ./my-card-images
+
+# Force overwrite existing images
+npm run export-images -- --force_overwrite
+
+# Export as PNG instead of WEBP
+npm run export-images -- --force_png
+
+# Remove safe=true parameter for better image generation
+npm run export-images -- --force-no-safe
+
+# Combine multiple options
+npm run export-images -- --force_overwrite --force-no-safe
+```
+
+### Options
+
+- `--delay <ms>` or `-d <ms>`: Delay between image downloads in milliseconds (default: 1000)
+- `--retries <count>` or `-r <count>`: Number of retry attempts per image (default: 3)
+- `--output <dir>` or `-o <dir>`: Output directory for images (default: public/images/cards)
+- `--collections <list>` or `-c <list>`: Comma-separated list of collections to export (default: all)
+- `--force_overwrite` or `-f`: Force overwrite existing local images (default: false)
+- `--force_png` or `-p`: Request PNG images instead of WEBP (default: false)
+- `--force-no-safe` or `-s`: Remove safe=true parameter from requests (default: false)
+- `--help` or `-h`: Show help message
+
+### Features
+
+- **Configurable Throttling**: Prevents rate limiting with customizable delays
+- **Retry Mechanism**: Automatically retries failed downloads
+- **Progress Tracking**: Shows detailed progress and results
+- **Error Handling**: Comprehensive error reporting and recovery
+- **Batch Processing**: Processes collections one at a time
+- **Collection Image Export**: Downloads collection images in addition to card images
+- **Format Selection**: Choose between WEBP (default) and PNG formats
+- **Safe Mode Control**: Toggle safe mode for better image generation
+- **Overwrite Protection**: Skip existing images unless forced to overwrite
+
 ## License & Attributions
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

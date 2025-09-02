@@ -7,6 +7,7 @@ import { useGameStore } from '../store/gameStore'
 import { loadCollection } from '../lib/collectionLoader'
 import { Card as CardType } from '../types/card'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCardImageUrl, getCollectionImageUrl } from '../lib/cardImageUtils'
 
 export default function CollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -15,19 +16,35 @@ export default function CollectionsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showCardModal, setShowCardModal] = useState(false)
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
+  const [selectedCardImageUrl, setSelectedCardImageUrl] = useState<string>('')
   const { collections } = useGameStore()
   const navigate = useNavigate()
 
   // Transform collections for display (add card counts and images)
-  const collectionDisplayData = collections.map(collection => ({
-    id: collection.id,
-    name: collection.name,
-    description: collection.description,
-    cards: collection.cards.length,
-    image: imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`) ||
-            `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`,
-    firstCard: collection.cards[0]
-  }))
+  const [collectionDisplayData, setCollectionDisplayData] = useState<any[]>([])
+  
+  useEffect(() => {
+    const loadCollectionImages = async () => {
+      const displayData = await Promise.all(
+        collections.map(async collection => {
+          const imageUrl = await getCollectionImageUrl(collection.id, 128, 128)
+          return {
+            id: collection.id,
+            name: collection.name,
+            description: collection.description,
+            cards: collection.cards.length,
+            image: imageUrl,
+            firstCard: collection.cards[0]
+          }
+        })
+      )
+      setCollectionDisplayData(displayData)
+    }
+    
+    if (collections.length > 0) {
+      loadCollectionImages()
+    }
+  }, [collections])
 
   useEffect(() => {
     // Initialize collections in the store
@@ -53,6 +70,24 @@ export default function CollectionsPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showCardModal]);
+
+  useEffect(() => {
+    const loadCardImage = async () => {
+      if (showCardModal && selectedCard) {
+        try {
+          const imageUrl = await getCardImageUrl(selectedCard.id, selectedCard.description, 256, 256);
+          setSelectedCardImageUrl(imageUrl);
+        } catch (error) {
+          console.error(`Failed to load image for card ${selectedCard.id}:`, error);
+          // Fallback to pollinations.ai URL
+          const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`;
+          setSelectedCardImageUrl(fallbackUrl);
+        }
+      }
+    };
+    
+    loadCardImage();
+  }, [showCardModal, selectedCard]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -167,10 +202,18 @@ export default function CollectionsPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={selectedCardImageUrl}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    onError={async (e) => {
+                      const img = e.currentTarget;
+                      try {
+                        const fallbackUrl = await getCardImageUrl(selectedCard.id, selectedCard.description, 256, 256);
+                        img.src = fallbackUrl;
+                      } catch (error) {
+                        console.error(`Failed to load fallback image for card ${selectedCard.id}:`, error);
+                      }
+                    }}
                     onLoad={(e) => {
                       const img = e.target as HTMLImageElement;
                       imageCacheService.cacheImage(img.src);

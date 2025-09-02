@@ -8,6 +8,7 @@ import { calculatePlayerStats } from '../lib/gameEngine'
 import { Shield, Sword, Sparkles, Flame, Star, Coins, X, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 import { imageCacheService } from '../lib/imageCacheService'
+import { getCardImageUrl } from '../lib/cardImageUtils'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ export default function ProfileSetupPage() {
   const [showCardModal, setShowCardModal] = useState(false)
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
+  const [cardImageUrls, setCardImageUrls] = useState<Record<string, string>>({})
   
   const stats = calculatePlayerStats(strategy, keyStat)
   
@@ -41,6 +43,27 @@ export default function ProfileSetupPage() {
     // Then sort alphabetically by title within each group
     return a.title.localeCompare(b.title);
   })
+
+  // Load card images
+  useEffect(() => {
+    const loadCardImages = async () => {
+      const newImageUrls: Record<string, string> = {}
+      for (const card of tokenCards) {
+        try {
+          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 64, 64)
+        } catch (error) {
+          console.error(`Failed to load image for card ${card.id}:`, error)
+          // Use getCardImageUrl which handles local fallback automatically
+          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 64, 64)
+        }
+      }
+      setCardImageUrls(newImageUrls)
+    }
+
+    if (tokenCards.length > 0) {
+      loadCardImages()
+    }
+  }, [tokenCards])
   
   // Initialize form with existing profile data
   useEffect(() => {
@@ -368,18 +391,17 @@ export default function ProfileSetupPage() {
                         <div className="flex items-start space-x-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                             <img
-                              src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`) ||
-                                   `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
+                              src={cardImageUrls[card.id]}
                               alt={card.title}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
+                              onError={async (e) => {
                                 const img = e.currentTarget;
-                                const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.title)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`;
-                                img.src = imageCacheService.getCachedImage(fallbackUrl) || fallbackUrl;
-                              }}
-                              onLoad={(e) => {
-                                const img = e.target as HTMLImageElement;
-                                imageCacheService.cacheImage(img.src);
+                                try {
+                                  const fallbackUrl = await getCardImageUrl(card.id, card.description, 64, 64);
+                                  img.src = fallbackUrl;
+                                } catch (error) {
+                                  console.error(`Failed to load fallback image for card ${card.id}:`, error);
+                                }
                               }}
                             />
                           </div>
@@ -479,13 +501,17 @@ export default function ProfileSetupPage() {
               <div>
                 <div className="relative h-64 mb-4">
                   <img
-                    src={imageCacheService.getCachedImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`) ||
-                         `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard?.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
+                    src={cardImageUrls[selectedCard?.id]}
                     alt={selectedCard?.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
-                    onLoad={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      imageCacheService.cacheImage(img.src);
+                    onError={async (e) => {
+                      const img = e.currentTarget;
+                      try {
+                        const fallbackUrl = await getCardImageUrl(selectedCard?.id, selectedCard?.description, 256, 256);
+                        img.src = fallbackUrl;
+                      } catch (error) {
+                        console.error(`Failed to load fallback image for card ${selectedCard?.id}:`, error);
+                      }
                     }}
                   />
                   <div className="absolute top-2 right-2">
