@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore'
 import { audioService } from '../lib/audioService'
 import { imageCacheService } from '../lib/imageCacheService'
 import { getCardImageUrl } from '../lib/cardImageUtils'
+import GameWebGL from '../components/GameWebGL'
 import {
   Card,
   CardHeader,
@@ -52,6 +53,10 @@ export default function GamePage() {
   const [actionLog, setActionLog] = useState<string[]>([])
   const [timeLeft, setTimeLeft] = useState(10)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // WebGL animation states
+  const [battleIntensity, setBattleIntensity] = useState(0.3)
+  const [energyLevel, setEnergyLevel] = useState(0.2)
   
   // Animation states
   const [playerHpAnimation, setPlayerHpAnimation] = useState(false)
@@ -705,6 +710,7 @@ export default function GamePage() {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
+      <GameWebGL battleIntensity={battleIntensity} energyLevel={energyLevel} />
       
       {/* Opponent Resources */}
       <div className="grid grid-cols-1 gap-2 mb-2 sm:mb-4">
