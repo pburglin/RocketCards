@@ -186,6 +186,423 @@
         "ap": 3,
         "dp": 4
       }
+    },
+    {
+      "id": "champion_token_ultimate_mecha",
+      "title": "Ultimate Mecha",
+      "description": "The most powerful robotic warrior ever created, piloted by the chosen one",
+      "imageDescription": "Massive futuristic mecha robot with advanced weaponry, standing heroically against a city backdrop",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +4 damage to all champions this turn; Passive: Cannot be targeted by damage effects under 3; When attacking: Deal 3 damage to all opponents",
+      "cost": {
+        "HP": 5,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "When humanity's greatest threat arises, only the ultimate weapon can answer the call.",
+      "collection": "anime",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 5,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_cosmic_senshi",
+      "title": "Cosmic Senshi",
+      "description": "A magical warrior who protects the universe from interdimensional threats",
+      "imageDescription": "Elegant warrior in a flowing magical uniform, wielding a cosmic staff with starlight effects",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 6 HP to all your champions; Passive: When you play a skill, gain 1 MP; When attacking: Heal 2 HP to player",
+      "cost": {
+        "HP": 4,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "For love and justice, I will fight to protect all existence!",
+      "collection": "anime",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_demon_slayer",
+      "title": "Master Demon Slayer",
+      "description": "The ultimate warrior trained to eliminate supernatural threats with sacred techniques",
+      "imageDescription": "Focused warrior with traditional demon-slaying gear, breathing technique visible as energy waves",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 5 damage to all enemy champions; Passive: +2 damage to all attacks; When attacking: Gain 1 MP",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "With every breath, I become stronger. With every strike, evil falls.",
+      "collection": "anime",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_psychic_master",
+      "title": "Psychic Master",
+      "description": "A being with ultimate telekinetic powers who can manipulate reality with their mind",
+      "imageDescription": "Powerful psychic with eyes glowing with telekinetic energy, objects floating around them",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your creatures gain +1 HP; When attacking: Deal damage equal to your MP",
+      "cost": {
+        "HP": 1,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The mind is the most powerful weapon, and mine has no limits.",
+      "collection": "anime",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 3,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_legendary_pokemon",
+      "title": "Legendary Pokémon",
+      "description": "The most powerful creature in existence, capable of controlling the elements themselves",
+      "imageDescription": "Majestic legendary Pokémon with multiple elemental auras, surrounded by natural phenomena",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 3 random creature cards to your hand; Passive: When you play a creature, deal 1 damage to all opponents; When attacking: Choose fire, water, electric, or grass effect",
+      "cost": {
+        "HP": 3,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "When the world needs a hero, I answer the call. Gotta catch 'em all!",
+      "collection": "anime",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "tactics_anime_power_up",
+      "title": "Anime Power Up",
+      "description": "Channel the power of anime to boost your abilities beyond limits",
+      "imageDescription": "Character surrounded by swirling energy, breaking through previous limitations with intense aura",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "All your champions gain +2 AP and +1 DP until end of turn, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "When the odds are impossible, that's when heroes shine brightest.",
+      "collection": "anime"
+    },
+    {
+      "id": "tactics_dramatic_finish",
+      "title": "Dramatic Finish",
+      "description": "Save your best move for the final moment",
+      "imageDescription": "Hero delivering final attack in slow motion, with dramatic lighting and special effects",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Deal 6 damage to target champion, gain 3 MP if this destroys it",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:6"],
+      "flavor": "Every great anime needs that one perfect final attack.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_dodge",
+      "title": "Impossible Dodge",
+      "description": "Dodge attacks with superhuman speed and reflexes",
+      "imageDescription": "Character moving so fast they appear as afterimages, avoiding incoming attacks",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Prevent all damage to target champion this turn, champion can attack again",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "In anime, speed isn't just about movement - it's about style.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_friendship_bond",
+      "title": "Friendship Bond",
+      "description": "The power of friendship strengthens your team",
+      "imageDescription": "Group of anime characters linked by glowing bonds of friendship, supporting each other",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Restore 3 HP to all your champions, they gain +1 AP this turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:heal", "duration:1"],
+      "flavor": "When friends fight together, their power multiplies exponentially.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_teleport",
+      "title": "Anime Teleport",
+      "description": "Move instantly across space with flashy effects",
+      "imageDescription": "Character vanishing in one location and reappearing in another with teleportation effects",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Target champion can attack this turn even if it couldn't before, deal 2 damage to target opponent champion",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "target:opponent", "damage:2"],
+      "flavor": "In anime, distance is just a suggestion.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_energy_barrage",
+      "title": "Energy Barrage",
+      "description": "Unleash a storm of energy projectiles",
+      "imageDescription": "Character firing multiple energy blasts in rapid succession, creating explosive impacts",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 1 damage to all opponent champions, 3 times",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["area:opponent", "damage:1x3"],
+      "flavor": "Why hit once when you can hit dozens of times in the same turn?",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_heal",
+      "title": "Healing Light",
+      "description": "Restore health with mystical anime healing powers",
+      "imageDescription": "Character surrounded by warm healing light, wounds closing and energy restoring",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 2 HP to target champion",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:heal"],
+      "flavor": "Even in the darkest moments, hope can heal any wound.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_speed_boost",
+      "title": "Speed Boost",
+      "description": "Increase movement speed with anime-style acceleration",
+      "imageDescription": "Character moving with speed lines and motion blur, leaving afterimages behind",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +1 AP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "Speed is the key to victory in any battle.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_shield",
+      "title": "Energy Shield",
+      "description": "Create a protective barrier of energy",
+      "imageDescription": "Character surrounded by a glowing energy shield, deflecting incoming attacks",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent 2 damage to target champion this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "Protection is just as important as offense.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_focus",
+      "title": "Mental Focus",
+      "description": "Concentrate your mind to enhance your abilities",
+      "imageDescription": "Character meditating with a focused expression, energy swirling around them",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +1 DP this turn, gain 1 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The mind is the most powerful weapon of all.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_strike",
+      "title": "Precision Strike",
+      "description": "A perfectly aimed attack that never misses",
+      "imageDescription": "Character delivering a precise strike with perfect form and technique",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, cannot be prevented",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2", "unpreventable"],
+      "flavor": "In anime, skill always trumps luck.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_regeneration",
+      "title": "Regeneration",
+      "description": "Rapidly heal wounds with accelerated recovery",
+      "imageDescription": "Character's wounds closing rapidly with glowing regenerative energy",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 3 HP to target champion over 2 turns",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:heal", "duration:2"],
+      "flavor": "True strength lies in the ability to recover from any setback.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_reflexes",
+      "title": "Enhanced Reflexes",
+      "description": "React instantly to any threat with superhuman reflexes",
+      "imageDescription": "Character reacting to multiple incoming attacks with perfect timing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent the next 2 damage to target champion this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "In the world of anime, reaction time is everything.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_endurance",
+      "title": "Enhanced Endurance",
+      "description": "Push through fatigue with incredible stamina",
+      "imageDescription": "Character continuing to fight despite exhaustion, with renewed energy",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack again this turn, gain 1 fatigue",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The will to never give up is the ultimate power.",
+      "collection": "anime"
+    },
+    {
+      "id": "skill_anime_senses",
+      "title": "Enhanced Senses",
+      "description": "Heighten your senses to perceive everything around you",
+      "imageDescription": "Character with enhanced vision, able to see energy auras and hidden details",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, prevent 1 damage to target champion this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "target:champion", "reaction:true"],
+      "flavor": "In anime, awareness is the first step to victory.",
+      "collection": "anime"
+    },
+    {
+      "id": "creature_anime_sidekick",
+      "title": "Loyal Sidekick",
+      "description": "A faithful companion ready to assist in any adventure",
+      "imageDescription": "Cute anime companion character with determined expression, ready to help",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: Gain 1 MP each turn; When attacking: Deal 1 damage to target",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Every hero needs a trusty companion by their side.",
+      "collection": "anime",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_anime_mentor",
+      "title": "Wise Mentor",
+      "description": "An experienced master who guides younger fighters",
+      "imageDescription": "Elderly anime master with long beard, teaching students with ancient wisdom",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: All your champions gain +1 DP; When attacking: Restore 1 HP to target champion",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The greatest power comes from learning from those who came before.",
+      "collection": "anime",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 2
+      }
     }
   ]
 }

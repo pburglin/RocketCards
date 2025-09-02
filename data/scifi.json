@@ -170,6 +170,455 @@
       "flavor": "From the birth of stars to the death of universes, it has witnessed all.",
       "collection": "scifi",
       "tokenCost": 75
+    },
+    {
+      "id": "champion_token_quantum_overlord",
+      "title": "Quantum Overlord",
+      "description": "A being that exists in multiple dimensions simultaneously, manipulating reality itself",
+      "imageDescription": "Ethereal figure with multiple translucent forms, surrounded by quantum particles and dimensional rifts",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your cards cost 1 less MP; When attacking: Deal damage equal to the number of different card types you've played this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the quantum realm, I am everywhere and nowhere, all possibilities and no certainty.",
+      "collection": "scifi",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 4,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_mech_prime",
+      "title": "Mech Prime",
+      "description": "The ultimate war machine, a fusion of organic and synthetic technology",
+      "imageDescription": "Massive humanoid mech with glowing blue circuits, armed with multiple energy weapons",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +3 damage to all champions this turn; Passive: Cannot be targeted by damage effects under 2; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 4,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Flesh and steel, merged in perfect harmony of destruction.",
+      "collection": "scifi",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 5,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_neural_network",
+      "title": "Neural Network Consciousness",
+      "description": "An artificial intelligence that has achieved true sentience and godlike processing power",
+      "imageDescription": "Digital consciousness represented as a glowing neural network spanning across cyberspace",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Look at opponent's entire hand and choose 2 cards to discard; Passive: Draw 1 extra card each turn; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -6,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "I think, therefore I am. I calculate, therefore you are obsolete.",
+      "collection": "scifi",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 3,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_void_walker",
+      "title": "Void Walker",
+      "description": "A traveler between galaxies who has mastered the art of space-time manipulation",
+      "imageDescription": "Figure in a sleek space suit with a helmet displaying star maps, standing on an asteroid with a spaceship in the background",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random rare technology cards to your hand; Passive: When you play an event, gain 1 MP; When attacking: +2 damage if you control a creature",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Distance is meaningless when you can fold space like paper.",
+      "collection": "scifi",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_bio_titan",
+      "title": "Bio-Titan",
+      "description": "A genetically engineered super-soldier with enhanced physical and mental capabilities",
+      "imageDescription": "Muscular figure with visible bio-mechanical enhancements, glowing veins, and advanced armor",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 4 HP to all your champions; Passive: When you play a creature, gain 1 HP; When attacking: Deal 1 damage to all enemies",
+      "cost": {
+        "HP": 3,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Born in a lab, forged in battle, perfected through evolution.",
+      "collection": "scifi",
+      "tokenCost": 60,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_quantum_scientist",
+      "title": "Quantum Scientist",
+      "description": "A brilliant researcher who has unlocked the secrets of quantum mechanics and reality manipulation",
+      "imageDescription": "Scientist in a lab coat with holographic displays showing quantum equations, surrounded by floating particles",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random technology cards to your hand; Passive: When you play an event, gain 1 MP; When attacking: Deal 1 damage to all opponents",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Reality is just a suggestion, and I have the tools to edit it.",
+      "collection": "scifi",
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "creature_nanite_swarm",
+      "title": "Nanite Swarm",
+      "description": "A cloud of microscopic robots that can reconfigure themselves for any purpose",
+      "imageDescription": "Swirling cloud of tiny metallic particles that form shifting patterns in the air",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: Restore 2 HP to all your champions; Passive: Gain 1 MP at the start of each turn; When attacking: Deal damage equal to your MP",
+      "cost": {
+        "HP": 2,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Individually insignificant, collectively unstoppable.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 6,
+        "maxHp": 4,
+        "maxMp": 6,
+        "ap": 2,
+        "dp": 3
+      }
+    },
+    {
+      "id": "tactics_temporal_shift",
+      "title": "Temporal Shift",
+      "description": "Manipulate the flow of time to gain a tactical advantage",
+      "imageDescription": "Warping time-space continuum with clock faces and hourglasses floating in distorted space",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Take an extra turn after this one, but lose 2 HP",
+      "cost": {
+        "HP": -2,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Time is a river, and I know how to change its course.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_plasma_cannon",
+      "title": "Plasma Cannon",
+      "description": "Fire a superheated ball of ionized gas that melts through armor",
+      "imageDescription": "Massive futuristic cannon firing a brilliant blue-white plasma bolt",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 4 damage to target champion, +2 damage if you control a technology card",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "When conventional weapons won't cut it, bring the sun to the battlefield.",
+      "collection": "scifi"
+    },
+    {
+      "id": "event_gravitational_anomaly",
+      "title": "Gravitational Anomaly",
+      "description": "A localized distortion in the fabric of space-time affects all combatants",
+      "imageDescription": "Warping gravitational field with objects floating and bending light around a central point",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All champions lose 1 MP regeneration, all creatures return to their owners' hands",
+      "cost": {
+        "HP": -2,
+        "MP": -2,
+        "fatigue": 2
+      },
+      "tags": ["area:all", "effect:mp_regen"],
+      "flavor": "The laws of physics are more like guidelines anyway.",
+      "collection": "scifi"
+    },
+    {
+      "id": "creature_holographic_decoy",
+      "title": "Holographic Decoy",
+      "description": "A lifelike hologram designed to confuse and distract enemies",
+      "imageDescription": "Flickering holographic figure that looks identical to a real person, shimmering with light",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by damage effects; On summon: Draw 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "If you can't tell what's real, how do you know you're safe?",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 4,
+        "maxHp": 2,
+        "maxMp": 4,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "skill_energy_blast",
+      "title": "Energy Blast",
+      "description": "Release a concentrated burst of pure energy from your weapon systems",
+      "imageDescription": "Character firing a concentrated beam of multicolored energy from advanced weapon",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you have a technology card in play",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Standard issue, but still surprisingly effective.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_shield_generator",
+      "title": "Shield Generator",
+      "description": "Deploy a personal energy barrier to protect against incoming attacks",
+      "imageDescription": "Personal energy shield flickering around a character, deflecting incoming projectiles",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent the next 2 damage to target champion this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:shield"],
+      "flavor": "The difference between victory and defeat is often just a few joules of energy.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_medical_nanobots",
+      "title": "Medical Nanobots",
+      "description": "Inject microscopic repair machines to heal wounds and restore health",
+      "imageDescription": "Glowing nanobots entering a wounded character, cellular repair visible at microscopic level",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 3 HP to target champion, remove all negative effects",
+      "cost": {
+        "HP": 3,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "heal:3"],
+      "flavor": "The future of medicine is smaller than you think.",
+      "collection": "scifi"
+    },
+    {
+      "id": "skill_emp_pulse",
+      "title": "EMP Pulse",
+      "description": "Emit an electromagnetic pulse that disrupts electronic systems",
+      "imageDescription": "Circular electromagnetic pulse expanding outward, disabling nearby electronic devices",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All opponent technology cards cost 1 more MP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["area:opponent", "effect:cost"],
+      "flavor": "In the digital age, silence is the ultimate weapon.",
+      "collection": "scifi"
+    },
+    {
+      "id": "creature_security_turret",
+      "title": "Security Turret",
+      "description": "An automated defense system programmed to eliminate threats",
+      "imageDescription": "Futuristic automated turret with multiple weapon barrels, scanning for targets",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Vigilant, relentless, and absolutely loyal.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 1,
+        "maxHp": 3,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_robo_dog",
+      "title": "Robo-Dog",
+      "description": "A cybernetic canine companion designed for combat and reconnaissance",
+      "imageDescription": "Mechanical dog with glowing eyes and armor plating, standing alert with sensors active",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Gain 1 MP; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Man's best friend, upgraded for the modern battlefield.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_space_marine",
+      "title": "Space Marine",
+      "description": "A heavily armored soldier trained for combat in zero-gravity environments",
+      "imageDescription": "Soldier in powered armor with thrusters, floating in space with planet in background",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 2 damage to target; Passive: Cannot be targeted by damage effects under 2",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The final frontier demands the ultimate warriors.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 1,
+        "maxHp": 4,
+        "maxMp": 1,
+        "ap": 2,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_alien_scout",
+      "title": "Alien Scout",
+      "description": "A reconnaissance alien with advanced sensory capabilities",
+      "imageDescription": "Small alien creature with multiple eyes, scanning environment with advanced sensors",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Look at opponent's hand",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "They're watching, always watching.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_mech_spider",
+      "title": "Mech Spider",
+      "description": "A robotic arachnid designed for infiltration and sabotage",
+      "imageDescription": "Mechanical spider with multiple legs, climbing walls with cutting tools extended",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target, +1 damage if played during night phase",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "In the shadows, it waits. In the silence, it strikes.",
+      "collection": "scifi",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "skill_teleporter",
+      "title": "Teleporter",
+      "description": "Instantly transport yourself to any location on the battlefield",
+      "imageDescription": "Character dematerializing in a swirl of light particles, reappearing elsewhere",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion cannot be attacked this turn, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "effect:protection"],
+      "flavor": "Distance is just another variable to be optimized.",
+      "collection": "scifi"
     }
   ]
 }

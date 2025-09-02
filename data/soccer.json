@@ -216,6 +216,455 @@
         "ap": 4,
         "dp": 2
       }
+    },
+    {
+      "id": "champion_token_world_cup_hero",
+      "title": "World Cup Hero",
+      "description": "The legendary player who scored the winning goal in the most important match ever played",
+      "imageDescription": "Celebrated soccer player lifting a trophy, surrounded by cheering fans and flashing cameras",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Draw 3 cards; Passive: +2 card per turn; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the moment of glory, legends are born.",
+      "collection": "soccer",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_tactical_genius",
+      "title": "Tactical Genius",
+      "description": "The mastermind coach who can read the game like no other and adapt strategies instantly",
+      "imageDescription": "Strategic coach on the sidelines, studying the field with intense focus, tactical board in hand",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your tactics cost 1 less MP; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The game is won in the mind before it's played on the field.",
+      "collection": "soccer",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 2,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_goalkeeping_god",
+      "title": "Goalkeeping God",
+      "description": "The ultimate shot-stopper who makes the impossible look routine with divine reflexes",
+      "imageDescription": "Legendary goalkeeper making an incredible save, ball frozen in mid-air, crowd in awe",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Prevent all damage to your champions this turn; Passive: Cannot be targeted by enemy effects; When attacking: Heal 3 HP to player",
+      "cost": {
+        "HP": 5,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Some shots are saved by skill, others by miracles. I make miracles look easy.",
+      "collection": "soccer",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 1,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_street_legend",
+      "title": "Street Legend",
+      "description": "The ultimate freestyle artist who learned the game in the streets and playgrounds",
+      "imageDescription": "Street soccer maestro performing incredible tricks with a worn ball in an urban setting",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 3 random skill cards to your hand; Passive: Skills cost 1 less MP; When attacking: Deal damage equal to the number of skills in your hand",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The streets don't teach you to play, they teach you to survive. And I've survived everything.",
+      "collection": "soccer",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_olympic_champion",
+      "title": "Olympic Champion",
+      "description": "The athlete who achieved perfection on the world's biggest stage, representing their nation with pride",
+      "imageDescription": "Olympic gold medalist standing on podium, national flag raised, tears of joy",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 5 HP to all your champions; Passive: When you play a creature, gain 1 MP; When attacking: +2 damage if MP >= 3",
+      "cost": {
+        "HP": 4,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "For country, for glory, for the dream that started in a backyard with a ball.",
+      "collection": "soccer",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_soccer_phenom",
+      "title": "Soccer Phenom",
+      "description": "A naturally gifted player with unparalleled talent and instinct for the game",
+      "imageDescription": "Young prodigy with incredible ball control, effortlessly juggling ball with both feet",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random skill cards to your hand; Passive: Skills cost 1 less MP; When attacking: Deal 1 damage to all opponents",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Born to play, destined to inspire.",
+      "collection": "soccer",
+      "championStats": {
+        "ap": 3,
+        "dp": 3
+      }
+    },
+    {
+      "id": "creature_loyal_sidekick",
+      "title": "Loyal Sidekick",
+      "description": "A devoted teammate who supports the star player with unwavering loyalty",
+      "imageDescription": "Supporting player running alongside the main striker, ready to assist at any moment",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: +2 damage to all your champions this turn; Passive: When you play a skill, gain 1 MP; When attacking: +1 damage if you control a champion",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Greatness is never achieved alone.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 4,
+        "maxHp": 3,
+        "maxMp": 4,
+        "ap": 2,
+        "dp": 2
+      }
+    },
+    {
+      "id": "skill_rainbow_flick",
+      "title": "Rainbow Flick",
+      "description": "A spectacular ball trick that leaves defenders mesmerized and confused",
+      "imageDescription": "Player performing an intricate ball flick with rainbow-colored ball trails",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Target champion cannot attack this turn, draw 2 cards",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "effect:stun"],
+      "flavor": "Artistry meets athleticism in perfect harmony.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_scorpion_kick",
+      "title": "Scorpion Kick",
+      "description": "A spectacular kick performed with the heel, catching everyone off guard",
+      "imageDescription": "Player performing a dramatic scorpion kick with ball flying toward goal",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 4 damage to target champion, +2 damage if you have a creature in play",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "When conventional shots won't do, add a little flair.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_panenka_penalty",
+      "title": "Panenka Penalty",
+      "description": "A cheeky chip shot that goes against all conventional wisdom but somehow works",
+      "imageDescription": "Player gently chipping the ball down the center during a penalty kick",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 3 damage to target champion, opponent discards 1 card at random",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:3"],
+      "flavor": "Confidence is the ultimate weapon.",
+      "collection": "soccer"
+    },
+    {
+      "id": "creature_team_captain",
+      "title": "Team Captain",
+      "description": "The inspirational leader who motivates teammates and organizes the defense",
+      "imageDescription": "Player with armband rallying teammates, pointing and shouting instructions",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: +1 damage to all your champions; Passive: Reduce damage to player by 1; On summon: Draw 1 card",
+      "cost": {
+        "HP": 2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Leadership isn't just about skill, it's about heart.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 2,
+        "maxHp": 4,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 3
+      }
+    },
+    {
+      "id": "skill_through_ball",
+      "title": "Through Ball",
+      "description": "A perfectly weighted pass that splits the defense and creates scoring opportunities",
+      "imageDescription": "Player delivering a precise through ball between defenders to a running teammate",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 1 card, +1 MP to all your champions",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:mp"],
+      "flavor": "Vision and timing create the perfect assist.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_sliding_tackle",
+      "title": "Sliding Tackle",
+      "description": "A defensive move that cleanly dispossesses the opponent",
+      "imageDescription": "Defender sliding in to steal the ball from an opponent with perfect timing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Negate the next opponent action this turn",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Defense wins championships, and timing wins tackles.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_corner_kick",
+      "title": "Corner Kick",
+      "description": "A set piece opportunity to create a scoring chance from a corner",
+      "imageDescription": "Player delivering a curling corner kick into the penalty area with players waiting",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Add 1 random creature card from your collection to your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:hand", "card:creature"],
+      "flavor": "Set pieces are where games are won and lost.",
+      "collection": "soccer"
+    },
+    {
+      "id": "skill_free_kick",
+      "title": "Free Kick",
+      "description": "A direct free kick taken with precision and power",
+      "imageDescription": "Player lining up for a free kick, ball placed perfectly on the spot",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you have no cards in hand",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Sometimes the best opportunities come from mistakes.",
+      "collection": "soccer"
+    },
+    {
+      "id": "creature_young_talent",
+      "title": "Young Talent",
+      "description": "An up-and-coming player with raw potential waiting to be unleashed",
+      "imageDescription": "Teenage player with determination in their eyes, practicing ball skills",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Gain 1 MP each turn; On summon: Gain 1 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The future of the game, today.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_substitute_player",
+      "title": "Substitute Player",
+      "description": "A fresh player brought in to change the momentum of the game",
+      "imageDescription": "Player running onto the field from the sidelines, full of energy",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Draw 1 card; Passive: +1 damage if played during second half",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Sometimes the impact player makes all the difference.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_goal_celebration",
+      "title": "Goal Celebration",
+      "description": "The euphoric moment of scoring that energizes the entire team",
+      "imageDescription": "Players celebrating a goal with arms raised and crowd going wild",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: +1 damage to all your champions; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The moment that makes all the hard work worthwhile.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_training_dummy",
+      "title": "Training Dummy",
+      "description": "A practice target used to perfect shooting and passing skills",
+      "imageDescription": "Soccer training dummy standing on the practice field, ball marks visible",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Every champion started with countless hours of practice.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 1,
+        "maxHp": 3,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_sports_journalist",
+      "title": "Sports Journalist",
+      "description": "A media member who reports on the action and influences public perception",
+      "imageDescription": "Reporter with microphone and camera, capturing the game's biggest moments",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Look at opponent's hand",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The pen is mightier than the boot.",
+      "collection": "soccer",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "skill_chip_shot",
+      "title": "Chip Shot",
+      "description": "A delicate lob shot that floats over the goalkeeper's head",
+      "imageDescription": "Player gently chipping the ball over the goalkeeper with perfect arc",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to target champion, +2 damage if goalkeeper is in play",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:1"],
+      "flavor": "Sometimes finesse beats power.",
+      "collection": "soccer"
     }
   ]
 }

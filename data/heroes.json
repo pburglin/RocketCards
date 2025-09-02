@@ -292,6 +292,440 @@
         "ap": 5,
         "dp": 3
       }
+    },
+    {
+      "id": "champion_token_odin",
+      "title": "Odin the All-Father",
+      "description": "The Norse god of wisdom and war, who sacrificed an eye for ultimate knowledge",
+      "imageDescription": "Majestic Norse god with long beard and spear, surrounded by ravens and divine lightning",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Draw 3 cards; Passive: +2 card per turn; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 3,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Wisdom comes at a price, and I have paid it in full.",
+      "collection": "heroes",
+      "tokenCost": 85,
+      "championStats": {
+        "ap": 4,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_king_of_kings",
+      "title": "King of Kings",
+      "description": "The ultimate ruler who has conquered kingdoms and united realms under one banner",
+      "imageDescription": "Majestic monarch in golden armor and crown, standing atop a castle with vast lands below",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your champions cost 1 less MP; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 4,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "One throne, one ruler, one destiny for all.",
+      "collection": "heroes",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 3,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_divine_champion",
+      "title": "Divine Champion",
+      "description": "A mortal hero blessed by the gods themselves with divine power and protection",
+      "imageDescription": "Radiant hero with glowing armor and divine aura, wielding a blessed weapon",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 6 HP to all your champions; Passive: Cannot be targeted by enemy effects; When attacking: Heal 3 HP to player",
+      "cost": {
+        "HP": 5,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The gods have chosen me as their instrument, and their power flows through my veins.",
+      "collection": "heroes",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_legendary_paladin",
+      "title": "Legendary Paladin",
+      "description": "The ultimate holy warrior who combines divine magic with unmatched combat skills",
+      "imageDescription": "Noble paladin in shining white armor, surrounded by holy light and sacred symbols",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Prevent all damage to your champions this turn; Passive: When you play a creature, gain 1 MP; When attacking: +2 damage if MP >= 3",
+      "cost": {
+        "HP": 6,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "For honor, for justice, for the light that banishes darkness!",
+      "collection": "heroes",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_mythic_beast",
+      "title": "Mythic Beast",
+      "description": "A creature of legend so powerful it has become part of the world's mythology",
+      "imageDescription": "Massive legendary creature with multiple heads and elemental powers, surrounded by ancient ruins",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 5 damage to all enemy champions; Passive: Gain 1 MP at the start of each turn; When attacking: Choose fire, ice, lightning, or earth effect",
+      "cost": {
+        "HP": 7,
+        "MP": -6,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "I am older than memory, stronger than steel, and eternal as the stars.",
+      "collection": "heroes",
+      "tokenCost": 90,
+      "championStats": {
+        "ap": 5,
+        "dp": 5
+      }
+    },
+    {
+      "id": "tactics_heroic_charge",
+      "title": "Heroic Charge",
+      "description": "Lead a devastating charge that inspires all allies",
+      "imageDescription": "Hero leading a charge with sword raised, allies following with renewed courage",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "All your champions gain +3 AP this turn, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "A true leader doesn't just command - they inspire.",
+      "collection": "heroes"
+    },
+    {
+      "id": "tactics_legendary_stand",
+      "title": "Legendary Last Stand",
+      "description": "Make a final, desperate stand that becomes the stuff of legend",
+      "imageDescription": "Hero making a final stand against overwhelming odds, becoming a beacon of hope",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Prevent all damage to your champions this turn, if you survive draw 3 cards",
+      "cost": {
+        "HP": 4,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["area:player", "reaction:true", "duration:1"],
+      "flavor": "Some deaths become legends, and legends never truly die.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_divine_blessing",
+      "title": "Divine Blessing",
+      "description": "Receive the favor of the gods to enhance your abilities",
+      "imageDescription": "Hero being blessed by divine light, gaining supernatural strength and protection",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Target champion gains +2 AP and +2 DP this turn, prevent 2 damage",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The gods favor those who favor the innocent.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_epic_tale",
+      "title": "Epic Tale",
+      "description": "Tell a story so inspiring it grants power to your allies",
+      "imageDescription": "Bard telling an epic tale to gathered heroes, who listen with wonder and inspiration",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "All your champions gain +1 AP this turn, draw 2 cards",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "A story well told can change the world.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_ancient_wisdom",
+      "title": "Ancient Wisdom",
+      "description": "Tap into the knowledge of ages to gain insight",
+      "imageDescription": "Ancient sage meditating, surrounded by scrolls and mystical knowledge",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Look at the top 5 cards of your deck, choose 2 to draw, shuffle the rest back",
+      "cost": {
+        "HP": 2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:deck", "effect:draw"],
+      "flavor": "The past holds the keys to the future.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_legendary_sword",
+      "title": "Legendary Sword Strike",
+      "description": "Deliver a blow with a weapon forged in legend",
+      "imageDescription": "Hero delivering a perfect strike with a glowing legendary sword",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 5 damage to target champion, cannot be prevented",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:5", "unpreventable"],
+      "flavor": "Forged in myth, tempered by time, wielded by destiny.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_heroic_resolve",
+      "title": "Heroic Resolve",
+      "description": "Find inner strength to overcome any obstacle",
+      "imageDescription": "Hero standing strong against overwhelming odds, inner strength glowing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +1 AP and +1 DP this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "True heroes are not made by power, but by perseverance.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_ancient_shield",
+      "title": "Ancient Shield",
+      "description": "Use a shield crafted by master artisans of old",
+      "imageDescription": "Hero raising an ancient shield with intricate designs, deflecting attacks",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent 3 damage to target champion this turn",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "The old ways made weapons that outlast their makers.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_legendary_bow",
+      "title": "Legendary Bow Shot",
+      "description": "Fire an arrow with perfect accuracy from a legendary bow",
+      "imageDescription": "Archer drawing back a legendary bow, arrow glowing with perfect aim",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 3 damage to target champion from any range",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:3"],
+      "flavor": "Distance is no barrier to a true archer's skill.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_heroic_leap",
+      "title": "Heroic Leap",
+      "description": "Leap into battle with superhuman agility",
+      "imageDescription": "Hero leaping through the air towards enemies, landing with perfect timing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack this turn even if it couldn't before",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "A hero knows when to strike and when to soar.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_ancient_spell",
+      "title": "Ancient Spell",
+      "description": "Cast a spell from a forgotten age of magic",
+      "imageDescription": "Wizard casting an ancient spell with glowing runes and mystical energy",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, restore 2 HP to target champion",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2", "effect:heal"],
+      "flavor": "The old magic still holds power for those who know how to wield it.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_legendary_armor",
+      "title": "Legendary Armor",
+      "description": "Don armor forged by legendary smiths",
+      "imageDescription": "Hero donning gleaming legendary armor, becoming nearly invulnerable",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +2 DP this turn, prevent 1 damage",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "True protection comes not from the armor, but from the will to protect.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_heroic_rally",
+      "title": "Heroic Rally",
+      "description": "Inspire allies to fight with renewed vigor",
+      "imageDescription": "Hero rallying allies with inspiring words and gestures, boosting morale",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All your champions gain +1 AP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 2
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "A single voice can unite many hearts.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_ancient_tome",
+      "title": "Ancient Tome",
+      "description": "Study a tome of forgotten knowledge",
+      "imageDescription": "Scholar reading from an ancient tome, gaining mystical knowledge",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 2 cards, gain 1 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:hand", "effect:mp"],
+      "flavor": "Knowledge is the greatest treasure of all.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_legendary_helm",
+      "title": "Legendary Helm",
+      "description": "Wear a helm that grants clarity and focus",
+      "imageDescription": "Hero donning a legendary helm with intricate designs, gaining mental clarity",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack again this turn, gain 1 fatigue",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "A clear mind sees the path to victory.",
+      "collection": "heroes"
+    },
+    {
+      "id": "skill_heroic_endurance",
+      "title": "Heroic Endurance",
+      "description": "Push through pain and exhaustion with sheer willpower",
+      "imageDescription": "Hero continuing to fight despite injuries, driven by inner strength",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains resistance to damage under 2 this turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "True heroes are forged in the crucible of adversity.",
+      "collection": "heroes"
+    },
+    {
+      "id": "creature_loyal_squire",
+      "title": "Loyal Squire",
+      "description": "A devoted young warrior ready to serve and learn",
+      "imageDescription": "Young squire in training armor, ready to assist their knight master",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: Gain 1 MP each turn; When attacking: Deal 1 damage to target",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Every great knight started as someone's squire.",
+      "collection": "heroes",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 1,
+        "maxHp": 3,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_ancient_spirit",
+      "title": "Ancient Spirit",
+      "description": "A mystical being that has watched over the world for ages",
+      "imageDescription": "Ethereal spirit with ancient wisdom, floating near historical landmarks",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: When you play a unique card, draw 1 card; When attacking: Restore 1 HP to target champion",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "I have seen civilizations rise and fall, and I remember them all.",
+      "collection": "heroes",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
     }
   ]
 }

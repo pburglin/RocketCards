@@ -212,6 +212,455 @@
         "ap": 4,
         "dp": 3
       }
+    },
+    {
+      "id": "champion_token_archmage",
+      "title": "Archmage of the Eternal Flame",
+      "description": "The most powerful spellcaster in the realm, master of all schools of magic",
+      "imageDescription": "Ancient wizard in ornate robes, surrounded by floating spellbooks and crackling magical energy",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 3 random spell cards to your hand; Passive: All spell cards cost 1 less MP; When attacking: Deal damage equal to the number of spells in your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Knowledge is power, but magic is knowledge made manifest.",
+      "collection": "fantasy",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_celestial_avatar",
+      "title": "Celestial Avatar",
+      "description": "A divine being that has taken mortal form to guide the faithful",
+      "imageDescription": "Radiant figure with glowing wings and halo, surrounded by heavenly light",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 6 HP to all your champions; Passive: Cannot be targeted by enemy effects; When attacking: Heal 3 HP to player",
+      "cost": {
+        "HP": 4,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The light of heaven shines through mortal form.",
+      "collection": "fantasy",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_demon_lord",
+      "title": "Demon Lord of the Abyss",
+      "description": "A powerful fiend from the deepest pits of hell, commanding legions of darkness",
+      "imageDescription": "Horned demon with glowing red eyes, standing in a throne room of bones and fire",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: All opponent champions lose 2 MP regeneration; Passive: When you play an event, deal 1 damage to all opponents; When attacking: +3 damage if MP >= 3",
+      "cost": {
+        "HP": -2,
+        "MP": -6,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "From the depths of despair, I rise to claim dominion.",
+      "collection": "fantasy",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 5,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_elemental_prince",
+      "title": "Prince of Elemental Realms",
+      "description": "A being of pure elemental power who commands the forces of nature itself",
+      "imageDescription": "Majestic figure composed of swirling elements - fire, water, earth, and air",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 2 damage to all champions; Passive: Gain 1 MP at the start of each turn; When attacking: Choose fire, water, earth, or air effect",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "I am the storm, the earthquake, the tsunami, and the inferno.",
+      "collection": "fantasy",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_time_keeper",
+      "title": "The Time Keeper",
+      "description": "A mysterious entity that exists outside the flow of time, manipulating past and future",
+      "imageDescription": "Ethereal being with hourglass body, surrounded by swirling temporal energy and floating clocks",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: Draw 1 extra card each turn; When attacking: Force opponent to discard 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -8,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the river of time, I am both the source and the destination.",
+      "collection": "fantasy",
+      "tokenCost": 85,
+      "championStats": {
+        "ap": 3,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_ancient_sorceress",
+      "title": "Ancient Sorceress",
+      "description": "A powerful mage who has mastered the arcane arts over centuries of study",
+      "imageDescription": "Elderly woman in ornate robes, surrounded by floating magical symbols and ancient tomes",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random spell cards to your hand; Passive: Spells cost 1 less MP; When attacking: Deal 1 damage to all opponents",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Age has not diminished her power, but rather focused it like a lens of pure magic.",
+      "collection": "fantasy",
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "creature_ancient_ent",
+      "title": "Ancient Ent",
+      "description": "A massive tree-like being that has witnessed the rise and fall of kingdoms",
+      "imageDescription": "Huge wooden humanoid with bark skin and glowing eyes, roots extending into the earth",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: Restore 3 HP to all your champions; Passive: Cannot be targeted by damage effects under 2; When attacking: Deal 2 damage to target",
+      "cost": {
+        "HP": 4,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "I have stood since the first seed took root, and I shall stand long after the last city falls.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 8,
+        "mp": 2,
+        "maxHp": 8,
+        "maxMp": 2,
+        "ap": 2,
+        "dp": 5
+      }
+    },
+    {
+      "id": "tactics_divine_intervention",
+      "title": "Divine Intervention",
+      "description": "Call upon the gods for miraculous aid in your time of need",
+      "imageDescription": "Radiant divine light breaking through dark clouds, blessing warriors below",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "Prevent all damage to your champions this turn, restore 2 HP to all champions",
+      "cost": {
+        "HP": 2,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1", "area:player"],
+      "flavor": "When all seems lost, the divine hand reaches down to save the faithful.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_lightning_bolt",
+      "title": "Lightning Bolt",
+      "description": "Call down a bolt of divine lightning to strike your enemies",
+      "imageDescription": "Massive lightning bolt striking down from storm clouds onto a target",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 4 damage to target champion, +1 damage if you control a creature",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "The wrath of heaven, delivered with precision.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "event_solar_eclipse",
+      "title": "Solar Eclipse",
+      "description": "The sun is blotted out, empowering dark magic and weakening light-based powers",
+      "imageDescription": "Large moon blocking the sun, casting an eerie twilight over the battlefield",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All dark magic champions gain +2 damage, all light magic champions lose 1 MP regeneration",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 2
+      },
+      "tags": ["area:all", "effect:damage"],
+      "flavor": "In darkness, the shadows grow strong.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "creature_shadow_wraith",
+      "title": "Shadow Wraith",
+      "description": "A ghostly apparition that feeds on fear and despair",
+      "imageDescription": "Ethereal shadow figure with glowing eyes, surrounded by dark mist",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 2 damage to target, opponent discards 1 card; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -1,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Fear is its sustenance, despair its weapon.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 4,
+        "maxHp": 3,
+        "maxMp": 4,
+        "ap": 2,
+        "dp": 2
+      }
+    },
+    {
+      "id": "skill_magic_missile",
+      "title": "Magic Missile",
+      "description": "Launch a series of small magical projectiles at your target",
+      "imageDescription": "Wizard casting multiple glowing magical bolts from outstretched hands",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to target champion, +1 damage if you have a spell card in hand",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:1"],
+      "flavor": "Simple, reliable, and surprisingly effective.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_shield_bash",
+      "title": "Shield Bash",
+      "description": "Use your shield as both defense and offense in a single devastating strike",
+      "imageDescription": "Knight slamming a large shield into an opponent with tremendous force",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, target champion cannot attack next turn",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2", "effect:stun"],
+      "flavor": "Sometimes the best defense is a good offense.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_healing_potion",
+      "title": "Healing Potion",
+      "description": "Quaff a magical potion that restores your vitality",
+      "imageDescription": "Glowing red potion being poured into a warrior's mouth, wounds visibly healing",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 2 HP to target champion, draw 1 card",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "heal:2"],
+      "flavor": "A taste of liquid sunshine that mends both body and spirit.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "skill_enchanted_blade",
+      "title": "Enchanted Blade",
+      "description": "Wield a weapon imbued with magical energy that cuts through armor",
+      "imageDescription": "Sword glowing with magical energy, slicing through metal and stone",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you control a unique champion",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "Steel is merely the vessel; magic is the true edge.",
+      "collection": "fantasy"
+    },
+    {
+      "id": "creature_forest_sprite",
+      "title": "Forest Sprite",
+      "description": "A tiny magical being that dwells in ancient woods and protects nature",
+      "imageDescription": "Small glowing fairy-like creature with wings, surrounded by flowers and leaves",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Gain 1 MP each turn; On summon: Draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Small in size, but mighty in magic and mischief.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_mountain_troll",
+      "title": "Mountain Troll",
+      "description": "A brutish creature from the high peaks, known for its incredible strength",
+      "imageDescription": "Large muscular troll with stone-like skin, wielding a massive club",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 2 damage to target; Passive: Cannot be targeted by damage effects under 2",
+      "cost": {
+        "HP": -2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Dumb as a rock, strong as an avalanche.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 5,
+        "mp": 0,
+        "maxHp": 5,
+        "maxMp": 0,
+        "ap": 2,
+        "dp": 3
+      }
+    },
+    {
+      "id": "creature_swamp_hag",
+      "title": "Swamp Hag",
+      "description": "An ancient witch who dwells in murky waters and brews potent potions",
+      "imageDescription": "Wrinkled old woman with glowing eyes, stirring a cauldron in a murky swamp",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Add 1 random common spell to your hand",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Her potions can heal or harm, depending on her mood.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 3,
+        "maxHp": 3,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_desert_scorpion",
+      "title": "Desert Scorpion",
+      "description": "A deadly arachnid that thrives in harsh desert environments",
+      "imageDescription": "Large scorpion with glowing stinger, crawling across sandy dunes",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target, +1 damage if played during day phase",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Its sting is swift, its venom is sure, and its patience is endless.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_cave_bat",
+      "title": "Cave Bat",
+      "description": "A nocturnal creature that hunts in dark caverns and underground lairs",
+      "imageDescription": "Large bat with glowing red eyes, flying through dark cave passages",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Cannot be targeted by opponent events",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "In the darkness, it sees all and fears nothing.",
+      "collection": "fantasy",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "skill_arcane_blast",
+      "title": "Arcane Blast",
+      "description": "Unleash a wave of pure magical energy that disrupts enemy magic",
+      "imageDescription": "Wizard releasing a burst of multicolored magical energy from both hands",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to all opponent champions, opponent loses 1 MP regeneration next turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["area:opponent", "damage:1", "effect:mp_regen"],
+      "flavor": "Raw magic, uncontrolled and unstoppable.",
+      "collection": "fantasy"
     }
   ]
 }

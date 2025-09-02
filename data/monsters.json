@@ -217,6 +217,455 @@
         "ap": 5,
         "dp": 4
       }
+    },
+    {
+      "id": "champion_token_leviathan",
+      "title": "Leviathan",
+      "description": "An ancient sea deity of unimaginable power that commands the very waters themselves",
+      "imageDescription": "Massive serpentine sea monster with multiple heads, coiled around a sinking ship in stormy seas",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 5 damage to all enemies; Passive: All water-themed cards cost 1 less MP; When attacking: +3 damage if MP >= 4",
+      "cost": {
+        "HP": 5,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the beginning, there was only water... and Leviathan.",
+      "collection": "monsters",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 5,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_behemoth",
+      "title": "Behemoth",
+      "description": "A colossal land monster of biblical proportions whose footsteps shake the earth",
+      "imageDescription": "Gigantic beast with multiple eyes and horns, standing atop a mountain peak, clouds swirling around",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: All enemy champions lose 2 MP regeneration; Passive: Cannot be targeted by damage effects under 3; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 6,
+        "MP": -6,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The earth trembles at its approach, the sky darkens in its shadow.",
+      "collection": "monsters",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 6,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_dracolich",
+      "title": "Dracolich",
+      "description": "An undead dragon that has transcended death itself, wielding both draconic power and necromancy",
+      "imageDescription": "Massive skeletal dragon with ghostly flames, perched on a throne of bones in a cursed crypt",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Return 2 creature cards from your discard to your hand; Passive: Gain 1 MP at the start of each turn; When attacking: +2 damage if you control a creature",
+      "cost": {
+        "HP": 3,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Death could not contain the dragon's hunger for power.",
+      "collection": "monsters",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 4,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_abomination",
+      "title": "The Abomination",
+      "description": "A twisted fusion of multiple creatures, a horror beyond comprehension born from dark experiments",
+      "imageDescription": "Grotesque hybrid creature with multiple limbs and heads, surrounded by dark magical energy in a laboratory",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random rare monster cards to your hand; Passive: When you play a creature, gain 1 HP; When attacking: Deal 1 damage to all enemies",
+      "cost": {
+        "HP": 2,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Science and madness combined to create the impossible.",
+      "collection": "monsters",
+      "tokenCost": 60,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_void_spawn",
+      "title": "Void Spawn",
+      "description": "A creature from beyond reality that feeds on the essence of existence itself",
+      "imageDescription": "Ethereal tentacled horror with glowing void eyes, emerging from a rift in space with stars being consumed behind it",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Discard all cards in your hand, then draw 4 cards; Passive: Your hand size limit is increased by 2; When attacking: Deal damage equal to the number of cards in your hand",
+      "cost": {
+        "HP": 0,
+        "MP": -8,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "It exists where existence ends, and it hungers for what lies between.",
+      "collection": "monsters",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 5,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_ancient_beholder",
+      "title": "Ancient Beholder",
+      "description": "A massive floating eye with numerous smaller eyes on stalks, each casting different spells",
+      "imageDescription": "Huge floating eyeball with multiple smaller eyes on tentacles, surrounded by magical auras",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random spell cards to your hand; Passive: +1 card per turn; When attacking: Deal 1 damage to all opponents",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "I see all, I know all, and soon... I shall consume all.",
+      "collection": "monsters",
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "creature_elder_basilisk",
+      "title": "Elder Basilisk",
+      "description": "An ancient basilisk whose gaze can turn entire armies to stone",
+      "imageDescription": "Massive serpent-like creature with crystalline scales, stone statues scattered around",
+      "type": "creatures",
+      "rarity": "unique",
+      "effect": "On summon: opponent discards 2 cards; Passive: Opponent creatures cost 2 more HP to play; When attacking: Deal 2 damage to target",
+      "cost": {
+        "HP": -3,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent"],
+      "flavor": "Age has only made its power more terrible.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 5,
+        "mp": 3,
+        "maxHp": 5,
+        "maxMp": 3,
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "tactics_monstrous_rage",
+      "title": "Monstrous Rage",
+      "description": "Unleash the primal fury that dwells within all creatures",
+      "imageDescription": "Beast with glowing red eyes, muscles bulging with rage and power",
+      "type": "tactics",
+      "rarity": "rare",
+      "effect": "All your champions gain +3 damage this turn, but lose 1 HP",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1", "area:player"],
+      "flavor": "Sometimes the only way to win is to abandon reason entirely.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_acid_spit",
+      "title": "Acid Spit",
+      "description": "Spit corrosive acid that burns through armor and flesh alike",
+      "imageDescription": "Monster spitting glowing green acid that dissolves metal and stone",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 3 damage to target champion, +1 damage if you control a creature",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:3"],
+      "flavor": "The acid burns not just the body, but the soul itself.",
+      "collection": "monsters"
+    },
+    {
+      "id": "event_blood_moon",
+      "title": "Blood Moon",
+      "description": "A crimson moon rises, empowering dark creatures and weakening the light",
+      "imageDescription": "Large red moon in a dark sky, casting bloody light over a haunted landscape",
+      "type": "events",
+      "rarity": "rare",
+      "effect": "All monster champions gain +1 damage, all non-monster champions lose 1 MP regeneration",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 2
+      },
+      "tags": ["area:all", "effect:damage"],
+      "flavor": "When the moon bleeds, the darkness grows stronger.",
+      "collection": "monsters"
+    },
+    {
+      "id": "creature_shadow_stalker",
+      "title": "Shadow Stalker",
+      "description": "A creature that moves through darkness, striking from the unseen void",
+      "imageDescription": "Shadowy figure with glowing red eyes, blending into darkness with claws ready",
+      "type": "creatures",
+      "rarity": "rare",
+      "effect": "When attacking: Deal 2 damage to target; Passive: Cannot be targeted by opponent events; On summon: Gain 1 MP",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Fear the darkness, for it fears nothing in return.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 3,
+        "maxHp": 3,
+        "maxMp": 3,
+        "ap": 2,
+        "dp": 2
+      }
+    },
+    {
+      "id": "skill_venomous_bite",
+      "title": "Venomous Bite",
+      "description": "Sink razor-sharp fangs into your enemy, injecting deadly poison",
+      "imageDescription": "Monster with long fangs sinking teeth into an opponent, green venom dripping",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to target champion, opponent loses 1 MP regeneration next turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "damage:1", "effect:mp_regen"],
+      "flavor": "The bite is just the beginning of the suffering.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_claw_frenzy",
+      "title": "Claw Frenzy",
+      "description": "A wild flurry of slashing claws that tears through defenses",
+      "imageDescription": "Monster with multiple claws slashing wildly at multiple opponents",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion, +1 damage if you have a monster champion in play",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2"],
+      "flavor": "When claws meet flesh, only the strongest survive.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_terrifying_howl",
+      "title": "Terrifying Howl",
+      "description": "A bone-chilling howl that freezes the blood and weakens the resolve",
+      "imageDescription": "Monster with mouth open wide, sound waves visible, opponents looking fearful",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All opponent champions lose 1 MP regeneration this turn",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["area:opponent", "effect:mp_regen"],
+      "flavor": "Some sounds are so terrible they echo in your nightmares forever.",
+      "collection": "monsters"
+    },
+    {
+      "id": "skill_swarm_attack",
+      "title": "Swarm Attack",
+      "description": "Call forth a horde of smaller creatures to overwhelm your enemies",
+      "imageDescription": "Swarm of small monsters attacking in a coordinated group assault",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to all opponent champions",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:opponent", "damage:1"],
+      "flavor": "Numbers have their own kind of strength.",
+      "collection": "monsters"
+    },
+    {
+      "id": "creature_giant_rat",
+      "title": "Giant Rat",
+      "description": "An oversized rodent that scavenges in the shadows and spreads disease",
+      "imageDescription": "Massive rat with glowing red eyes, crawling through dark tunnels",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Small, numerous, and surprisingly dangerous.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_carrion_feeder",
+      "title": "Carrion Feeder",
+      "description": "A scavenger that grows stronger with each fallen foe",
+      "imageDescription": "Vulture-like creature feeding on remains, growing larger and more menacing",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; On summon: Gain 1 HP for each creature in your discard pile",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Death feeds it, and it feeds on death.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 1,
+        "maxHp": 3,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 2
+      }
+    },
+    {
+      "id": "creature_bone_golem",
+      "title": "Bone Golem",
+      "description": "A construct made from the bones of the fallen, animated by dark magic",
+      "imageDescription": "Skeleton golem made of various bones, glowing with necromantic energy",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 2 damage to target; Passive: Cannot be targeted by healing effects",
+      "cost": {
+        "HP": -2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Built from death, sustained by death, empowered by death.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 4,
+        "mp": 0,
+        "maxHp": 4,
+        "maxMp": 0,
+        "ap": 2,
+        "dp": 3
+      }
+    },
+    {
+      "id": "creature_mist_wraith",
+      "title": "Mist Wraith",
+      "description": "A ghostly apparition that emerges from fog to drain the life force of the living",
+      "imageDescription": "Ethereal ghostly figure emerging from thick mist, reaching out with spectral hands",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target, restore 1 HP to yourself",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "It comes with the fog and leaves only sorrow behind.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_spider_brood",
+      "title": "Spider Brood",
+      "description": "A cluster of smaller spiders that attack in coordinated swarms",
+      "imageDescription": "Group of large spiders moving in formation, webs glistening in the dark",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target, +1 damage if played during night phase",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "In the dark, they are everywhere at once.",
+      "collection": "monsters",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "skill_poison_cloud",
+      "title": "Poison Cloud",
+      "description": "Release a toxic cloud that sickens all who breathe it",
+      "imageDescription": "Green toxic cloud spreading across a battlefield, figures coughing and staggering",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All champions lose 1 MP regeneration this turn, opponent discards 1 card",
+      "cost": {
+        "HP": -1,
+        "MP": -1,
+        "fatigue": 1
+      },
+      "tags": ["area:all", "effect:mp_regen"],
+      "flavor": "The air itself becomes a weapon.",
+      "collection": "monsters"
     }
   ]
 }

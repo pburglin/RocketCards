@@ -170,6 +170,440 @@
       "flavor": "The pen is mightier than the sword, but charisma is mightier than both.",
       "collection": "politics",
       "tokenCost": 65
+    },
+    {
+      "id": "champion_token_presidential_candidate",
+      "title": "Presidential Candidate",
+      "description": "The ultimate political aspirant with the charisma and strategy to win the highest office",
+      "imageDescription": "Charismatic candidate at a massive rally, crowd waving flags, campaign banners everywhere",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Draw 3 cards; Passive: +2 card per turn; When attacking: Force opponent to discard 2 cards",
+      "cost": {
+        "HP": 2,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The road to power is paved with promises, and I intend to keep them all.",
+      "collection": "politics",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 2,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_spy_master",
+      "title": "Spy Master",
+      "description": "The ultimate intelligence operative who controls information networks and political secrets",
+      "imageDescription": "Mysterious figure in shadows, surrounded by classified documents and surveillance equipment",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Look at opponent's entire hand and choose 2 cards to discard; Passive: When you play an event, deal 1 damage to all opponents; When attacking: +2 damage if MP >= 3",
+      "cost": {
+        "HP": 0,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Knowledge is power, and I know everything worth knowing.",
+      "collection": "politics",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_corporate_ceo",
+      "title": "Corporate CEO",
+      "description": "The ultimate business leader who wields economic power to influence political outcomes",
+      "imageDescription": "Powerful CEO in an expensive suit, standing in a corporate boardroom with global maps",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: All opponent champions lose 2 MP regeneration; Passive: When you play a creature, gain 1 MP; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the modern world, wealth is the ultimate political currency.",
+      "collection": "politics",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_diplomatic_envoy",
+      "title": "Diplomatic Envoy",
+      "description": "The master negotiator who can forge alliances and manipulate international relations",
+      "imageDescription": "Elegant diplomat in formal attire, shaking hands with world leaders at a summit",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your events cost 1 less MP; When attacking: Heal 3 HP to player",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Peace through strength, prosperity through cooperation, victory through diplomacy.",
+      "collection": "politics",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 2,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_revolutionary",
+      "title": "Revolutionary Leader",
+      "description": "The ultimate catalyst for change who can overthrow established systems and create new orders",
+      "imageDescription": "Passionate revolutionary on a barricade, leading a crowd with raised fist, banners flying",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 3 random rare political cards to your hand; Passive: When you play a creature, deal 1 damage to all opponents; When attacking: Deal damage equal to the number of creatures you control",
+      "cost": {
+        "HP": 0,
+        "MP": -8,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The system is broken, and I am the hammer that will shatter it.",
+      "collection": "politics",
+      "tokenCost": 85,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "tactics_political_maneuver",
+      "title": "Political Maneuver",
+      "description": "Execute a complex political strategy to gain advantage",
+      "imageDescription": "Politician making strategic moves on a political chessboard with various pieces",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Look at opponent's hand, choose 1 card for them to discard, draw 2 cards",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 2
+      },
+      "tags": ["target:opponent", "effect:discard"],
+      "flavor": "In politics, the best offense is a good defense, and the best defense is knowing your enemy's hand.",
+      "collection": "politics"
+    },
+    {
+      "id": "tactics_media_blackout",
+      "title": "Media Blackout",
+      "description": "Control the narrative by limiting information flow",
+      "imageDescription": "Newsroom with screens going dark, journalists looking confused and frustrated",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Opponent cannot play events next turn, all your champions gain +1 AP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["target:opponent", "duration:1"],
+      "flavor": "Control the message, control the perception, control the outcome.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_opposition_research",
+      "title": "Opposition Research",
+      "description": "Gather damaging information about your political opponents",
+      "imageDescription": "Researcher going through files and documents, finding compromising information",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Look at opponent's entire hand, choose 2 cards to discard",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:discard"],
+      "flavor": "In politics, knowledge is not just power - it's ammunition.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_campaign_funding",
+      "title": "Campaign Funding",
+      "description": "Secure financial backing to support your political agenda",
+      "imageDescription": "Business leaders writing checks, politician shaking hands with donors",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Gain 3 MP, draw 2 cards",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:mp"],
+      "flavor": "Money makes the world go round, especially in politics.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_public_relations",
+      "title": "Public Relations",
+      "description": "Manage your public image to maintain support",
+      "imageDescription": "PR team working on positive press coverage, smiling politician in good light",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Restore 4 HP to all your champions, prevent 2 damage this turn",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:heal"],
+      "flavor": "Perception is reality, and reality is what you make it.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_legislative_session",
+      "title": "Legislative Session",
+      "description": "Call a special session to push through important legislation",
+      "imageDescription": "Legislators voting in a special session, gavel coming down for order",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Double the effect of your next card this turn, gain 1 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "When the time is right, action must be swift and decisive.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_press_conference",
+      "title": "Press Conference",
+      "description": "Address the media to shape public opinion",
+      "imageDescription": "Politician at podium answering questions from reporters with flashing cameras",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 1 card, gain 1 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:draw"],
+      "flavor": "Spin is an art form, and I am the artist.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_constituency_outreach",
+      "title": "Constituency Outreach",
+      "description": "Connect with voters to build grassroots support",
+      "imageDescription": "Politician shaking hands with voters at a community event, smiling families",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Add 1 common card from your collection to your hand",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:hand", "card:common"],
+      "flavor": "Politics begins and ends with the people.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_policy_paper",
+      "title": "Policy Paper",
+      "description": "Publish a detailed policy proposal to gain intellectual credibility",
+      "imageDescription": "Think tank researchers presenting a policy paper to interested audience",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at the top 3 cards of your deck, choose 1 to draw",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:deck", "effect:draw"],
+      "flavor": "Ideas drive progress, and progress drives votes.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_campaign_rally",
+      "title": "Campaign Rally",
+      "description": "Hold a public event to energize your base",
+      "imageDescription": "Massive crowd at political rally, banners waving, supporters cheering",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All your champions gain +1 AP this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "The energy of the crowd is contagious and powerful.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_op_ed_piece",
+      "title": "Op-Ed Piece",
+      "description": "Publish an opinion article to influence public discourse",
+      "imageDescription": "Newspaper with prominent opinion piece, readers discussing the article",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Opponent loses 1 MP regeneration this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:mp_regen"],
+      "flavor": "The pen may not be mightier than the sword, but it's a lot cheaper to file.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_constituency_service",
+      "title": "Constituency Service",
+      "description": "Provide direct assistance to voters to build loyalty",
+      "imageDescription": "Government office helping constituents with paperwork and services",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 2 HP to all your champions",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "effect:heal"],
+      "flavor": "Service builds trust, and trust builds power.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_debate_prep",
+      "title": "Debate Preparation",
+      "description": "Study your opponent's positions to exploit weaknesses",
+      "imageDescription": "Campaign team studying opponent's past speeches and voting record",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, prevent 1 damage to target champion this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "target:champion", "reaction:true"],
+      "flavor": "Knowledge is the best weapon in any debate.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_grassroots_fundraising",
+      "title": "Grassroots Fundraising",
+      "description": "Raise small donations from many supporters",
+      "imageDescription": "Community fundraiser with many small donors contributing modest amounts",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Gain 2 MP, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:mp"],
+      "flavor": "Many small voices can create a mighty roar.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_polling_booth",
+      "title": "Polling Booth",
+      "description": "Set up voting infrastructure to increase participation",
+      "imageDescription": "Voting booths with citizens casting ballots, election officials monitoring",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 2 cards, gain 1 fatigue",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 1
+      },
+      "tags": ["target:hand"],
+      "flavor": "Democracy works best when everyone participates.",
+      "collection": "politics"
+    },
+    {
+      "id": "skill_campaign_manager",
+      "title": "Campaign Manager",
+      "description": "Hire a professional to coordinate your campaign efforts",
+      "imageDescription": "Experienced campaign manager directing staff and coordinating strategy",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "All your champions gain +1 DP this turn, gain 1 MP",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "Even the best candidate needs great management to succeed.",
+      "collection": "politics"
+    },
+    {
+      "id": "creature_political_intern",
+      "title": "Political Intern",
+      "description": "An eager young staffer ready to do the legwork",
+      "imageDescription": "Young intern carrying files and coffee, working late in campaign office",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: Gain 1 MP each turn; When attacking: Look at opponent's hand",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Every great political career starts with someone fetching coffee.",
+      "collection": "politics",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_pollster",
+      "title": "Pollster",
+      "description": "A data analyst who can predict and influence voting patterns",
+      "imageDescription": "Statistician analyzing polling data on computer screens, charts and graphs visible",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: When you play a skill, draw 1 card; When attacking: Restore 1 HP to target champion",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Numbers don't lie, but they can be... creatively interpreted.",
+      "collection": "politics",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 3,
+        "maxHp": 2,
+        "maxMp": 3,
+        "ap": 1,
+        "dp": 1
+      }
     }
   ]
 }

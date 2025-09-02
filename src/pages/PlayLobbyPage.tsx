@@ -99,7 +99,7 @@ export default function PlayLobbyPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-3xl">
+    <div className="container mx-auto px-4 py-6">
       {/* Progress Indicator */}
       <SetupProgressIndicator
         currentStep="play"

@@ -216,6 +216,423 @@
         "ap": 3,
         "dp": 5
       }
+    },
+    {
+      "id": "champion_token_supreme_court_justice",
+      "title": "Supreme Court Justice",
+      "description": "The ultimate arbiter of legal precedent with the power to reshape entire legal systems",
+      "imageDescription": "Distinguished Supreme Court Justice in ceremonial robes, seated on an ornate bench with legal tomes",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: Draw 1 extra card each turn; When attacking: Force opponent to discard 2 cards",
+      "cost": {
+        "HP": 2,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The law is not just written in books, but carved in the very foundation of justice.",
+      "collection": "lawyers",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 2,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_corporate_raider",
+      "title": "Corporate Raider",
+      "description": "A ruthless business attorney who specializes in hostile takeovers and corporate warfare",
+      "imageDescription": "Sharp-dressed corporate lawyer in an expensive suit, standing in a boardroom with takeover documents",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: All opponent champions lose 2 MP regeneration; Passive: When you play an event, deal 1 damage to all opponents; When attacking: +3 damage if MP >= 3",
+      "cost": {
+        "HP": 0,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the courtroom of commerce, I am both judge and executioner.",
+      "collection": "lawyers",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 4,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_criminal_defense",
+      "title": "Master Criminal Defense Attorney",
+      "description": "The legendary lawyer who has never lost a case and can get anyone acquitted",
+      "imageDescription": "Charismatic defense attorney passionately arguing in court, jury captivated by their words",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Prevent all damage to your champions this turn; Passive: Cannot be targeted by enemy effects; When attacking: Heal 2 HP to player",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Everyone deserves representation, but not everyone deserves to win. I make sure my clients do.",
+      "collection": "lawyers",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 2,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_international_lawyer",
+      "title": "International Lawyer",
+      "description": "A legal expert in global affairs who can navigate the complex web of international law",
+      "imageDescription": "Sophisticated lawyer in an international setting, surrounded by flags and diplomatic documents",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Add 2 random rare legal cards to your hand; Passive: All your events cost 1 less MP; When attacking: Deal damage equal to the number of different card types you've played this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "The law knows no borders, but I know how to bend them.",
+      "collection": "lawyers",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_legal_eagle",
+      "title": "Legal Eagle",
+      "description": "The ultimate legal strategist who can find victory in the most impossible situations",
+      "imageDescription": "Brilliant lawyer surrounded by legal documents, eyes sharp with tactical insight",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Look at opponent's entire hand and choose 2 cards to discard; Passive: When you play a tactic, gain 1 MP; When attacking: +2 damage if you control a creature",
+      "cost": {
+        "HP": 0,
+        "MP": -7,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the game of law, I don't just play by the rules - I rewrite them.",
+      "collection": "lawyers",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 3,
+        "dp": 5
+      }
+    },
+    {
+      "id": "tactics_legal_strategy",
+      "title": "Legal Strategy",
+      "description": "A masterful legal strategy that adapts to any situation",
+      "imageDescription": "Lawyer studying case files with strategic planning board showing multiple legal approaches",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Look at the top 5 cards of your deck, choose 2 to draw, shuffle the rest back",
+      "cost": {
+        "HP": 1,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["target:deck", "effect:draw"],
+      "flavor": "Every case has a winning angle, you just need to find it.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "tactics_courtroom_drama",
+      "title": "Courtroom Drama",
+      "description": "Create a dramatic scene that distracts and confuses your opponent",
+      "imageDescription": "Chaotic courtroom scene with lawyers arguing dramatically, judge trying to restore order",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Opponent cannot play events next turn, all champions gain +1 AP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["target:opponent", "duration:1"],
+      "flavor": "The best defense is a good offense, and the best offense is good theater.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_evidence_suppression",
+      "title": "Evidence Suppression",
+      "description": "Suppress damaging evidence through legal technicalities",
+      "imageDescription": "Lawyer dramatically objecting while court clerk removes evidence from the table",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Prevent all damage to target champion this turn, opponent loses 2 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true"],
+      "flavor": "The evidence may be damning, but the law is on my side.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_witness_intimidation",
+      "title": "Witness Intimidation",
+      "description": "Intimidate a witness to prevent them from testifying effectively",
+      "imageDescription": "Intimidating lawyer leaning over witness stand, witness looking nervous and hesitant",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Target champion cannot attack next turn, opponent discards 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The truth is only as strong as the witness's courage.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_legal_research",
+      "title": "Intensive Legal Research",
+      "description": "Conduct thorough research to find the perfect legal precedent",
+      "imageDescription": "Lawyer surrounded by stacks of law books and legal databases, highlighting key passages",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Draw 3 cards, then choose 1 to play for free this turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:draw"],
+      "flavor": "The law is vast, but I know exactly where to look.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_plea_bargain",
+      "title": "Plea Bargain",
+      "description": "Negotiate a deal that benefits both parties",
+      "imageDescription": "Lawyers shaking hands across a table with signed documents, both looking satisfied",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Restore 4 HP to target champion, opponent gains 2 MP",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:heal"],
+      "flavor": "Sometimes the best justice is the one that everyone can live with.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_discovery_motion",
+      "title": "Discovery Motion",
+      "description": "File a motion to discover your opponent's hidden strategies",
+      "imageDescription": "Lawyer presenting legal documents to court clerk, requesting discovery of evidence",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, choose 1 card they must discard",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:discard"],
+      "flavor": "Sunshine is the best disinfectant, especially in court.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_court_clerk",
+      "title": "Court Clerk Assistance",
+      "description": "Get help from the court clerk to manage paperwork",
+      "imageDescription": "Court clerk efficiently organizing and filing legal documents at the clerk's desk",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 1 card, gain 1 MP",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:draw"],
+      "flavor": "The real work of law happens in the details.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_legal_brief",
+      "title": "Legal Brief",
+      "description": "Submit a well-crafted legal brief that strengthens your position",
+      "imageDescription": "Lawyer presenting a polished legal brief to the judge, who reads it with interest",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +2 AP this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The pen may not be mightier than the sword, but it's a lot cheaper to file.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_court_security",
+      "title": "Court Security",
+      "description": "Call for court security to maintain order",
+      "imageDescription": "Court security officers maintaining order in a busy courtroom, ensuring decorum",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent 2 damage to your champions this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:true", "duration:1"],
+      "flavor": "Order in the court is not optional.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_jury_selection",
+      "title": "Jury Selection",
+      "description": "Carefully select jurors who will be favorable to your case",
+      "imageDescription": "Lawyer examining potential jurors during voir dire, making strategic selections",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at the top 3 cards of your deck, choose 1 to put in your hand",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:deck", "effect:draw"],
+      "flavor": "A fair trial starts with a fair jury.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_legal_filing",
+      "title": "Legal Filing",
+      "description": "File important legal documents that advance your case",
+      "imageDescription": "Lawyer submitting legal documents to the court, checking off filing requirements",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Gain 2 MP, draw 1 card",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:player", "effect:draw"],
+      "flavor": "Every case is built on a foundation of properly filed documents.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_court_reporter",
+      "title": "Court Reporter",
+      "description": "Ensure every word is recorded for the official transcript",
+      "imageDescription": "Court reporter typing rapidly on a stenotype machine, capturing every word",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Draw 1 card, prevent 1 damage to target champion this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true"],
+      "flavor": "The record speaks for itself, and I make sure it speaks clearly.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_legal_secretary",
+      "title": "Legal Secretary",
+      "description": "Get assistance from an efficient legal secretary",
+      "imageDescription": "Legal secretary efficiently managing files and scheduling, supporting the legal team",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 2 HP to target champion, gain 1 MP",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:heal"],
+      "flavor": "Behind every great lawyer is an even greater secretary.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "skill_court_interpreter",
+      "title": "Court Interpreter",
+      "description": "Provide translation services for better communication",
+      "imageDescription": "Court interpreter facilitating communication between judge, lawyers, and foreign witness",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack this turn even if it couldn't before",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "Justice transcends language barriers.",
+      "collection": "lawyers"
+    },
+    {
+      "id": "creature_legal_intern",
+      "title": "Legal Intern",
+      "description": "An eager law student ready to assist with basic legal tasks",
+      "imageDescription": "Young law student in suit, carrying files and ready to help with legal research",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: Draw 1 extra card each turn",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The future of law, ready to learn and eager to help.",
+      "collection": "lawyers",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 2,
+        "maxHp": 2,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_paralegal",
+      "title": "Paralegal",
+      "description": "A skilled legal assistant who handles complex documentation",
+      "imageDescription": "Professional paralegal organizing case files and legal documents with precision",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Look at opponent's hand; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "The backbone of any successful legal practice.",
+      "collection": "lawyers",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
+        "ap": 1,
+        "dp": 2
+      }
     }
   ]
 }

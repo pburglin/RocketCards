@@ -225,6 +225,440 @@
         "ap": 3,
         "dp": 4
       }
+    },
+    {
+      "id": "champion_token_wasteland_king",
+      "title": "Wasteland King",
+      "description": "The supreme ruler of the post-apocalyptic world, commanding loyalty through fear and respect",
+      "imageDescription": "Charismatic warlord in makeshift armor, sitting on a throne of scrap metal and vehicle parts",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Take control of target opponent champion until end of turn; Passive: All your creatures gain +1 damage; When attacking: Deal 2 damage to all opponents",
+      "cost": {
+        "HP": 4,
+        "MP": -6,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "In the ashes of civilization, I rise to claim what's left.",
+      "collection": "apocalypse",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 4,
+        "dp": 4
+      }
+    },
+    {
+      "id": "champion_token_radiation_beast",
+      "title": "Radiation Beast Alpha",
+      "description": "The ultimate mutated creature that has adapted perfectly to the radioactive wasteland",
+      "imageDescription": "Massive glowing mutated beast with multiple eyes and tentacles, surrounded by radioactive aura",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Deal 4 damage to all enemy champions; Passive: Cannot be targeted by damage effects under 2; When attacking: +2 damage if MP >= 3",
+      "cost": {
+        "HP": 6,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Evolution didn't stop when the bombs fell - it accelerated.",
+      "collection": "apocalypse",
+      "tokenCost": 75,
+      "championStats": {
+        "ap": 5,
+        "dp": 3
+      }
+    },
+    {
+      "id": "champion_token_survivalist",
+      "title": "Master Survivalist",
+      "description": "The ultimate prepper who predicted the apocalypse and prepared for every possible scenario",
+      "imageDescription": "Highly equipped survivor with advanced gear and weapons, standing in a fortified bunker",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Prevent all damage to your champions this turn; Passive: Draw 1 extra card each turn; When attacking: Heal 2 HP to player",
+      "cost": {
+        "HP": 5,
+        "MP": -4,
+        "fatigue": 1
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "While others panicked, I was already three steps ahead. Preparedness is survival.",
+      "collection": "apocalypse",
+      "tokenCost": 65,
+      "championStats": {
+        "ap": 2,
+        "dp": 6
+      }
+    },
+    {
+      "id": "champion_token_mech_walker",
+      "title": "Mech Walker",
+      "description": "A heavily armored combat walker that dominates the wasteland with superior firepower",
+      "imageDescription": "Massive bipedal war machine with multiple weapon systems, striding through ruined cityscape",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: +3 damage to all champions this turn; Passive: Cannot be targeted by opponent events; When attacking: Deal 3 damage to target",
+      "cost": {
+        "HP": 7,
+        "MP": -6,
+        "fatigue": 3
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "Flesh and blood may fail, but steel and fire never tire.",
+      "collection": "apocalypse",
+      "tokenCost": 80,
+      "championStats": {
+        "ap": 4,
+        "dp": 5
+      }
+    },
+    {
+      "id": "champion_token_plague_doctor",
+      "title": "Plague Doctor",
+      "description": "A mysterious figure who has mastered both healing and the deadly pathogens of the wasteland",
+      "imageDescription": "Eerie figure in a bird-like mask with medical equipment, surrounded by both healing light and dark aura",
+      "type": "champions",
+      "rarity": "unique",
+      "effect": "On summon: Restore 5 HP to all your champions; Passive: When you play a creature, deal 1 damage to all opponents; When attacking: Choose to heal 3 HP or deal 3 damage",
+      "cost": {
+        "HP": 3,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["reaction:false", "duration:persistent", "token_purchase:true"],
+      "flavor": "I bring both salvation and damnation - choose wisely which you need.",
+      "collection": "apocalypse",
+      "tokenCost": 70,
+      "championStats": {
+        "ap": 3,
+        "dp": 4
+      }
+    },
+    {
+      "id": "tactics_wasteland_ambush",
+      "title": "Wasteland Ambush",
+      "description": "Use the terrain to your advantage and strike from hiding",
+      "imageDescription": "Scavengers emerging from behind wrecked vehicles and rubble to attack unsuspecting enemies",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Deal 4 damage to target champion, if it survives draw 2 cards",
+      "cost": {
+        "HP": 1,
+        "MP": -5,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:4"],
+      "flavor": "In the wasteland, every shadow hides a potential threat.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "tactics_nuclear_strike",
+      "title": "Nuclear Strike",
+      "description": "Call down a devastating nuclear bombardment",
+      "imageDescription": "Missile silo launching nuclear warheads into the sky, explosions visible on the horizon",
+      "type": "tactics",
+      "rarity": "unique",
+      "effect": "Deal 8 damage to all champions, both players lose 3 HP",
+      "cost": {
+        "HP": -3,
+        "MP": -6,
+        "fatigue": 3
+      },
+      "tags": ["area:all", "damage:8"],
+      "flavor": "The ultimate equalizer - death from above.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_radioactive_decay",
+      "title": "Radioactive Decay",
+      "description": "Expose enemies to lingering radiation that continues to damage them",
+      "imageDescription": "Green radioactive mist clinging to wounded survivors, causing ongoing damage",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Deal 2 damage to target champion now and 2 more damage next turn",
+      "cost": {
+        "HP": -1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "damage:2", "duration:2"],
+      "flavor": "Radiation is a gift that keeps on giving.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_junk_fortification",
+      "title": "Junk Fortification",
+      "description": "Build defensive barriers from scrap and debris",
+      "imageDescription": "Survivors quickly constructing defensive walls from car parts and metal scraps",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "All your champions gain +2 DP this turn, prevent 3 damage",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["area:player", "duration:1"],
+      "flavor": "In the wasteland, creativity is survival.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_mutant_regeneration",
+      "title": "Mutant Regeneration",
+      "description": "Harness the power of mutation to rapidly heal wounds",
+      "imageDescription": "Mutated survivor's wounds closing rapidly with glowing green energy",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Restore 5 HP to target champion, gain 1 fatigue",
+      "cost": {
+        "HP": 4,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "effect:heal"],
+      "flavor": "Mutation isn't just about the changes you can see - it's about what you become.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_wasteland_scavenging",
+      "title": "Wasteland Scavenging",
+      "description": "Search the ruins for valuable resources and equipment",
+      "imageDescription": "Scavengers carefully searching through rubble and abandoned buildings for useful items",
+      "type": "skills",
+      "rarity": "rare",
+      "effect": "Look at the top 4 cards of your deck, choose 2 to draw",
+      "cost": {
+        "HP": 1,
+        "MP": -3,
+        "fatigue": 1
+      },
+      "tags": ["target:deck", "effect:draw"],
+      "flavor": "One person's trash is another person's treasure - if you're desperate enough.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_radiation_sickness",
+      "title": "Radiation Sickness",
+      "description": "Expose enemies to debilitating radiation poisoning",
+      "imageDescription": "Survivor clutching their stomach in pain, green radiation symbols floating around them",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion loses 2 MP regeneration this turn",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "effect:mp_regen"],
+      "flavor": "Radiation doesn't just kill you - it makes the process thoroughly unpleasant.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_scrap_metal",
+      "title": "Scrap Metal Shield",
+      "description": "Use pieces of metal as improvised armor",
+      "imageDescription": "Survivor wearing makeshift armor made from car parts and metal scraps",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Prevent 3 damage to target champion this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "In the wasteland, protection comes from whatever you can scavenge.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_wasteland_stamina",
+      "title": "Wasteland Stamina",
+      "description": "Endure the harsh conditions through sheer willpower",
+      "imageDescription": "Tough survivor pushing through exhaustion in the harsh wasteland environment",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack again this turn",
+      "cost": {
+        "HP": 2,
+        "MP": -1,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "Only the strong survive, and only the survivors grow stronger.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_jury_rig",
+      "title": "Jury-Rig Repairs",
+      "description": "Make quick repairs with whatever materials are available",
+      "imageDescription": "Mechanic using duct tape and spare parts to repair damaged equipment",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Restore 3 HP to target champion",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["target:champion", "effect:heal"],
+      "flavor": "In the wasteland, perfect is the enemy of functional.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_wasteland_vision",
+      "title": "Wasteland Vision",
+      "description": "Use experience to spot hidden threats and opportunities",
+      "imageDescription": "Experienced survivor scanning the horizon for dangers and resources",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Look at opponent's hand, draw 1 card",
+      "cost": {
+        "HP": 0,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:opponent", "effect:draw"],
+      "flavor": "Experience is the best teacher, assuming you live long enough to learn.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_radioactive_burst",
+      "title": "Radioactive Burst",
+      "description": "Release a concentrated burst of radiation",
+      "imageDescription": "Mutant releasing a cone of green radioactive energy from their hands",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 2 damage to target champion and 1 damage to all other champions",
+      "cost": {
+        "HP": -1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "area:all", "damage:2/1"],
+      "flavor": "Radiation spreads, and so does its deadly touch.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_wasteland_fortitude",
+      "title": "Wasteland Fortitude",
+      "description": "Draw strength from years of surviving harsh conditions",
+      "imageDescription": "Hardened survivor standing strong against harsh wasteland conditions",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains +1 AP and +1 DP this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The wasteland doesn't just test your strength - it forges it.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_scavenger_swarm",
+      "title": "Scavenger Swarm",
+      "description": "Call upon a group of desperate scavengers to aid you",
+      "imageDescription": "Group of ragged scavengers swarming around a target, overwhelming with numbers",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Deal 1 damage to target champion 3 times",
+      "cost": {
+        "HP": 0,
+        "MP": -3,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "damage:1x3"],
+      "flavor": "In numbers, even the weak can become dangerous.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_wasteland_endurance",
+      "title": "Wasteland Endurance",
+      "description": "Push through pain and fatigue with sheer determination",
+      "imageDescription": "Battered survivor continuing to fight despite injuries and exhaustion",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion can attack again this turn, gain 2 fatigue",
+      "cost": {
+        "HP": 3,
+        "MP": -1,
+        "fatigue": 2
+      },
+      "tags": ["target:champion", "duration:1"],
+      "flavor": "The will to survive is stronger than any wound.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "skill_radioactive_adaptation",
+      "title": "Radioactive Adaptation",
+      "description": "Evolve to survive in the most radioactive environments",
+      "imageDescription": "Mutant's body adapting to radiation exposure, becoming more resilient",
+      "type": "skills",
+      "rarity": "common",
+      "effect": "Target champion gains resistance to damage under 3 this turn",
+      "cost": {
+        "HP": 1,
+        "MP": -2,
+        "fatigue": 1
+      },
+      "tags": ["target:champion", "reaction:true", "duration:1"],
+      "flavor": "Evolution accelerates in the face of extinction.",
+      "collection": "apocalypse"
+    },
+    {
+      "id": "creature_wasteland_raider",
+      "title": "Wasteland Raider",
+      "description": "A desperate survivor who takes what they need by force",
+      "imageDescription": "Rough-looking survivor with makeshift weapons, ready to raid and pillage",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "When attacking: Deal 1 damage to target; Passive: Gain 1 MP each turn",
+      "cost": {
+        "HP": 2,
+        "MP": -2,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "In the wasteland, the only law is survival.",
+      "collection": "apocalypse",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 3,
+        "mp": 2,
+        "maxHp": 3,
+        "maxMp": 2,
+        "ap": 2,
+        "dp": 1
+      }
+    },
+    {
+      "id": "creature_rad_rat",
+      "title": "Giant Rad-Rat",
+      "description": "A mutated rodent that has grown to alarming proportions",
+      "imageDescription": "Massive rat with glowing red eyes, scurrying through radioactive wasteland",
+      "type": "creatures",
+      "rarity": "common",
+      "effect": "Passive: When you play a creature, deal 1 damage to target champion",
+      "cost": {
+        "HP": 1,
+        "MP": -1,
+        "fatigue": 0
+      },
+      "tags": ["reaction:false"],
+      "flavor": "Size isn't everything, but it helps when you're trying to survive.",
+      "collection": "apocalypse",
+      "duration": "HP",
+      "creatureStats": {
+        "hp": 2,
+        "mp": 1,
+        "maxHp": 2,
+        "maxMp": 1,
+        "ap": 1,
+        "dp": 1
+      }
     }
   ]
 }

@@ -5,6 +5,7 @@ import { loadAllCollections } from '../lib/collectionLoader'
 import { CardCollection } from '../types/game'
 import { imageCacheService } from '../lib/imageCacheService'
 import { getCollectionImageUrl } from '../lib/cardImageUtils'
+import WebGLBackground from '../components/WebGLBackground'
 
 interface CollectionDisplay {
   id: string
@@ -60,6 +61,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen pt-16 pb-12">
+      <WebGLBackground />
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
