@@ -137,7 +137,11 @@ export default function GamePage() {
   
   useEffect(() => {
     if (!matchState) {
-      navigate('/play')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/play')
+      }, 0)
       return
     }
     
@@ -242,7 +246,11 @@ export default function GamePage() {
       if (playerState.hp <= 0 || opponentState.hp <= 0) {
         // Scroll to top when match ends
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        navigate('/results')
+        // Use setTimeout to defer the navigation to the next tick
+        // This prevents the "Cannot update a component while rendering" warning
+        setTimeout(() => {
+          navigate('/results')
+        }, 0)
       }
     }
   }, [playerState?.hp, opponentState?.hp, navigate])
@@ -459,7 +467,11 @@ export default function GamePage() {
   
   const handleConcede = () => {
     concede()
-    navigate('/results')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/results')
+    }, 0)
   }
   
   const handleResolve = async () => {

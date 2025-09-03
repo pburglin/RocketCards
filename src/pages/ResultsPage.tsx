@@ -27,7 +27,11 @@ export default function ResultsPage() {
   // If no match state, redirect to play
   useEffect(() => {
     if (!matchState) {
-      navigate('/play')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/play')
+      }, 0)
     }
   }, [matchState, navigate])
 
@@ -46,12 +50,20 @@ export default function ResultsPage() {
 
   const handlePlayAgain = () => {
     clearGameState()
-    navigate('/play')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/play')
+    }, 0)
   }
 
   const handleReturnHome = () => {
     clearGameState()
-    navigate('/')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/')
+    }, 0)
   }
 
   // Calculate match statistics

@@ -578,7 +578,11 @@ export default function DeckBuilderPage() {
                           setTimeout(() => {
                             setSuccess('')
                             // Redirect to play lobby after successful deck creation
-                            navigate('/play')
+                            // Use setTimeout to defer the navigation to the next tick
+                            // This prevents the "Cannot update a component while rendering" warning
+                            setTimeout(() => {
+                              navigate('/play')
+                            }, 0)
                           }, 1000)
                         } else {
                           setError('Deck must have exactly 30 cards to save')

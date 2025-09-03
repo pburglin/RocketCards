@@ -36,7 +36,11 @@ export default function PlaySetupPage() {
       return
     }
     
-    navigate('/play')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/play')
+    }, 0)
   }
 
   const handleBackToDeck = () => {
@@ -44,7 +48,11 @@ export default function PlaySetupPage() {
   }
 
   const handleBuildDeck = () => {
-    navigate('/deck-builder')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/deck-builder')
+    }, 0)
   }
 
   if (decks.length === 0) {

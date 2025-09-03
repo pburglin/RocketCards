@@ -58,7 +58,11 @@ export default function SettingsPage() {
       localStorage.removeItem('userSettings')
       
       // Redirect to landing page
-      navigate('/')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/')
+      }, 0)
     }
   }
 

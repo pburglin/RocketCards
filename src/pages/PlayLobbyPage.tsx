@@ -29,7 +29,11 @@ export default function PlayLobbyPage() {
   useEffect(() => {
     // If user somehow gets here without profile or deck, redirect to play flow
     if (!profile || decks.length === 0) {
-      navigate('/play-flow')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/play-flow')
+      }, 0)
       return
     }
     
@@ -78,7 +82,11 @@ export default function PlayLobbyPage() {
       })
       
       setShowLoading(false);
-      navigate('/game')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/game')
+      }, 0)
     }, 2000);
   }
 

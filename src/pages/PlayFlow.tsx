@@ -20,11 +20,19 @@ export default function PlayFlow() {
     if (hasProfile && hasDeck && !basicDeckCreated) {
       // All prerequisites met, go to play lobby
       console.log('Navigating to /play - has profile and deck');
-      navigate('/play')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/play')
+      }, 0)
     } else if (!hasProfile) {
       // No profile, go to profile setup
       console.log('Navigating to /profile - no profile');
-      navigate('/profile')
+      // Use setTimeout to defer the navigation to the next tick
+      // This prevents the "Cannot update a component while rendering" warning
+      setTimeout(() => {
+        navigate('/profile')
+      }, 0)
     } else if (hasProfile && !hasDeck && !basicDeckCreated) {
       // Has profile but no deck, automatically create a basic deck
       console.log('Creating basic deck - has profile but no deck');
@@ -55,7 +63,11 @@ export default function PlayFlow() {
           console.log('Timeout completed, navigating to /play');
           setBasicDeckCreated(false);
           setProgress(0);
-          navigate('/play');
+          // Use setTimeout to defer the navigation to the next tick
+          // This prevents the "Cannot update a component while rendering" warning
+          setTimeout(() => {
+            navigate('/play');
+          }, 0)
         }, 5000)
       }
     } else if (basicDeckCreated) {
@@ -150,9 +162,17 @@ export default function PlayFlow() {
           <Button
             onClick={() => {
               if (getCurrentStep() === 'profile') {
-                navigate('/profile')
+                // Use setTimeout to defer the navigation to the next tick
+                // This prevents the "Cannot update a component while rendering" warning
+                setTimeout(() => {
+                  navigate('/profile')
+                }, 0)
               } else if (getCurrentStep() === 'deck' && !basicDeckCreated) {
-                navigate('/deck-builder')
+                // Use setTimeout to defer the navigation to the next tick
+                // This prevents the "Cannot update a component while rendering" warning
+                setTimeout(() => {
+                  navigate('/deck-builder')
+                }, 0)
               }
             }}
             className="px-8 py-3"

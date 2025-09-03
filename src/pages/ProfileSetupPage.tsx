@@ -100,7 +100,11 @@ export default function ProfileSetupPage() {
     })
     
     // Navigate to deck builder after profile creation
-    navigate('/deck-builder')
+    // Use setTimeout to defer the navigation to the next tick
+    // This prevents the "Cannot update a component while rendering" warning
+    setTimeout(() => {
+      navigate('/deck-builder')
+    }, 0)
   }
 
   return (
