@@ -19,7 +19,8 @@ export default function SettingsPage() {
     language: 'en',
     animations: true,
     autoSave: true,
-    soundEffects: true
+    soundEffects: true,
+    webglEffects: true
   })
   
   const [notificationSettings, setNotificationSettings] = useState({
@@ -153,6 +154,22 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={generalSettings.soundEffects}
                 onChange={(e) => setGeneralSettings({...generalSettings, soundEffects: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
+          </div>
+          
+          <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
+            <div>
+              <div className="font-medium">WebGL Effects</div>
+              <div className="text-sm text-text-secondary">3D background animations and visual effects</div>
+            </div>
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={generalSettings.webglEffects}
+                onChange={(e) => setGeneralSettings({...generalSettings, webglEffects: e.target.checked})}
                 className="toggle toggle-primary absolute opacity-0 w-0 h-0"
               />
               <div className="toggle-slider rounded-full"></div>

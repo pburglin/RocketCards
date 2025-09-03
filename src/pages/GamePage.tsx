@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/gameStore'
 import { audioService } from '../lib/audioService'
@@ -71,6 +71,68 @@ export default function GamePage() {
     opponentMp: false,
     opponentFatigue: false
   })
+  
+  // Track previous game state for WebGL effects
+  const prevLogLength = useRef(matchState?.log?.length || 0);
+  
+  // Update WebGL effects based on game state changes
+  useEffect(() => {
+    if (!matchState || !playerState || !opponentState) return;
+    
+    // Calculate damage dealt this update
+    let damageDealt = 0;
+    if (prevPlayerHp.current !== undefined && playerState.hp !== undefined) {
+      const playerDamage = prevPlayerHp.current - playerState.hp;
+      if (playerDamage > 0) damageDealt += playerDamage;
+    }
+    if (prevOpponentHp.current !== undefined && opponentState.hp !== undefined) {
+      const opponentDamage = prevOpponentHp.current - opponentState.hp;
+      if (opponentDamage > 0) damageDealt += opponentDamage;
+    }
+    
+    // Check for new cards played (log entries added)
+    const newLogEntries = matchState.log?.length - prevLogLength.current;
+    const cardsPlayed = newLogEntries > 0 ? newLogEntries : 0;
+    
+    // Check for turn change
+    const turnChanged = prevTurn.current !== undefined && matchState.turn !== prevTurn.current;
+    
+    // Update WebGL parameters based on game events
+    if (damageDealt > 0 || cardsPlayed > 0 || turnChanged) {
+      // Increase battle intensity based on damage and cards played
+      const intensityBoost = (damageDealt * 0.1) + (cardsPlayed * 0.05) + (turnChanged ? 0.2 : 0);
+      setBattleIntensity(prev => Math.min(1, Math.max(0.1, prev + intensityBoost)));
+      
+      // Increase energy level based on game activity
+      const energyBoost = (damageDealt * 0.05) + (cardsPlayed * 0.1) + (turnChanged ? 0.1 : 0);
+      setEnergyLevel(prev => Math.min(1, Math.max(0.1, prev + energyBoost)));
+      
+      // Reset to base levels after a short delay
+      setTimeout(() => {
+        setBattleIntensity(prev => Math.max(0.3, prev - 0.1));
+        setEnergyLevel(prev => Math.max(0.2, prev - 0.05));
+      }, 1000);
+    }
+    
+    // Update previous values
+    prevPlayerHp.current = playerState.hp;
+    prevOpponentHp.current = opponentState.hp;
+    prevTurn.current = matchState.turn;
+    prevLogLength.current = matchState.log?.length || 0;
+    
+  }, [matchState?.turn, matchState?.log?.length, playerState?.hp, opponentState?.hp]);
+  
+  // Reset WebGL effects when match starts
+  useEffect(() => {
+    if (matchState) {
+      setBattleIntensity(0.3);
+      setEnergyLevel(0.2);
+      prevPlayerHp.current = playerState?.hp;
+      prevOpponentHp.current = opponentState?.hp;
+      prevTurn.current = matchState.turn;
+      prevLogLength.current = matchState.log?.length || 0;
+    }
+  }, [matchState]);
   
   
   useEffect(() => {

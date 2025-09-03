@@ -61,7 +61,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen pt-16 pb-12">
-      <WebGLBackground />
+      <WebGLBackground intensity={0.7} />
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
