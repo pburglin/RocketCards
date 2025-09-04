@@ -10,6 +10,10 @@ import {
   CardTitle,
   CardDescription
 } from '../components/ui/Card'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Points, PointMaterial } from '@react-three/drei'
+import * as THREE from 'three'
+import { useRef, useMemo } from 'react'
 
 export default function ResultsPage() {
   const navigate = useNavigate()
@@ -48,6 +52,88 @@ export default function ResultsPage() {
     }
   }, [isPlayerWinner]);
 
+  // WebGL Victory/Defeat Particles Component
+  function ResultsParticles({ isVictory }: { isVictory: boolean }) {
+    const ref = useRef<THREE.Points>(null)
+    const particleCount = 500
+    
+    const [positions] = useState(() => {
+      const pos = new Float32Array(particleCount * 3)
+      for (let i = 0; i < particleCount; i++) {
+        pos[i * 3] = (Math.random() - 0.5) * 20
+        pos[i * 3 + 1] = (Math.random() - 0.5) * 20
+        pos[i * 3 + 2] = (Math.random() - 0.5) * 20
+      }
+      return pos
+    })
+
+    const colors = useMemo(() => {
+      const cols = new Float32Array(particleCount * 3)
+      for (let i = 0; i < particleCount; i++) {
+        if (isVictory) {
+          // Gold/yellow particles for victory
+          cols[i * 3] = Math.random() * 0.3 + 0.7 // Red component (high)
+          cols[i * 3 + 1] = Math.random() * 0.3 + 0.7 // Green component (high)
+          cols[i * 3 + 2] = Math.random() * 0.4 + 0.3 // Blue component (medium)
+        } else {
+          // Gray/silver particles for defeat
+          const gray = Math.random() * 0.4 + 0.3
+          cols[i * 3] = gray
+          cols[i * 3 + 1] = gray
+          cols[i * 3 + 2] = gray
+        }
+      }
+      return cols
+    }, [isVictory])
+
+    useFrame((state, delta) => {
+      if (ref.current) {
+        ref.current.rotation.x += delta * 0.05
+        ref.current.rotation.y += delta * 0.03
+        
+        const positions = ref.current.geometry.attributes.position.array as Float32Array
+        const colors = ref.current.geometry.attributes.color.array as Float32Array
+        
+        for (let i = 0; i < particleCount; i++) {
+          const i3 = i * 3
+          
+          // Gentle floating motion
+          positions[i3] += Math.sin(state.clock.elapsedTime + i) * delta * 0.2
+          positions[i3 + 1] += Math.cos(state.clock.elapsedTime * 0.7 + i) * delta * 0.15
+          positions[i3 + 2] += Math.sin(state.clock.elapsedTime * 0.5 + i) * delta * 0.1
+          
+          // Pulsing color effect
+          const pulse = Math.sin(state.clock.elapsedTime * 2 + i) * 0.1
+          if (isVictory) {
+            colors[i3] = Math.min(1, Math.max(0.7, colors[i3] + pulse * delta))
+            colors[i3 + 1] = Math.min(1, Math.max(0.7, colors[i3 + 1] + pulse * delta))
+            colors[i3 + 2] = Math.min(0.7, Math.max(0.3, colors[i3 + 2] + pulse * delta))
+          } else {
+            const gray = Math.min(0.7, Math.max(0.3, colors[i3] + pulse * delta))
+            colors[i3] = gray
+            colors[i3 + 1] = gray
+            colors[i3 + 2] = gray
+          }
+        }
+        ref.current.geometry.attributes.position.needsUpdate = true
+        ref.current.geometry.attributes.color.needsUpdate = true
+      }
+    })
+
+    return (
+      <Points ref={ref} positions={positions} colors={colors} frustumCulled={false}>
+        <PointMaterial
+          transparent
+          size={0.03}
+          sizeAttenuation={true}
+          depthWrite={false}
+          vertexColors
+          opacity={0.6}
+        />
+      </Points>
+    )
+  }
+
   const handlePlayAgain = () => {
     clearGameState()
     // Use setTimeout to defer the navigation to the next tick
@@ -80,6 +166,14 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen pt-16 pb-12">
+      {/* WebGL Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <Canvas camera={{ position: [0, 0, 5] }}>
+          <ambientLight intensity={0.3} />
+          <ResultsParticles isVictory={isPlayerWinner} />
+        </Canvas>
+      </div>
+      
       {/* Results Header */}
       <section className="py-12">
         <div className="container mx-auto px-4">

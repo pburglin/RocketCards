@@ -312,4 +312,20 @@
   .animate-bar-change {
     animation: zoom-in-out 0.5s ease-in-out;
   }
+  
+  @keyframes flash {
+    0% {
+      background-color: rgba(255, 255, 255, 0);
+    }
+    50% {
+      background-color: rgba(255, 215, 0, 0.3);
+    }
+    100% {
+      background-color: rgba(255, 255, 255, 0);
+    }
+  }
+  
+  .animate-flash {
+    animation: flash 1s ease-in-out;
+  }
 }

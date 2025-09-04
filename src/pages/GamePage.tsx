@@ -76,6 +76,9 @@ export default function GamePage() {
   // WebGL effect states
   const [cardAttackEffect, setCardAttackEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
   const [cardDestructionEffect, setCardDestructionEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
+  const [cardAdditionEffect, setCardAdditionEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
+  const [skillTacticsEffect, setSkillTacticsEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
+  const [specialCardEffect, setSpecialCardEffect] = useState<{ position: [number, number, number]; isActive: boolean; isVictory?: boolean } | null>(null)
   
   // Track previous game state for WebGL effects
   const prevLogLength = useRef(matchState?.log?.length || 0);
@@ -373,9 +376,9 @@ export default function GamePage() {
         // Trigger WebGL card attack effect
         const webglEffects = areWebGLEffectsEnabled();
         if (webglEffects) {
-          // Random position for the effect (you can calculate actual card position if needed)
+          // Position effect near the center for card attacks
           setCardAttackEffect({
-            position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+            position: [0, 0, 0],
             isActive: true
           });
           setTimeout(() => setCardAttackEffect(null), 1000);
@@ -387,7 +390,62 @@ export default function GamePage() {
       
       // Check if card can be played
       const canPlay = playCardAction(cardId)
-      if (!canPlay) {
+      if (canPlay) {
+        // Card was successfully played, trigger appropriate WebGL effect
+        if (areAnimationsEnabled()) {
+          const webglEffects = areWebGLEffectsEnabled();
+          if (webglEffects) {
+            // Find the card to determine its type
+            let playedCard = null;
+            for (const collection of collections) {
+              playedCard = collection.cards.find((c: any) => c.id === cardId);
+              if (playedCard) break;
+            }
+            
+            if (playedCard) {
+              if (playedCard.tokenCost) {
+                // Trigger special card effect with background flashing for token cards
+                setSpecialCardEffect({
+                  position: [0, 0, 0], // Center position for special card effect
+                  isActive: true,
+                  isVictory: true // Use victory colors (gold/white) for special cards
+                });
+                setTimeout(() => setSpecialCardEffect(null), 2000);
+                
+                // Add background flashing effect
+                const gameContainer = document.querySelector('.container.mx-auto.px-2.sm\\:px-4.py-2.sm\\:py-4');
+                if (gameContainer) {
+                  gameContainer.classList.add('animate-flash');
+                  setTimeout(() => {
+                    gameContainer.classList.remove('animate-flash');
+                  }, 1000);
+                }
+              } else if (playedCard.type === 'skills' || playedCard.type === 'tactics') {
+                // Trigger blue effect for skills/tactics cards
+                setSkillTacticsEffect({
+                  position: [0, 0, 0], // Center position for hand card usage
+                  isActive: true
+                });
+                setTimeout(() => setSkillTacticsEffect(null), 1500);
+              } else {
+                // Trigger green effect for other card types (champions, creatures, events)
+                setCardAdditionEffect({
+                  position: [0, -2, 0], // Position below center for player battlefield
+                  isActive: true
+                });
+                setTimeout(() => setCardAdditionEffect(null), 1500);
+              }
+            } else {
+              // Fallback to green effect if card not found
+              setCardAdditionEffect({
+                position: [0, -2, 0], // Position below center for player battlefield
+                isActive: true
+              });
+              setTimeout(() => setCardAdditionEffect(null), 1500);
+            }
+          }
+        }
+      } else {
         // Check the most recent log entries for specific error messages
         let errorMessage = 'Invalid play - check costs and phase';
         
@@ -651,7 +709,7 @@ export default function GamePage() {
                                   const webglEffects = areWebGLEffectsEnabled();
                                   if (webglEffects && areAnimationsEnabled()) {
                                     setCardDestructionEffect({
-                                      position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                      position: [0, 0, 0], // Center position for hand card discard
                                       isActive: true
                                     });
                                     setTimeout(() => setCardDestructionEffect(null), 1500);
@@ -792,6 +850,9 @@ export default function GamePage() {
             energyLevel={energyLevel}
             cardAttackEffect={cardAttackEffect || undefined}
             cardDestructionEffect={cardDestructionEffect || undefined}
+            cardAdditionEffect={cardAdditionEffect || undefined}
+            skillTacticsEffect={skillTacticsEffect || undefined}
+            specialCardEffect={specialCardEffect || undefined}
           />
         ) : null;
       })()}
@@ -935,7 +996,7 @@ export default function GamePage() {
                                 const webglEffects = areWebGLEffectsEnabled();
                                 if (webglEffects) {
                                   setCardDestructionEffect({
-                                    position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                    position: [0, -2, 0], // Position in player champion area
                                     isActive: true
                                   });
                                   setTimeout(() => setCardDestructionEffect(null), 1500);
@@ -1101,7 +1162,7 @@ export default function GamePage() {
                                    const webglEffects = areWebGLEffectsEnabled();
                                    if (webglEffects) {
                                      setCardDestructionEffect({
-                                       position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                       position: [0, -3, 0], // Position in player creature area
                                        isActive: true
                                      });
                                      setTimeout(() => setCardDestructionEffect(null), 1500);

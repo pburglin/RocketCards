@@ -46,16 +46,18 @@ export default function SettingsPage() {
     setPrivacySettings(savedSettings.privacy);
   }, [])
 
-  const handleSave = () => {
-    // Save settings using the utility function
+  // Auto-save settings whenever they change
+  useEffect(() => {
     saveSettings({
       general: generalSettings,
       notifications: notificationSettings,
       privacy: privacySettings
     });
-    
-    // Show success message
-    alert('Settings saved successfully!')
+  }, [generalSettings, notificationSettings, privacySettings]);
+
+  const handleSave = () => {
+    // Settings are now auto-saved, so this function is no longer needed
+    // Keep it for backward compatibility but make it a no-op
   }
 
   const handleLogout = () => {
@@ -463,12 +465,7 @@ export default function SettingsPage() {
                   {activeSection === 'privacy' && 'Control your privacy and security settings'}
                 </p>
               </div>
-              {activeSection !== 'admin' && (
-                <Button onClick={handleSave}>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Changes
-                </Button>
-              )}
+              {/* Settings are now auto-saved - no Save Changes button needed */}
             </div>
             
             {activeSection === 'general' && renderGeneralSettings()}
