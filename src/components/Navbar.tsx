@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Home, BookOpen, Layout, Gamepad2, User, Settings, HelpCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },
@@ -13,7 +13,18 @@ const navItems = [
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const location = useLocation()
+  
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location]);
+  
+  // Set mounted state for fade-in animations
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -35,7 +46,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const isActive = location.pathname === item.path
             return (
               <Link
@@ -45,7 +56,11 @@ export default function Navbar() {
                   isActive
                     ? 'bg-primary/20 text-primary border border-primary/30'
                     : 'text-text-secondary hover:text-text hover:bg-surface-light'
-                }`}
+                } ${isMounted ? 'animate-fade-in-up' : ''}`}
+                style={{
+                  animationDelay: isMounted ? `${index * 0.1}s` : '0s',
+                  animationFillMode: 'both'
+                }}
               >
                 <item.icon className="w-5 h-5" />
                 <span>{item.label}</span>
@@ -72,7 +87,7 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute w-full bg-surface border-t border-border">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-3">
-            {navItems.map((item) => {
+            {navItems.map((item, index) => {
               const isActive = location.pathname === item.path
               return (
                 <Link
@@ -82,7 +97,11 @@ export default function Navbar() {
                     isActive
                       ? 'bg-primary/20 text-primary border border-primary/30'
                       : 'text-text-secondary hover:text-text hover:bg-surface-light'
-                  }`}
+                  } ${isMounted ? 'animate-fade-in-up' : ''}`}
+                  style={{
+                    animationDelay: isMounted ? `${index * 0.1}s` : '0s',
+                    animationFillMode: 'both'
+                  }}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon className="w-5 h-5" />

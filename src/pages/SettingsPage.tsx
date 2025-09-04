@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Settings, Palette, Bell, Shield, User, Gamepad2, LogOut, Save, X } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -8,13 +8,14 @@ import {
   CardTitle,
   CardDescription
 } from '../components/ui/Card'
+import { loadSettings, saveSettings, UserSettings } from '../lib/settingsUtils'
 
 export default function SettingsPage() {
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('general')
   
   // Form states
-  const [generalSettings, setGeneralSettings] = useState({
+  const [generalSettings, setGeneralSettings] = useState<UserSettings['general']>({
     theme: 'dark',
     language: 'en',
     animations: true,
@@ -23,7 +24,7 @@ export default function SettingsPage() {
     webglEffects: true
   })
   
-  const [notificationSettings, setNotificationSettings] = useState({
+  const [notificationSettings, setNotificationSettings] = useState<UserSettings['notifications']>({
     email: true,
     push: true,
     gameUpdates: true,
@@ -31,19 +32,27 @@ export default function SettingsPage() {
     achievements: true
   })
   
-  const [privacySettings, setPrivacySettings] = useState({
+  const [privacySettings, setPrivacySettings] = useState<UserSettings['privacy']>({
     profileVisibility: 'friends',
     gameHistory: 'friends',
     showOnlineStatus: true
   })
 
+  // Load settings on component mount
+  useEffect(() => {
+    const savedSettings = loadSettings();
+    setGeneralSettings(savedSettings.general);
+    setNotificationSettings(savedSettings.notifications);
+    setPrivacySettings(savedSettings.privacy);
+  }, [])
+
   const handleSave = () => {
-    // Save settings to localStorage or API
-    localStorage.setItem('userSettings', JSON.stringify({
+    // Save settings using the utility function
+    saveSettings({
       general: generalSettings,
       notifications: notificationSettings,
       privacy: privacySettings
-    }))
+    });
     
     // Show success message
     alert('Settings saved successfully!')

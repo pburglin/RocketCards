@@ -23,16 +23,36 @@ export default function ProfileSetupPage() {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [cardImageUrls, setCardImageUrls] = useState<Record<string, string>>({})
+  const [selectedCollection, setSelectedCollection] = useState<string>('all')
+  const [unlockStatus, setUnlockStatus] = useState<'all' | 'locked' | 'unlocked'>('all')
   
   const stats = calculatePlayerStats(strategy, keyStat)
   
   // Calculate MP regen based on strategy
   const mpRegen = strategy === 'aggressive' ? 4 : strategy === 'balanced' ? 3 : 2
   
-  // Get all token-purchasable cards
+  // Get all token-purchasable cards with filtering
   const tokenCards = collections.flatMap(collection =>
     collection.cards.filter(card => card.tokenCost)
-  ).sort((a, b) => {
+  )
+  .filter(card => {
+    // Collection filter
+    if (selectedCollection !== 'all') {
+      return card.collection === selectedCollection;
+    }
+    return true;
+  })
+  .filter(card => {
+    // Unlock status filter
+    const isPurchased = isCardPurchased(card.id);
+    if (unlockStatus === 'locked') {
+      return !isPurchased;
+    } else if (unlockStatus === 'unlocked') {
+      return isPurchased;
+    }
+    return true;
+  })
+  .sort((a, b) => {
     // Sort by unlocked/locked status first
     const aIsPurchased = isCardPurchased(a.id);
     const bIsPurchased = isCardPurchased(b.id);
@@ -368,6 +388,38 @@ export default function ProfileSetupPage() {
             <p className="text-text-secondary mb-6">
               Spend your tokens to unlock exclusive special cards that can be added to your decks.
             </p>
+            
+            {/* Filtering Controls */}
+            <div className="flex flex-wrap gap-4 mb-6 p-4 bg-surface-light rounded-lg">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-sm font-medium mb-2">Collection</label>
+                <select
+                  value={selectedCollection}
+                  onChange={(e) => setSelectedCollection(e.target.value)}
+                  className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="all">All Collections</option>
+                  {collections.map(collection => (
+                    <option key={collection.id} value={collection.id}>
+                      {collection.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-sm font-medium mb-2">Unlock Status</label>
+                <select
+                  value={unlockStatus}
+                  onChange={(e) => setUnlockStatus(e.target.value as 'all' | 'locked' | 'unlocked')}
+                  className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="all">All Cards</option>
+                  <option value="locked">Locked Only</option>
+                  <option value="unlocked">Unlocked Only</option>
+                </select>
+              </div>
+            </div>
             
             {tokenCards.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

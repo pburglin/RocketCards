@@ -26,6 +26,7 @@ import {
   Hand,
   Trash
 } from 'lucide-react'
+import { areAnimationsEnabled, areSoundEffectsEnabled, areWebGLEffectsEnabled } from '../lib/settingsUtils'
 
 export default function GamePage() {
   const navigate = useNavigate()
@@ -349,33 +350,6 @@ export default function GamePage() {
     }
   }, [playerState?.hp, playerState?.mp, playerState?.fatigue, opponentState?.hp, opponentState?.mp, opponentState?.fatigue]);
   
-  // Check if animations are enabled
-  const areAnimationsEnabled = () => {
-    const settings = localStorage.getItem('userSettings');
-    if (settings) {
-      try {
-        const parsed = JSON.parse(settings);
-        return parsed.general?.animations !== false;
-      } catch (e) {
-        return true; // Default to enabled if parsing fails
-      }
-    }
-    return true; // Default to enabled
-  };
-  
-  // Check if sound effects are enabled
-  const isSoundEffectsEnabled = () => {
-    const settings = localStorage.getItem('userSettings');
-    if (settings) {
-      try {
-        const parsed = JSON.parse(settings);
-        return parsed.general?.soundEffects !== false;
-      } catch (e) {
-        return true; // Default to enabled if parsing fails
-      }
-    }
-    return true; // Default to enabled
-  };
   
   const getCardTitle = (cardId: string, collections: any[]) => {
     if (!cardId) return 'Unknown Card';
@@ -397,8 +371,7 @@ export default function GamePage() {
         setTimeout(() => setCardAttackAnimation(null), 1000);
         
         // Trigger WebGL card attack effect
-        const settings = localStorage.getItem('userSettings');
-        const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+        const webglEffects = areWebGLEffectsEnabled();
         if (webglEffects) {
           // Random position for the effect (you can calculate actual card position if needed)
           setCardAttackEffect({
@@ -675,8 +648,7 @@ export default function GamePage() {
                                 const success = discardHandCard(index);
                                 if (success) {
                                   // Trigger WebGL card destruction effect
-                                  const settings = localStorage.getItem('userSettings');
-                                  const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                  const webglEffects = areWebGLEffectsEnabled();
                                   if (webglEffects && areAnimationsEnabled()) {
                                     setCardDestructionEffect({
                                       position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
@@ -813,8 +785,7 @@ export default function GamePage() {
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
       {(() => {
-        const settings = localStorage.getItem('userSettings');
-        const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+        const webglEffects = areWebGLEffectsEnabled();
         return webglEffects ? (
           <GameWebGL
             battleIntensity={battleIntensity}
@@ -961,8 +932,7 @@ export default function GamePage() {
                                 setTimeout(() => setCardRemovalAnimation(null), 1000);
                                 
                                 // Trigger WebGL card destruction effect
-                                const settings = localStorage.getItem('userSettings');
-                                const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                const webglEffects = areWebGLEffectsEnabled();
                                 if (webglEffects) {
                                   setCardDestructionEffect({
                                     position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
@@ -1128,8 +1098,7 @@ export default function GamePage() {
                                    setTimeout(() => setCardRemovalAnimation(null), 1000);
                                    
                                    // Trigger WebGL card destruction effect
-                                   const settings = localStorage.getItem('userSettings');
-                                   const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                   const webglEffects = areWebGLEffectsEnabled();
                                    if (webglEffects) {
                                      setCardDestructionEffect({
                                        position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
@@ -1739,7 +1708,7 @@ export default function GamePage() {
                 <label className="relative inline-block w-9 h-5 align-middle select-none">
                   <input
                     type="checkbox"
-                    defaultChecked={isSoundEffectsEnabled()}
+                    defaultChecked={areSoundEffectsEnabled()}
                     onChange={(e) => {
                       // Update localStorage settings
                       const settings = localStorage.getItem('userSettings');
