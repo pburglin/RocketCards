@@ -61,7 +61,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen pt-16 pb-12">
-      <WebGLBackground intensity={0.7} />
+      {(() => {
+        const settings = localStorage.getItem('userSettings');
+        const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+        return webglEffects ? <WebGLBackground intensity={0.7} /> : null;
+      })()}
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">

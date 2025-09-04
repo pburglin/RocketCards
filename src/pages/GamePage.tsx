@@ -784,7 +784,11 @@ export default function GamePage() {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
-      <GameWebGL battleIntensity={battleIntensity} energyLevel={energyLevel} />
+      {(() => {
+        const settings = localStorage.getItem('userSettings');
+        const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+        return webglEffects ? <GameWebGL battleIntensity={battleIntensity} energyLevel={energyLevel} /> : null;
+      })()}
       
       {/* Opponent Resources */}
       <div className="grid grid-cols-1 gap-2 mb-2 sm:mb-4">

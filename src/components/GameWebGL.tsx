@@ -157,7 +157,7 @@ function EnergyOrbs(props: { energyLevel: number }) {
 
 export default function GameWebGL({ battleIntensity = 0, energyLevel = 0 }: { battleIntensity?: number; energyLevel?: number }) {
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none">
+    <div className="fixed inset-0 z-0 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 5] }}>
         <ambientLight intensity={0.5} />
         <BattleParticles battleIntensity={battleIntensity} />
