@@ -897,12 +897,59 @@ export function endTurn(
           }
         }
       } else {
-        console.log('Opponent has playable cards, not discarding');
-        // Cannot draw card - hand is full but has playable cards
-        newMatchState.log.push({
-          message: `Opponent could not draw a card - hand limit reached (${newMatchState.rules.handLimit} cards)`,
-          turn: newMatchState.turn
+        console.log('Opponent has playable cards, checking for unplayable cards to discard');
+        // Opponent has playable cards, but let's check if there are unplayable cards we should discard
+        const unplayableCards = newOpponentState.hand.filter(cardId => {
+          const card = getCardFromCollections(cardId, collections);
+          if (!card) return false;
+          // Check if card is unplayable due to cost
+          const isAffordable = (newOpponentState.hp + card.cost.HP >= 0) && (newOpponentState.mp + card.cost.MP >= 0);
+          return !isAffordable;
         });
+        
+        if (unplayableCards.length > 0) {
+          console.log('Opponent has unplayable cards, discarding one');
+          // Discard a random unplayable card
+          const randomUnplayableIndex = Math.floor(Math.random() * unplayableCards.length);
+          const cardIdToDiscard = unplayableCards[randomUnplayableIndex];
+          const cardIndexInHand = newOpponentState.hand.indexOf(cardIdToDiscard);
+          
+          if (cardIndexInHand !== -1) {
+            const discardedCardId = newOpponentState.hand.splice(cardIndexInHand, 1)[0];
+            newOpponentState.discard.push(discardedCardId);
+            
+            // Find the card title for the log message
+            let cardTitle = "a card";
+            const discardedCard = getCardFromCollections(discardedCardId, collections);
+            if (discardedCard) {
+              cardTitle = discardedCard.title;
+            }
+            
+            newMatchState.log.push({
+              message: `Opponent discarded ${cardTitle} (unplayable card)`,
+              turn: newMatchState.turn
+            });
+            
+            // Now try to draw a card since hand is no longer full
+            const drawnCard = newOpponentState.deck.pop();
+            if (drawnCard) {
+              newOpponentState.hand.push(drawnCard);
+              drawnCardId = drawnCard;
+              startDetails.hand = [...newOpponentState.hand];
+              newMatchState.log.push({
+                message: `Opponent drew a card`,
+                turn: newMatchState.turn
+              });
+            }
+          }
+        } else {
+          console.log('Opponent has playable cards, not discarding');
+          // Cannot draw card - hand is full but has playable cards
+          newMatchState.log.push({
+            message: `Opponent could not draw a card - hand limit reached (${newMatchState.rules.handLimit} cards)`,
+            turn: newMatchState.turn
+          });
+        }
       }
     } else {
       const drawnCard = newOpponentState.deck.pop()

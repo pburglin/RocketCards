@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription
 } from '../components/ui/Card'
-import { loadSettings, saveSettings, UserSettings } from '../lib/settingsUtils'
+import { loadSettings, saveSettings, UserSettings, DEFAULT_SETTINGS } from '../lib/settingsUtils'
 
 export default function SettingsPage() {
   const navigate = useNavigate()
@@ -21,6 +21,7 @@ export default function SettingsPage() {
     animations: true,
     autoSave: true,
     soundEffects: true,
+    backgroundMusic: true,
     webglEffects: true
   })
   
@@ -40,10 +41,18 @@ export default function SettingsPage() {
 
   // Load settings on component mount
   useEffect(() => {
-    const savedSettings = loadSettings();
-    setGeneralSettings(savedSettings.general);
-    setNotificationSettings(savedSettings.notifications);
-    setPrivacySettings(savedSettings.privacy);
+    try {
+      const savedSettings = loadSettings();
+      setGeneralSettings(savedSettings.general);
+      setNotificationSettings(savedSettings.notifications);
+      setPrivacySettings(savedSettings.privacy);
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+      // Fall back to default settings
+      setGeneralSettings(DEFAULT_SETTINGS.general);
+      setNotificationSettings(DEFAULT_SETTINGS.notifications);
+      setPrivacySettings(DEFAULT_SETTINGS.privacy);
+    }
   }, [])
 
   // Auto-save settings whenever they change
@@ -169,6 +178,22 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={generalSettings.soundEffects}
                 onChange={(e) => setGeneralSettings({...generalSettings, soundEffects: e.target.checked})}
+                className="toggle toggle-primary absolute opacity-0 w-0 h-0"
+              />
+              <div className="toggle-slider rounded-full"></div>
+            </label>
+          </div>
+          
+          <div className="flex items-center justify-between p-3 bg-surface-light rounded-lg">
+            <div>
+              <div className="font-medium">Background Music</div>
+              <div className="text-sm text-text-secondary">Enable background music during gameplay</div>
+            </div>
+            <label className="relative inline-block w-9 h-5 align-middle select-none">
+              <input
+                type="checkbox"
+                checked={generalSettings.backgroundMusic}
+                onChange={(e) => setGeneralSettings({...generalSettings, backgroundMusic: e.target.checked})}
                 className="toggle toggle-primary absolute opacity-0 w-0 h-0"
               />
               <div className="toggle-slider rounded-full"></div>

@@ -297,6 +297,28 @@
     }
   }
   
+  @keyframes card-draw {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes card-remove {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+  
   .animate-zoom {
     animation: zoom-in-out 1s ease-in-out;
   }
@@ -307,6 +329,14 @@
   
   .animate-removal {
     animation: fade-out 1s ease-in-out;
+  }
+  
+  .animate-card-draw {
+    animation: card-draw 0.3s ease-out;
+  }
+  
+  .animate-card-remove {
+    animation: card-remove 0.3s ease-out;
   }
   
   .animate-bar-change {

@@ -2,15 +2,15 @@ import { CardCollection } from '../types/game'
 
 // List of available collections
 export const AVAILABLE_COLLECTIONS = [
-  { id: 'fantasy', name: 'Fantasy Realms' },
-  { id: 'politics', name: 'Political Arena' },
-  { id: 'monsters', name: 'Monster Mayhem' },
   { id: 'anime', name: 'Anime All-Stars' },
-  { id: 'scifi', name: 'Sci-Fi Universe' },
-  { id: 'soccer', name: 'Soccer Legends' },
-  { id: 'lawyers', name: 'Legal Eagles' },
   { id: 'apocalypse', name: 'Wasteland Warriors' },
-  { id: 'heroes', name: 'Legendary Heroes' }
+  { id: 'fantasy', name: 'Fantasy Realms' },
+  { id: 'heroes', name: 'Legendary Heroes' },
+  { id: 'lawyers', name: 'Legal Eagles' },
+  { id: 'monsters', name: 'Monster Mayhem' },
+  { id: 'politics', name: 'Political Arena' },
+  { id: 'scifi', name: 'Sci-Fi Universe' },
+  { id: 'soccer', name: 'Soccer Legends' }
 ]
 
 // Function to load a collection from JSON file
@@ -37,7 +37,8 @@ export async function loadAllCollections(): Promise<CardCollection[]> {
     }
   }
   
-  return collections
+  // Sort collections alphabetically by name
+  return collections.sort((a, b) => a.name.localeCompare(b.name))
 }
 
 // Function to get collection metadata (without loading all cards)

@@ -5,6 +5,7 @@ export interface GeneralSettings {
   animations: boolean;
   autoSave: boolean;
   soundEffects: boolean;
+  backgroundMusic: boolean;
   webglEffects: boolean;
 }
 
@@ -28,13 +29,14 @@ export interface UserSettings {
   privacy: PrivacySettings;
 }
 
-const DEFAULT_SETTINGS: UserSettings = {
+export const DEFAULT_SETTINGS: UserSettings = {
   general: {
     theme: 'dark',
     language: 'en',
     animations: true,
     autoSave: true,
     soundEffects: true,
+    backgroundMusic: true,
     webglEffects: true
   },
   notifications: {

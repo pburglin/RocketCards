@@ -64,6 +64,7 @@ export default function GamePage() {
   const [opponentHpAnimation, setOpponentHpAnimation] = useState(false)
   const [cardAttackAnimation, setCardAttackAnimation] = useState<string | null>(null)
   const [cardRemovalAnimation, setCardRemovalAnimation] = useState<string | null>(null)
+  const [cardDrawAnimation, setCardDrawAnimation] = useState<string | null>(null)
   const [barAnimations, setBarAnimations] = useState({
     playerHp: false,
     playerMp: false,
@@ -72,6 +73,10 @@ export default function GamePage() {
     opponentMp: false,
     opponentFatigue: false
   })
+  
+  // Track previous hand states for animation detection
+  const prevPlayerHand = useRef<string[]>([])
+  const prevOpponentHand = useRef<string[]>([])
   
   // WebGL effect states
   const [cardAttackEffect, setCardAttackEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
@@ -156,6 +161,16 @@ export default function GamePage() {
     // Initialize game state - but don't auto-trigger phase transitions
     // Let the user click the button to proceed
   }, [matchState, navigate])
+  
+  // Initialize previous hand states
+  useEffect(() => {
+    if (playerState?.hand) {
+      prevPlayerHand.current = [...playerState.hand];
+    }
+    if (opponentState?.hand) {
+      prevOpponentHand.current = [...opponentState.hand];
+    }
+  }, [playerState?.hand, opponentState?.hand]);
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -354,6 +369,42 @@ export default function GamePage() {
   }, [playerState?.hp, playerState?.mp, playerState?.fatigue, opponentState?.hp, opponentState?.mp, opponentState?.fatigue]);
   
   
+  // Detect card draw/removal animations
+  useEffect(() => {
+    if (areAnimationsEnabled() && playerState?.hand) {
+      // Check for newly drawn cards (cards added to hand)
+      const newCards = playerState.hand.filter(cardId => !prevPlayerHand.current.includes(cardId));
+      if (newCards.length > 0) {
+        // Trigger draw animation for the first new card
+        setCardDrawAnimation(newCards[0]);
+        setTimeout(() => setCardDrawAnimation(null), 300);
+      }
+      
+      prevPlayerHand.current = [...playerState.hand];
+    }
+  }, [playerState?.hand]);
+  
+  useEffect(() => {
+    if (areAnimationsEnabled() && opponentState?.hand) {
+      // Check for newly drawn cards (cards added to hand)
+      const newCards = opponentState.hand.filter(cardId => !prevOpponentHand.current.includes(cardId));
+      if (newCards.length > 0) {
+        // For opponent, we can trigger a general draw effect
+        // Since we don't show opponent's hand details, we just trigger the effect
+      }
+      
+      // Check for removed cards (cards discarded from hand)
+      const removedCards = prevOpponentHand.current.filter(cardId => !opponentState.hand.includes(cardId));
+      if (removedCards.length > 0) {
+        // Trigger removal animation for opponent cards
+        setCardRemovalAnimation(removedCards[0]);
+        setTimeout(() => setCardRemovalAnimation(null), 300);
+      }
+      
+      prevOpponentHand.current = [...opponentState.hand];
+    }
+  }, [opponentState?.hand]);
+   
   const getCardTitle = (cardId: string, collections: any[]) => {
     if (!cardId) return 'Unknown Card';
     
@@ -371,7 +422,10 @@ export default function GamePage() {
       // Trigger card attack animation if animations are enabled
       if (areAnimationsEnabled()) {
         setCardAttackAnimation(cardId);
+        // Also trigger removal animation
+        setCardRemovalAnimation(cardId);
         setTimeout(() => setCardAttackAnimation(null), 1000);
+        setTimeout(() => setCardRemovalAnimation(null), 300);
         
         // Trigger WebGL card attack effect
         const webglEffects = areWebGLEffectsEnabled();
@@ -608,6 +662,8 @@ export default function GamePage() {
                                               key={`${cardId}-${index}`}
                                               className={`relative card-hover-effect rounded-lg shadow-lg overflow-hidden ${
                                                 cardAttackAnimation === cardId ? 'animate-zoom' : ''
+                                              } ${cardDrawAnimation === cardId ? 'animate-card-draw' : ''} ${
+                                                cardRemovalAnimation === cardId ? 'animate-card-remove' : ''
                                               } ${card?.tokenCost ? 'bg-gradient-to-br from-amber-900/40 to-amber-800/30 border-2 border-amber-600/50' : 'bg-surface'} ${
                                                 matchState?.activePlayer !== 'player' || matchState?.phase !== 'main'
                                                   ? 'opacity-50 cursor-not-allowed'

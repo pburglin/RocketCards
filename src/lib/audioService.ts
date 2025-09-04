@@ -113,7 +113,20 @@ class AudioService {
 
   // Play background music
   public playBackgroundMusic(): void {
-    if (!this.isSoundEffectsEnabled()) {
+    // Check if background music is enabled (separate from sound effects)
+    const settings = localStorage.getItem('userSettings')
+    let musicEnabled = true
+    if (settings) {
+      try {
+        const parsed = JSON.parse(settings)
+        // Check for separate background music setting only
+        musicEnabled = parsed.general?.backgroundMusic !== false
+      } catch (e) {
+        musicEnabled = true // Default to enabled if parsing fails
+      }
+    }
+    
+    if (!musicEnabled) {
       return
     }
 
