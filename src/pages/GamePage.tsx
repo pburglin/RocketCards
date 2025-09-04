@@ -72,6 +72,10 @@ export default function GamePage() {
     opponentFatigue: false
   })
   
+  // WebGL effect states
+  const [cardAttackEffect, setCardAttackEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
+  const [cardDestructionEffect, setCardDestructionEffect] = useState<{ position: [number, number, number]; isActive: boolean } | null>(null)
+  
   // Track previous game state for WebGL effects
   const prevLogLength = useRef(matchState?.log?.length || 0);
   
@@ -391,6 +395,18 @@ export default function GamePage() {
       if (areAnimationsEnabled()) {
         setCardAttackAnimation(cardId);
         setTimeout(() => setCardAttackAnimation(null), 1000);
+        
+        // Trigger WebGL card attack effect
+        const settings = localStorage.getItem('userSettings');
+        const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+        if (webglEffects) {
+          // Random position for the effect (you can calculate actual card position if needed)
+          setCardAttackEffect({
+            position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+            isActive: true
+          });
+          setTimeout(() => setCardAttackEffect(null), 1000);
+        }
       }
       
       // Play card sound
@@ -657,6 +673,18 @@ export default function GamePage() {
                                 }
                                 audioService.playDamageSound();
                                 const success = discardHandCard(index);
+                                if (success) {
+                                  // Trigger WebGL card destruction effect
+                                  const settings = localStorage.getItem('userSettings');
+                                  const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                  if (webglEffects && areAnimationsEnabled()) {
+                                    setCardDestructionEffect({
+                                      position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                      isActive: true
+                                    });
+                                    setTimeout(() => setCardDestructionEffect(null), 1500);
+                                  }
+                                }
                                 if (!success) {
                                   setPenaltyMessage('Failed to discard card');
                                   setShowPenalty(true);
@@ -787,7 +815,14 @@ export default function GamePage() {
       {(() => {
         const settings = localStorage.getItem('userSettings');
         const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
-        return webglEffects ? <GameWebGL battleIntensity={battleIntensity} energyLevel={energyLevel} /> : null;
+        return webglEffects ? (
+          <GameWebGL
+            battleIntensity={battleIntensity}
+            energyLevel={energyLevel}
+            cardAttackEffect={cardAttackEffect || undefined}
+            cardDestructionEffect={cardDestructionEffect || undefined}
+          />
+        ) : null;
       })()}
       
       {/* Opponent Resources */}
@@ -924,6 +959,17 @@ export default function GamePage() {
                               if (areAnimationsEnabled()) {
                                 setCardRemovalAnimation(champion.cardId);
                                 setTimeout(() => setCardRemovalAnimation(null), 1000);
+                                
+                                // Trigger WebGL card destruction effect
+                                const settings = localStorage.getItem('userSettings');
+                                const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                if (webglEffects) {
+                                  setCardDestructionEffect({
+                                    position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                    isActive: true
+                                  });
+                                  setTimeout(() => setCardDestructionEffect(null), 1500);
+                                }
                               }
                               audioService.playDamageSound();
                               discardChampion(index);
@@ -1080,6 +1126,17 @@ export default function GamePage() {
                                  if (areAnimationsEnabled()) {
                                    setCardRemovalAnimation(creature.cardId);
                                    setTimeout(() => setCardRemovalAnimation(null), 1000);
+                                   
+                                   // Trigger WebGL card destruction effect
+                                   const settings = localStorage.getItem('userSettings');
+                                   const webglEffects = settings ? JSON.parse(settings).general?.webglEffects !== false : true;
+                                   if (webglEffects) {
+                                     setCardDestructionEffect({
+                                       position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
+                                       isActive: true
+                                     });
+                                     setTimeout(() => setCardDestructionEffect(null), 1500);
+                                   }
                                  }
                                  audioService.playDamageSound();
                                  discardCreature(index);

@@ -8,14 +8,14 @@ function StarField({ intensity = 1 }: { intensity?: number }) {
   const ref = useRef<THREE.Points>(null)
   const [sphere] = useState(() => {
     // Ensure we always return a Float32Array
-    const positions = inSphere(new Float32Array(12000 * 3), { radius: 2.5 })
+    const positions = inSphere(new Float32Array(6000 * 3), { radius: 2.5 })
     return positions instanceof Float32Array ? positions : new Float32Array(positions)
   })
 
   // Create colors for stars
   const colors = useMemo(() => {
-    const cols = new Float32Array(12000 * 3)
-    for (let i = 0; i < 12000; i++) {
+    const cols = new Float32Array(6000 * 3)
+    for (let i = 0; i < 100; i++) {
       // Create a mix of white, blue, and yellow stars for more visual interest
       const starType = Math.random()
       if (starType < 0.7) {
@@ -76,7 +76,7 @@ function StarField({ intensity = 1 }: { intensity?: number }) {
 
 export default function WebGLBackground({ intensity = 1 }: { intensity?: number }) {
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 z-0 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 1] }}>
         <ambientLight intensity={0.1} />
         <StarField intensity={intensity} />

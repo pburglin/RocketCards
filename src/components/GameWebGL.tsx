@@ -6,7 +6,7 @@ import * as THREE from 'three'
 
 function BattleParticles(props: { battleIntensity: number }) {
   const ref = useRef<THREE.Points>(null)
-  const particleCount = 3000
+  const particleCount = 300
   
   // Create particles with different colors based on battle intensity
   const [positions] = useState(() => {
@@ -155,13 +155,173 @@ function EnergyOrbs(props: { energyLevel: number }) {
   )
 }
 
-export default function GameWebGL({ battleIntensity = 0, energyLevel = 0 }: { battleIntensity?: number; energyLevel?: number }) {
+function CardAttackEffect({ position, isActive }: { position: [number, number, number]; isActive: boolean }) {
+  const ref = useRef<THREE.Points>(null)
+  const particleCount = 200
+  
+  const [positions] = useState(() => {
+    const pos = new Float32Array(particleCount * 3)
+    for (let i = 0; i < particleCount; i++) {
+      pos[i * 3] = position[0]
+      pos[i * 3 + 1] = position[1]
+      pos[i * 3 + 2] = position[2]
+    }
+    return pos
+  })
+
+  const colors = useMemo(() => {
+    const cols = new Float32Array(particleCount * 3)
+    for (let i = 0; i < particleCount; i++) {
+      // Yellow/gold burst colors
+      cols[i * 3] = 1
+      cols[i * 3 + 1] = Math.random() * 0.8 + 0.2
+      cols[i * 3 + 2] = Math.random() * 0.2
+    }
+    return cols
+  }, [])
+
+  useFrame((state, delta) => {
+    if (ref.current && isActive) {
+      const positions = ref.current.geometry.attributes.position.array as Float32Array
+      const colors = ref.current.geometry.attributes.color.array as Float32Array
+      
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3
+        
+        // Radiate outward from the position
+        const directionX = (Math.random() - 0.5) * 2
+        const directionY = (Math.random() - 0.5) * 2
+        const directionZ = (Math.random() - 0.5) * 2
+        
+        positions[i3] += directionX * delta * 5
+        positions[i3 + 1] += directionY * delta * 5
+        positions[i3 + 2] += directionZ * delta * 5
+        
+        // Fade out colors over time
+        if (colors[i3] > 0) colors[i3] -= delta * 0.5
+        if (colors[i3 + 1] > 0) colors[i3 + 1] -= delta * 0.3
+        if (colors[i3 + 2] > 0) colors[i3 + 2] -= delta * 0.1
+      }
+      
+      ref.current.geometry.attributes.position.needsUpdate = true
+      ref.current.geometry.attributes.color.needsUpdate = true
+    }
+  })
+
+  if (!isActive) return null
+
+  return (
+    <Points ref={ref} positions={positions} colors={colors} frustumCulled={false}>
+      <PointMaterial
+        transparent
+        size={0.05}
+        sizeAttenuation={true}
+        depthWrite={false}
+        vertexColors
+        opacity={0.8}
+      />
+    </Points>
+  )
+}
+
+function CardDestructionEffect({ position, isActive }: { position: [number, number, number]; isActive: boolean }) {
+  const ref = useRef<THREE.Points>(null)
+  const particleCount = 300
+  
+  const [positions] = useState(() => {
+    const pos = new Float32Array(particleCount * 3)
+    for (let i = 0; i < particleCount; i++) {
+      pos[i * 3] = position[0] + (Math.random() - 0.5) * 0.5
+      pos[i * 3 + 1] = position[1] + (Math.random() - 0.5) * 0.5
+      pos[i * 3 + 2] = position[2] + (Math.random() - 0.5) * 0.5
+    }
+    return pos
+  })
+
+  const colors = useMemo(() => {
+    const cols = new Float32Array(particleCount * 3)
+    for (let i = 0; i < particleCount; i++) {
+      // Red/orange explosion colors
+      cols[i * 3] = Math.random() * 0.5 + 0.5
+      cols[i * 3 + 1] = Math.random() * 0.3
+      cols[i * 3 + 2] = Math.random() * 0.2
+    }
+    return cols
+  }, [])
+
+  useFrame((state, delta) => {
+    if (ref.current && isActive) {
+      const positions = ref.current.geometry.attributes.position.array as Float32Array
+      const colors = ref.current.geometry.attributes.color.array as Float32Array
+      
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3
+        
+        // Explode outward with gravity effect
+        const directionX = (Math.random() - 0.5) * 3
+        const directionY = (Math.random() - 0.5) * 3
+        const directionZ = (Math.random() - 0.5) * 3
+        
+        positions[i3] += directionX * delta * 3
+        positions[i3 + 1] += directionY * delta * 3 - delta * 2 // Gravity pull downward
+        positions[i3 + 2] += directionZ * delta * 3
+        
+        // Fade out colors over time
+        if (colors[i3] > 0) colors[i3] -= delta * 0.3
+        if (colors[i3 + 1] > 0) colors[i3 + 1] -= delta * 0.2
+        if (colors[i3 + 2] > 0) colors[i3 + 2] -= delta * 0.1
+      }
+      
+      ref.current.geometry.attributes.position.needsUpdate = true
+      ref.current.geometry.attributes.color.needsUpdate = true
+    }
+  })
+
+  if (!isActive) return null
+
+  return (
+    <Points ref={ref} positions={positions} colors={colors} frustumCulled={false}>
+      <PointMaterial
+        transparent
+        size={0.04}
+        sizeAttenuation={true}
+        depthWrite={false}
+        vertexColors
+        opacity={0.9}
+      />
+    </Points>
+  )
+}
+
+export default function GameWebGL({ 
+  battleIntensity = 0, 
+  energyLevel = 0,
+  cardAttackEffect,
+  cardDestructionEffect
+}: { 
+  battleIntensity?: number; 
+  energyLevel?: number;
+  cardAttackEffect?: { position: [number, number, number]; isActive: boolean };
+  cardDestructionEffect?: { position: [number, number, number]; isActive: boolean };
+}) {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 5] }}>
         <ambientLight intensity={0.5} />
         <BattleParticles battleIntensity={battleIntensity} />
         <EnergyOrbs energyLevel={energyLevel} />
+        {cardAttackEffect && (
+          <CardAttackEffect 
+            position={cardAttackEffect.position} 
+            isActive={cardAttackEffect.isActive} 
+          />
+        )}
+        {cardDestructionEffect && (
+          <CardDestructionEffect 
+            position={cardDestructionEffect.position} 
+            isActive={cardDestructionEffect.isActive} 
+          />
+        )}
       </Canvas>
     </div>
   )
