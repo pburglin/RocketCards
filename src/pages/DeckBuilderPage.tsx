@@ -323,12 +323,12 @@ export default function DeckBuilderPage() {
       {/* Progress Indicator */}
       <SetupProgressIndicator
         currentStep="deck"
-        hasProfile={true}
+        hasProfile={!!profile}
         hasDeck={decks.length > 0 || isDeckValid}
       />
       
       <div className="flex items-center mb-8">
-        <div className="w-12 h-12 bg-gradient-to-br from-secondary to-accent rounded-xl flex items-center justify-center mr-4">
+        <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center mr-4">
           <LayoutGrid className="w-6 h-6 text-white" />
         </div>
         <h1 className="text-3xl font-bold">Deck Builder</h1>

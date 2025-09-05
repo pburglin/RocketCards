@@ -14,46 +14,32 @@ export default function SettingsPage() {
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('general')
   
-  // Form states
-  const [generalSettings, setGeneralSettings] = useState<UserSettings['general']>({
-    theme: 'dark',
-    language: 'en',
-    animations: true,
-    autoSave: true,
-    soundEffects: true,
-    backgroundMusic: true,
-    webglEffects: true
-  })
-  
-  const [notificationSettings, setNotificationSettings] = useState<UserSettings['notifications']>({
-    email: true,
-    push: true,
-    gameUpdates: true,
-    friendRequests: true,
-    achievements: true
-  })
-  
-  const [privacySettings, setPrivacySettings] = useState<UserSettings['privacy']>({
-    profileVisibility: 'friends',
-    gameHistory: 'friends',
-    showOnlineStatus: true
-  })
-
-  // Load settings on component mount
-  useEffect(() => {
+  // Form states - initialize with loaded settings or defaults
+  const [generalSettings, setGeneralSettings] = useState<UserSettings['general']>(() => {
     try {
       const savedSettings = loadSettings();
-      setGeneralSettings(savedSettings.general);
-      setNotificationSettings(savedSettings.notifications);
-      setPrivacySettings(savedSettings.privacy);
+      return { ...DEFAULT_SETTINGS.general, ...savedSettings.general };
     } catch (error) {
-      console.error('Failed to load settings:', error);
-      // Fall back to default settings
-      setGeneralSettings(DEFAULT_SETTINGS.general);
-      setNotificationSettings(DEFAULT_SETTINGS.notifications);
-      setPrivacySettings(DEFAULT_SETTINGS.privacy);
+      return DEFAULT_SETTINGS.general;
     }
-  }, [])
+  });
+  const [notificationSettings, setNotificationSettings] = useState<UserSettings['notifications']>(() => {
+    try {
+      const savedSettings = loadSettings();
+      return { ...DEFAULT_SETTINGS.notifications, ...savedSettings.notifications };
+    } catch (error) {
+      return DEFAULT_SETTINGS.notifications;
+    }
+  });
+  const [privacySettings, setPrivacySettings] = useState<UserSettings['privacy']>(() => {
+    try {
+      const savedSettings = loadSettings();
+      return { ...DEFAULT_SETTINGS.privacy, ...savedSettings.privacy };
+    } catch (error) {
+      return DEFAULT_SETTINGS.privacy;
+    }
+  });
+
 
   // Auto-save settings whenever they change
   useEffect(() => {

@@ -5,14 +5,14 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Label } from '../components/ui/Label'
 import { calculatePlayerStats } from '../lib/gameEngine'
-import { Shield, Sword, Sparkles, Flame, Star, Coins, X, CheckCircle } from 'lucide-react'
+import { Shield, Sword, Sparkles, Flame, Star, Coins, X, CheckCircle, User } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 import { imageCacheService } from '../lib/imageCacheService'
 import { getCardImageUrl } from '../lib/cardImageUtils'
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate()
-  const { profile, saveProfile, collections, purchaseCardWithTokens, isCardPurchased } = useGameStore()
+  const { profile, saveProfile, collections, purchaseCardWithTokens, isCardPurchased, decks } = useGameStore()
   const [displayName, setDisplayName] = useState(profile?.displayName || 'Player')
   const [strategy, setStrategy] = useState<'aggressive' | 'balanced' | 'defensive'>(profile?.strategy || 'balanced')
   const [keyStat, setKeyStat] = useState<'strength' | 'intelligence' | 'charisma'>(profile?.keyStat || 'intelligence')
@@ -132,13 +132,13 @@ export default function ProfileSetupPage() {
       {/* Progress Indicator */}
       <SetupProgressIndicator
         currentStep="profile"
-        hasProfile={false}
-        hasDeck={false}
+        hasProfile={!!profile}
+        hasDeck={decks.length > 0}
       />
       
       <div className="flex items-center mb-8">
         <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center mr-4">
-          <Sword className="w-6 h-6 text-white" />
+          <User className="w-6 h-6 text-white" />
         </div>
         <h1 className="text-3xl font-bold">Profile {profile ? 'Management' : 'Setup'}</h1>
       </div>
