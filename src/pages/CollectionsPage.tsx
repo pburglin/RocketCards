@@ -7,7 +7,7 @@ import { useGameStore } from '../store/gameStore'
 import { loadCollection } from '../lib/collectionLoader'
 import { Card as CardType } from '../types/card'
 import { imageCacheService } from '../lib/imageCacheService'
-import { getCardImageUrl, getCollectionImageUrl } from '../lib/cardImageUtils'
+import { getCardImageUrl, getCollectionImageUrl, preloadCollectionImages, preloadCardImages, preloadCollectionImagesProgressive, preloadCardImagesProgressive } from '../lib/cardImageUtils'
 
 export default function CollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,20 +25,50 @@ export default function CollectionsPage() {
   
   useEffect(() => {
     const loadCollectionImages = async () => {
+      // Preload all collection images first (high priority) with progressive loading
+      const collectionImages = collections.map(collection => ({
+        id: collection.id,
+        description: collection.description
+      }))
+      await preloadCollectionImagesProgressive(collectionImages)
+      
       const displayData = await Promise.all(
         collections.map(async collection => {
-          const imageUrl = await getCollectionImageUrl(collection.id, 128, 128)
-          return {
-            id: collection.id,
-            name: collection.name,
-            description: collection.description,
-            cards: collection.cards.length,
-            image: imageUrl,
-            firstCard: collection.cards[0]
+          try {
+            const imageUrl = await getCollectionImageUrl(collection.id, 128, 128)
+            return {
+              id: collection.id,
+              name: collection.name,
+              description: collection.description,
+              cards: collection.cards.length,
+              image: imageUrl,
+              firstCard: collection.cards[0]
+            }
+          } catch (error) {
+            console.error(`Failed to load image for collection ${collection.id}:`, error)
+            return {
+              id: collection.id,
+              name: collection.name,
+              description: collection.description,
+              cards: collection.cards.length,
+              image: `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`,
+              firstCard: collection.cards[0]
+            }
           }
         })
       )
       setCollectionDisplayData(displayData)
+      
+      // Preload first few cards from each collection (medium priority) with progressive loading
+      const firstCards = collections.slice(0, 3).flatMap(collection =>
+        collection.cards.slice(0, 5).map(card => ({
+          id: card.id,
+          description: card.description
+        }))
+      )
+      if (firstCards.length > 0) {
+        preloadCardImagesProgressive(firstCards, 'medium')
+      }
     }
     
     if (collections.length > 0) {
@@ -89,6 +119,19 @@ export default function CollectionsPage() {
     loadCardImage();
   }, [showCardModal, selectedCard]);
 
+  // Lazy load collection card images when user hovers over collection
+  const handleCollectionHover = async (collectionId: string) => {
+    const collection = collections.find(c => c.id === collectionId)
+    if (collection) {
+      // Preload all cards in this collection with low priority
+      const cards = collection.cards.map(card => ({
+        id: card.id,
+        description: card.description
+      }))
+      preloadCardImages(cards, 'low')
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -98,7 +141,7 @@ export default function CollectionsPage() {
         </div>
         
         <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-          <Button 
+          <Button
             onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
             variant="outline"
             size="sm"
@@ -136,6 +179,7 @@ export default function CollectionsPage() {
             <Card
               key={collection.id}
               className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+              onMouseEnter={() => handleCollectionHover(collection.id)}
             >
               <div
                 className="relative h-48 overflow-hidden rounded-t-lg cursor-pointer"
@@ -145,6 +189,7 @@ export default function CollectionsPage() {
                   src={collection.image}
                   alt={collection.name}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-80" />
               </div>

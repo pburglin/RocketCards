@@ -4,9 +4,16 @@
 class ImageExportService {
   private readonly EXPORT_BATCH_SIZE = 5
   private readonly EXPORT_DELAY = 1000 // 1 second delay between batches
+  private readonly DEFAULT_QUALITY = 80
+  private readonly DEFAULT_WIDTH = 256
+  private readonly DEFAULT_HEIGHT = 256
   
   // Export images for all cards in a collection
-  public async exportCollectionImages(collectionId: string, onProgress?: (progress: number, total: number) => void): Promise<{ success: number; failed: number }> {
+  public async exportCollectionImages(
+    collectionId: string,
+    onProgress?: (progress: number, total: number) => void,
+    options?: { quality?: number; width?: number; height?: number }
+  ): Promise<{ success: number; failed: number }> {
     try {
       const collectionModule = await import(`../../data/${collectionId}.json`)
       const collection = collectionModule.default || collectionModule
@@ -27,7 +34,7 @@ class ImageExportService {
         const batchResults = await Promise.all(
           batch.map(async (card: any) => {
             try {
-              const success = await this.exportCardImage(card.id, card.description, card.title)
+              const success = await this.exportCardImage(card.id, card.description, card.title, options)
               if (success) {
                 successCount++
               } else {
@@ -61,10 +68,17 @@ class ImageExportService {
   }
   
   // Export image for a single card
-  public async exportCardImage(cardId: string, description: string, title: string): Promise<boolean> {
+  public async exportCardImage(
+    cardId: string,
+    description: string,
+    title: string,
+    options?: { quality?: number; width?: number; height?: number }
+  ): Promise<boolean> {
     try {
-      // Generate pollinations.ai URL
-      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`
+      // Generate pollinations.ai URL with customizable dimensions
+      const width = options?.width || this.DEFAULT_WIDTH;
+      const height = options?.height || this.DEFAULT_HEIGHT;
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(description)}?width=${width}&height=${height}&nologo=true&private=true&safe=true&seed=1`
       
       // Download image as blob
       const response = await fetch(imageUrl)
@@ -90,9 +104,12 @@ class ImageExportService {
   }
   
   // Export all collections
-  public async exportAllCollections(onProgress?: (collection: string, progress: number, total: number) => void): Promise<Record<string, { success: number; failed: number }>> {
+  public async exportAllCollections(
+    onProgress?: (collection: string, progress: number, total: number) => void,
+    options?: { quality?: number; width?: number; height?: number }
+  ): Promise<Record<string, { success: number; failed: number }>> {
     const collections = [
-      'fantasy', 'politics', 'monsters', 'anime', 'scifi', 
+      'fantasy', 'politics', 'monsters', 'anime', 'scifi',
       'soccer', 'lawyers', 'apocalypse', 'heroes'
     ]
     
@@ -105,7 +122,7 @@ class ImageExportService {
           if (onProgress) {
             onProgress(collectionId, progress, total)
           }
-        })
+        }, options)
         results[collectionId] = result
       } catch (error) {
         console.error(`Failed to export collection ${collectionId}:`, error)

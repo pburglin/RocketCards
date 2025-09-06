@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { LayoutGrid, Plus, Minus, Save, Upload, Download, X, Sparkles, Trash2, Edit3, Info, CheckCircle } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
 import { imageCacheService } from '../lib/imageCacheService'
-import { getCardImageUrl, getCollectionImageUrl } from '../lib/cardImageUtils'
+import { getCardImageUrl, getCollectionImageUrl, preloadCollectionImages, preloadCardImages, preloadCollectionImagesProgressive, preloadCardImagesProgressive } from '../lib/cardImageUtils'
 
 export default function DeckBuilderPage() {
   const navigate = useNavigate()
@@ -81,9 +81,16 @@ export default function DeckBuilderPage() {
     }
   }, [selectedDeck?.cards.length, selectedCollection])
 
-  // Load collection images
+  // Load collection images with preloading
   useEffect(() => {
     const loadCollectionImages = async () => {
+      // Preload all collection images first with progressive loading
+      const collectionData = collections.map(collection => ({
+        id: collection.id,
+        description: collection.description
+      }))
+      await preloadCollectionImagesProgressive(collectionData)
+      
       const newImageUrls: Record<string, string> = {}
       for (const collection of collections) {
         try {
@@ -101,13 +108,26 @@ export default function DeckBuilderPage() {
     }
   }, [collections])
 
-  // Load card images for available cards
+  // Load card images for available cards with lazy loading
   useEffect(() => {
     const loadCardImages = async () => {
       if (!selectedCollection) return;
       
+      // Preload first batch of cards (high priority)
+      const firstBatch = selectedCollection.cards.slice(0, 40)
+      const remainingCards = selectedCollection.cards.slice(40)
+      
+      // Preload first batch with progressive loading
+      if (firstBatch.length > 0) {
+        const cardData = firstBatch.map(card => ({
+          id: card.id,
+          description: card.description
+        }))
+        preloadCardImagesProgressive(cardData, 'high')
+      }
+      
       const newImageUrls: Record<string, string> = {}
-      for (const card of selectedCollection.cards) {
+      for (const card of firstBatch) {
         try {
           newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 64, 64)
         } catch (error) {
@@ -116,12 +136,55 @@ export default function DeckBuilderPage() {
         }
       }
       setCardImageUrls(newImageUrls)
+      
+      // Preload remaining cards with low priority using progressive loading
+      if (remainingCards.length > 0) {
+        const remainingCardData = remainingCards.map(card => ({
+          id: card.id,
+          description: card.description
+        }))
+        preloadCardImagesProgressive(remainingCardData, 'low')
+      }
     }
 
     if (selectedCollection) {
       loadCardImages()
     }
   }, [selectedCollection])
+
+  // Handle loading images for cards that come into view
+  useEffect(() => {
+    const loadRemainingCardImages = async () => {
+      if (!selectedCollection || selectedCollection.cards.length === 0) return;
+      
+      const currentImageUrls = { ...cardImageUrls };
+      const firstBatchIds = new Set(selectedCollection.cards.slice(0, 40).map(card => card.id));
+      const remainingCards = selectedCollection.cards.slice(40).filter(card => !currentImageUrls[card.id]);
+      
+      // Load images for remaining cards that haven't been loaded yet
+      for (const card of remainingCards) {
+        if (!currentImageUrls[card.id]) {
+          try {
+            currentImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 64, 64)
+          } catch (error) {
+            console.error(`Failed to load image for card ${card.id}:`, error)
+            currentImageUrls[card.id] = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`
+          }
+        }
+      }
+      
+      if (Object.keys(currentImageUrls).length > Object.keys(cardImageUrls).length) {
+        setCardImageUrls(currentImageUrls)
+      }
+    }
+
+    // Load remaining card images after initial load
+    const timer = setTimeout(() => {
+      loadRemainingCardImages()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [selectedCollection, cardImageUrls])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -623,6 +686,7 @@ export default function DeckBuilderPage() {
                                 src={cardImageUrls[card.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
                                 alt={card.title}
                                 className="w-full h-full object-cover"
+                                loading="lazy"
                                 onError={async (e) => {
                                   const img = e.currentTarget;
                                   const fallbackUrl = await getCardImageUrl(card.id, card.description, 64, 64);
@@ -766,6 +830,7 @@ export default function DeckBuilderPage() {
                                       src={cardImageUrls[card.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=64&height=64&nologo=true&private=true&safe=true&seed=1`}
                                       alt={card.title}
                                       className="w-full h-full object-cover"
+                                      loading="lazy"
                                       onError={async (e) => {
                                         const img = e.currentTarget;
                                         const fallbackUrl = await getCardImageUrl(card.id, card.description, 64, 64);
@@ -870,6 +935,7 @@ export default function DeckBuilderPage() {
                             src={collectionImageUrls[collection.name] || `https://image.pollinations.ai/prompt/${encodeURIComponent(collection.name)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`}
                             alt={collection.name}
                             className="w-full h-full object-cover rounded"
+                            loading="lazy"
                             onError={async (e) => {
                               const img = e.currentTarget;
                               const fallbackUrl = await getCollectionImageUrl(collection.name, 128, 128);
@@ -1153,6 +1219,7 @@ export default function DeckBuilderPage() {
                     src={cardImageUrls[selectedCard.id] || `https://image.pollinations.ai/prompt/${encodeURIComponent(selectedCard.description)}?width=256&height=256&nologo=true&private=true&safe=true&seed=1`}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    loading="eager"
                     onError={async (e) => {
                       const img = e.currentTarget;
                       const fallbackUrl = await getCardImageUrl(selectedCard.id, selectedCard.description, 256, 256);

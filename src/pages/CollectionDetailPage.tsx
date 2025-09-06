@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { useGameStore } from '../store/gameStore'
@@ -7,7 +7,7 @@ import { Card as CardType } from '../types/card'
 import { Plus, Minus, Info, Image as ImageIcon, Filter, X, CheckCircle } from 'lucide-react'
 import { loadCollection } from '../lib/collectionLoader'
 import { imageCacheService } from '../lib/imageCacheService'
-import { getCardImageUrl } from '../lib/cardImageUtils'
+import { getCardImageUrl, preloadCardImages, preloadCardImagesProgressive } from '../lib/cardImageUtils'
 
 export default function CollectionDetailPage() {
   const { collectionId } = useParams<{collectionId: string}>()
@@ -41,26 +41,84 @@ export default function CollectionDetailPage() {
     loadCollectionCards()
   }, [collectionId, collections])
 
-  // Load card images
+  // Load card images with improved lazy loading
   useEffect(() => {
     const loadCardImages = async () => {
       const newImageUrls: Record<string, string> = {}
-      for (const card of cards) {
+      
+      // Preload first batch of cards (high priority)
+      const firstBatch = cards.slice(0, 30)
+      const remainingCards = cards.slice(30)
+      
+      // Preload first batch with progressive loading
+      if (firstBatch.length > 0) {
+        const cardData = firstBatch.map(card => ({
+          id: card.id,
+          description: card.description
+        }))
+        preloadCardImagesProgressive(cardData, 'high')
+      }
+      
+      // Load images for first batch
+      for (const card of firstBatch) {
         try {
           newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 128, 128)
         } catch (error) {
           console.error(`Failed to load image for card ${card.id}:`, error)
-          // Use getCardImageUrl which handles local fallback automatically
-          newImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 128, 128)
+          newImageUrls[card.id] = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
         }
       }
+      
       setCardImageUrls(newImageUrls)
+      
+      // Preload remaining cards with low priority using progressive loading
+      if (remainingCards.length > 0) {
+        const remainingCardData = remainingCards.map(card => ({
+          id: card.id,
+          description: card.description
+        }))
+        preloadCardImagesProgressive(remainingCardData, 'low')
+      }
     }
 
     if (cards.length > 0) {
       loadCardImages()
     }
   }, [cards])
+
+  // Handle loading images for cards that come into view
+  useEffect(() => {
+    const loadRemainingCardImages = async () => {
+      if (cards.length === 0) return;
+      
+      const currentImageUrls = { ...cardImageUrls };
+      const firstBatchIds = new Set(cards.slice(0, 30).map(card => card.id));
+      const remainingCards = cards.slice(30).filter(card => !currentImageUrls[card.id]);
+      
+      // Load images for remaining cards that haven't been loaded yet
+      for (const card of remainingCards) {
+        if (!currentImageUrls[card.id]) {
+          try {
+            currentImageUrls[card.id] = await getCardImageUrl(card.id, card.description, 128, 128)
+          } catch (error) {
+            console.error(`Failed to load image for card ${card.id}:`, error)
+            currentImageUrls[card.id] = `https://image.pollinations.ai/prompt/${encodeURIComponent(card.description)}?width=128&height=128&nologo=true&private=true&safe=true&seed=1`
+          }
+        }
+      }
+      
+      if (Object.keys(currentImageUrls).length > Object.keys(cardImageUrls).length) {
+        setCardImageUrls(currentImageUrls)
+      }
+    }
+
+    // Load remaining card images after initial load
+    const timer = setTimeout(() => {
+      loadRemainingCardImages()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [cards, cardImageUrls])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -171,22 +229,23 @@ export default function CollectionDetailPage() {
                 }}
               >
                 <div className="relative h-40 overflow-hidden rounded-t-lg">
-                  <img
-                    src={cardImageUrls[card.id]}
-                    alt={card.title}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                    onError={async (e) => {
-                      const img = e.currentTarget;
-                      try {
-                        const fallbackUrl = await getCardImageUrl(card.id, card.description, 128, 128);
-                        img.src = fallbackUrl;
-                      } catch (error) {
-                        console.error(`Failed to load fallback image for card ${card.id}:`, error);
-                      }
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
-                </div>
+                 <img
+                   src={cardImageUrls[card.id]}
+                   alt={card.title}
+                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy"
+                   onError={async (e) => {
+                     const img = e.currentTarget;
+                     try {
+                       const fallbackUrl = await getCardImageUrl(card.id, card.description, 128, 128);
+                       img.src = fallbackUrl;
+                     } catch (error) {
+                       console.error(`Failed to load fallback image for card ${card.id}:`, error);
+                     }
+                   }}
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-70" />
+               </div>
                 
                 <CardHeader>
                   <div className="flex justify-between items-start mb-2">
@@ -354,6 +413,7 @@ export default function CollectionDetailPage() {
                     src={cardImageUrls[selectedCard.id]}
                     alt={selectedCard.title}
                     className="w-full h-full object-cover rounded-lg shadow-lg"
+                    loading="eager"
                     onError={async (e) => {
                       const img = e.currentTarget;
                       try {

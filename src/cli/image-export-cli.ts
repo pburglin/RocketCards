@@ -6,6 +6,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,10 @@ interface ExportOptions {
   forceOverwrite: boolean;
   forcePng: boolean;
   forceNoSafe: boolean;
+  quality: number;
+  width: number;
+  height: number;
+  optimize: boolean;
 }
 
 class ImageExportCLI {
@@ -54,7 +59,11 @@ class ImageExportCLI {
       collections: this.COLLECTIONS,
       forceOverwrite: false,
       forcePng: false,
-      forceNoSafe: false
+      forceNoSafe: false,
+      quality: 80,
+      width: 256,
+      height: 256,
+      optimize: true
     };
   }
 
@@ -101,8 +110,29 @@ class ImageExportCLI {
         case '-s':
           this.options.forceNoSafe = true;
           break;
-        case '--help':
+        case '--quality':
+        case '-q':
+          if (i + 1 < args.length) {
+            this.options.quality = parseInt(args[++i]) || 80;
+          }
+          break;
+        case '--width':
+        case '-w':
+          if (i + 1 < args.length) {
+            this.options.width = parseInt(args[++i]) || 256;
+          }
+          break;
+        case '--height':
         case '-h':
+          if (i + 1 < args.length) {
+            this.options.height = parseInt(args[++i]) || 256;
+          }
+          break;
+        case '--no-optimize':
+          this.options.optimize = false;
+          break;
+        case '--help':
+        case '-H':
           this.showHelp();
           process.exit(0);
           break;
@@ -115,7 +145,7 @@ class ImageExportCLI {
 RocketCards Image Export CLI
 ============================
 
-Downloads card images from pollinations.ai to local files.
+Downloads card images from pollinations.ai to local files with optimization.
 
 Usage: node image-export-cli.js [options]
 
@@ -127,7 +157,11 @@ Options:
   -f, --force_overwrite   Force overwrite existing local images (default: false)
   -p, --force_png         Request PNG images instead of WEBP (default: false)
   -s, --force-no-safe     Remove safe=true parameter from requests (default: false)
-  -h, --help             Show this help message
+  -q, --quality <number>  Image quality for compression (default: 80)
+  -w, --width <number>    Image width (default: 256)
+  -h, --height <number>   Image height (default: 256)
+  --no-optimize           Disable image optimization (default: false)
+  -H, --help             Show this help message
 
 Examples:
   node image-export-cli.js
@@ -136,6 +170,8 @@ Examples:
   node image-export-cli.js --output ./my-images --delay 500
   node image-export-cli.js --force_overwrite --force_png
   node image-export-cli.js --force-no-safe
+  node image-export-cli.js --quality 90 --width 512 --height 512
+  node image-export-cli.js --no-optimize
     `);
   }
 
@@ -202,7 +238,35 @@ Examples:
         return true;
       }
       
-      await fs.writeFile(filepath, Buffer.from(buffer));
+      let imageBuffer = Buffer.from(buffer);
+      
+      // Apply optimization if enabled
+      if (this.options.optimize) {
+        try {
+          const sharpImage = sharp(imageBuffer);
+          
+          // Resize if dimensions are specified and different from current
+          if (this.options.width !== 256 || this.options.height !== 256) {
+            sharpImage.resize(this.options.width, this.options.height);
+          }
+          
+          // Apply compression based on file type
+          if (filename.endsWith('.webp')) {
+            const webpBuffer = await sharpImage.webp({ quality: this.options.quality }).toBuffer();
+            imageBuffer = Buffer.from(webpBuffer);
+          } else if (filename.endsWith('.png')) {
+            const pngBuffer = await sharpImage.png({ quality: this.options.quality }).toBuffer();
+            imageBuffer = Buffer.from(pngBuffer);
+          } else {
+            const jpegBuffer = await sharpImage.jpeg({ quality: this.options.quality }).toBuffer();
+            imageBuffer = Buffer.from(jpegBuffer);
+          }
+        } catch (sharpError) {
+          console.warn(`  ⚠️  Optimization failed for ${filename}, saving original: ${sharpError}`);
+        }
+      }
+      
+      await fs.writeFile(filepath, imageBuffer);
       return true;
     } catch (error) {
       console.error(`✗ Failed to save image ${filename}: ${error}`);
@@ -359,6 +423,9 @@ Examples:
     console.log(`Force Overwrite: ${this.options.forceOverwrite ? 'Yes' : 'No'}`);
     console.log(`Force PNG: ${this.options.forcePng ? 'Yes' : 'No'}`);
     console.log(`Force No Safe: ${this.options.forceNoSafe ? 'Yes' : 'No'}`);
+    console.log(`Quality: ${this.options.quality}`);
+    console.log(`Dimensions: ${this.options.width}x${this.options.height}`);
+    console.log(`Optimize: ${this.options.optimize ? 'Yes' : 'No'}`);
     console.log('');
     
     await this.ensureOutputDirectory();

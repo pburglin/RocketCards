@@ -13,6 +13,10 @@ export default function AdminImageExport() {
   const [exportProgress, setExportProgress] = useState<{ collection: string; progress: number; total: number } | null>(null)
   const [exportResults, setExportResults] = useState<Record<string, { success: number; failed: number }> | null>(null)
   const [selectedCollection, setSelectedCollection] = useState<string>('all')
+  const [quality, setQuality] = useState<number>(80)
+  const [width, setWidth] = useState<number>(256)
+  const [height, setHeight] = useState<number>(256)
+  const [optimize, setOptimize] = useState<boolean>(true)
   const { collections } = useGameStore()
 
   const handleExportAll = async () => {
@@ -21,9 +25,10 @@ export default function AdminImageExport() {
     setExportResults(null)
     
     try {
+      const options = optimize ? { quality, width, height } : undefined;
       const results = await imageExportService.exportAllCollections((collection, progress, total) => {
         setExportProgress({ collection, progress, total })
-      })
+      }, options)
       
       setExportResults(results)
     } catch (error) {
@@ -40,9 +45,10 @@ export default function AdminImageExport() {
     setExportResults(null)
     
     try {
+      const options = optimize ? { quality, width, height } : undefined;
       const result = await imageExportService.exportCollectionImages(collectionId, (progress, total) => {
         setExportProgress({ collection: collectionId, progress, total })
-      })
+      }, options)
       
       setExportResults({ [collectionId]: result })
     } catch (error) {
@@ -106,8 +112,8 @@ export default function AdminImageExport() {
           </select>
           
           <Button
-            onClick={() => selectedCollection === 'all' 
-              ? handleExportAll() 
+            onClick={() => selectedCollection === 'all'
+              ? handleExportAll()
               : handleExportCollection(selectedCollection)}
             disabled={isExporting}
             className="flex items-center"
@@ -121,8 +127,8 @@ export default function AdminImageExport() {
           </Button>
           
           <Button
-            onClick={() => selectedCollection === 'all' 
-              ? handleExportAll() 
+            onClick={() => selectedCollection === 'all'
+              ? handleExportAll()
               : handleDownloadCollection(selectedCollection)}
             variant="outline"
             disabled={isExporting}
@@ -131,6 +137,64 @@ export default function AdminImageExport() {
             <Download className="w-4 h-4 mr-2" />
             Download ZIP
           </Button>
+        </div>
+      </div>
+      
+      {/* Optimization Options */}
+      <div className="mb-6 p-4 bg-surface-light rounded-lg">
+        <h3 className="font-semibold mb-3">Image Optimization Options</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Quality ({quality}%)</label>
+            <input
+              type="range"
+              min="10"
+              max="100"
+              value={quality}
+              onChange={(e) => setQuality(parseInt(e.target.value))}
+              disabled={isExporting}
+              className="w-full"
+            />
+            <div className="text-xs text-text-secondary mt-1">{quality}%</div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Width ({width}px)</label>
+            <input
+              type="number"
+              min="64"
+              max="1024"
+              value={width}
+              onChange={(e) => setWidth(parseInt(e.target.value) || 256)}
+              disabled={isExporting}
+              className="w-full px-2 py-1 bg-surface border border-border rounded text-sm"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Height ({height}px)</label>
+            <input
+              type="number"
+              min="64"
+              max="1024"
+              value={height}
+              onChange={(e) => setHeight(parseInt(e.target.value) || 256)}
+              disabled={isExporting}
+              className="w-full px-2 py-1 bg-surface border border-border rounded text-sm"
+            />
+          </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="optimize"
+              checked={optimize}
+              onChange={(e) => setOptimize(e.target.checked)}
+              disabled={isExporting}
+              className="mr-2"
+            />
+            <label htmlFor="optimize" className="text-sm">Enable Optimization</label>
+          </div>
         </div>
       </div>
 
@@ -206,6 +270,7 @@ export default function AdminImageExport() {
           <li>• Use "Download ZIP" to download images as individual files</li>
           <li>• Exported images will be saved with card IDs as filenames</li>
           <li>• Place exported images in the /public/images/cards/ directory for local loading</li>
+          <li>• Adjust quality and dimensions to optimize file sizes and loading performance</li>
         </ul>
       </div>
     </Card>

@@ -33,7 +33,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp,jpg,jpeg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -60,6 +60,46 @@ export default defineConfig({
               },
               cacheableResponse: {
                 statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/image\.pollinations\.ai\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pollinations-images-cache',
+              expiration: {
+                maxEntries: 500, // Increased from 200 to 500
+                maxAgeSeconds: 60 * 60 * 24 * 60 // Increased from 30 to 60 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              backgroundSync: {
+                name: 'pollinations-image-queue',
+                options: {
+                  maxRetentionTime: 60 * 24 // Retry for up to 24 hours
+                }
+              }
+            }
+          },
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/images/cards/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'local-card-images-cache',
+              expiration: {
+                maxEntries: 1000, // Increased from 500 to 1000
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              backgroundSync: {
+                name: 'local-card-images-queue',
+                options: {
+                  maxRetentionTime: 60 * 24 // Retry for up to 24 hours
+                }
               }
             }
           }
