@@ -18,6 +18,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/TermsOfServicePage'
 import CookiePolicyPage from './pages/CookiePolicyPage'
 import DisclaimerPage from './pages/DisclaimerPage'
+import HelpPage from './pages/HelpPage'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
@@ -53,6 +54,7 @@ function App() {
                   <Route path="/terms" element={<TermsOfServicePage />} />
                   <Route path="/cookies" element={<CookiePolicyPage />} />
                   <Route path="/disclaimer" element={<DisclaimerPage />} />
+                  <Route path="/help" element={<HelpPage />} />
                 </Routes>
       </AnimatePresence>
       <Footer />

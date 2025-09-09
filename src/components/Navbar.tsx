@@ -70,10 +70,13 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center space-x-3">
-          <button className="p-2 rounded-full bg-surface-light hover:bg-surface transition-colors">
+          <Link
+            to="/help"
+            className="p-2 rounded-full bg-surface-light hover:bg-surface transition-colors"
+          >
             <HelpCircle className="w-5 h-5 text-text-secondary" />
-          </button>
-          <button 
+          </Link>
+          <button
             className="md:hidden p-2 rounded-lg bg-surface-light hover:bg-surface transition-colors"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
