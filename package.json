@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "export-images": "npx tsx src/cli/image-export-cli.ts"
+    "export-images": "npx tsx src/cli/image-export-cli.ts",
+    "test-llm": "node test-llm.js"
   },
   "dependencies": {
     "@react-three/drei": "^9.117.0",

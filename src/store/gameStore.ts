@@ -429,18 +429,21 @@ export const useGameStore = create<GameStore>()(
         // If opponent should play first, trigger AI after a short delay
         if (match.matchState.activePlayer === 'opponent' && match.matchState.phase === 'main') {
           setTimeout(() => {
-            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
-            if (currentMatchState && currentPlayerState && currentOpponentState) {
-              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
-              
-              // Always end the opponent's turn after AI plays, in sequence
-              const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
-              set({
-                matchState: endTurnResult.matchState,
-                playerState: endTurnResult.playerState,
-                opponentState: endTurnResult.opponentState
-              })
+            const runAI = async () => {
+              const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
+              if (currentMatchState && currentPlayerState && currentOpponentState) {
+                const aiResult = await playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
+                
+                // Always end the opponent's turn after AI plays, in sequence
+                const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
+                set({
+                  matchState: endTurnResult.matchState,
+                  playerState: endTurnResult.playerState,
+                  opponentState: endTurnResult.opponentState
+                })
+              }
             }
+            runAI()
           }, 500)
         }
         
@@ -482,45 +485,47 @@ export const useGameStore = create<GameStore>()(
         // After ending turn, if it's now the opponent's turn, trigger AI after a short delay
         if (result.matchState.activePlayer === 'opponent' && result.matchState.phase === 'main') {
           setTimeout(() => {
-            const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
-            if (currentMatchState && currentPlayerState && currentOpponentState) {
-              const aiResult = playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
-              
-              // Always end the opponent's turn after AI plays, in sequence
-              const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
-              set({
-                matchState: endTurnResult.matchState,
-                playerState: endTurnResult.playerState,
-                opponentState: endTurnResult.opponentState
-              })
+            const runAI = async () => {
+              const { matchState: currentMatchState, playerState: currentPlayerState, opponentState: currentOpponentState, collections: currentCollections } = get()
+              if (currentMatchState && currentPlayerState && currentOpponentState) {
+                const aiResult = await playOpponentAI(currentMatchState, currentPlayerState, currentOpponentState, currentCollections)
+                
+                // Always end the opponent's turn after AI plays, in sequence
+                const endTurnResult = endTurn(aiResult.matchState, aiResult.playerState, aiResult.opponentState, currentCollections)
+                set({
+                  matchState: endTurnResult.matchState,
+                  playerState: endTurnResult.playerState,
+                  opponentState: endTurnResult.opponentState
+                })
+              }
             }
+            runAI()
           }, 500)
         }
         
       },
       resolveLLM: async () => {
-        const { matchState, playerState, opponentState } = get()
+        const { matchState, playerState, opponentState, collections } = get()
         if (!matchState || !playerState || !opponentState) {
           return { log: ['Error: No match state'] }
         }
         
-        // In a real app, this would call the LLM API
-        // For MVP, we'll simulate a response
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        const log = [
-          'Player gains 3 MP',
-          'Opponent takes 2 damage',
-          'Champion ability triggered'
-        ]
-        
-        set(state => {
-          if (state.matchState) {
-            state.matchState.log = [...state.matchState.log, ...log.map(message => ({ message, turn: state.matchState!.turn }))]
-          }
-        })
-        
-        return { log }
+        try {
+          const result = await resolveEffects(matchState, playerState, opponentState, collections)
+          
+          set({
+            matchState: result.matchState,
+            playerState: result.playerState,
+            opponentState: result.opponentState
+          })
+          
+          // Extract new log entries to return
+          const newLogs = result.matchState.log.slice(matchState.log.length).map(entry => entry.message)
+          return { log: newLogs }
+        } catch (error) {
+          console.error('LLM resolution failed:', error)
+          return { log: ['LLM resolution failed'] }
+        }
       },
       concede: () => {
         const { matchState, playerState, opponentState } = get()

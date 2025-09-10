@@ -4,14 +4,22 @@ import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Label } from '../components/ui/Label'
 import { useGameStore } from '../store/gameStore'
-import { Gamepad2, User, Settings, Clock, Shuffle, Users } from 'lucide-react'
+import { Gamepad2, User, Settings, Clock, Shuffle, Users, TestTube } from 'lucide-react'
 import SetupProgressIndicator from '../components/SetupProgressIndicator'
+import { isLLMTurnResolverEnabled } from '../lib/llmConfig'
+import { testLLMConnection } from '../lib/testLLM'
 
 export default function PlayLobbyPage() {
   const navigate = useNavigate()
   const { decks, selectedDeck, setSelectedDeck, startMatch, profile } = useGameStore()
   const [opponent, setOpponent] = useState<'ai' | 'pvp'>('ai')
   const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
+  const [aiType, setAiType] = useState<'basic' | 'advanced'>(() => {
+    // Default to advanced AI if LLM is enabled
+    return isLLMTurnResolverEnabled() ? 'advanced' : 'basic';
+  })
+  const [isTestButtonDisabled, setIsTestButtonDisabled] = useState(false)
+  const [testCooldown, setTestCooldown] = useState(0)
   const [timedMatch, setTimedMatch] = useState(true)
   const [mulliganEnabled, setMulliganEnabled] = useState(true)
   const [seed, setSeed] = useState('')
@@ -25,6 +33,7 @@ export default function PlayLobbyPage() {
   const [maxHand, setMaxHand] = useState(4)
   const [errors, setErrors] = useState<{deck?: string}>({})
   const [showLoading, setShowLoading] = useState(false)
+  const [testResult, setTestResult] = useState<{success: boolean, message: string} | null>(null)
   
   useEffect(() => {
     // If user somehow gets here without profile or deck, redirect to play flow
@@ -41,6 +50,45 @@ export default function PlayLobbyPage() {
       setSelectedDeck(decks[0])
     }
   }, [decks, selectedDeck, setSelectedDeck, navigate, profile])
+  
+  // Handle cooldown timer for LLM test button
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (testCooldown > 0) {
+      timer = setTimeout(() => {
+        setTestCooldown(prev => prev - 1);
+      }, 1000);
+    } else if (testCooldown === 0 && isTestButtonDisabled) {
+      setIsTestButtonDisabled(false);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [testCooldown, isTestButtonDisabled]);
+  
+  // Set default AI type to advanced when LLM is enabled
+  useEffect(() => {
+    if (isLLMTurnResolverEnabled() && aiType === 'basic') {
+      setAiType('advanced');
+    }
+  }, []);
+  
+  const handleTestLLM = async () => {
+    if (isTestButtonDisabled) return;
+    
+    setIsTestButtonDisabled(true);
+    setTestCooldown(60); // 1 minute cooldown
+    setTestResult(null);
+    
+    try {
+      const result = await testLLMConnection();
+      setTestResult({ success: result.success, message: result.message });
+      console.log('LLM Test Result:', result);
+    } catch (error) {
+      console.error('LLM Test Error:', error);
+      setTestResult({ success: false, message: 'Test failed: ' + (error instanceof Error ? error.message : 'Unknown error') });
+    }
+  };
   
   const handleStartMatch = () => {
     // Reset errors
@@ -68,7 +116,7 @@ export default function PlayLobbyPage() {
       startMatch({
         deck: deckToStart,
         opponentType: opponent,
-        aiDifficulty,
+        aiDifficulty: isLLMTurnResolverEnabled() && aiType === 'advanced' ? 'hard' : aiDifficulty,
         timedMatch,
         mulliganEnabled,
         seed: seed || undefined,
@@ -186,7 +234,62 @@ export default function PlayLobbyPage() {
           
           {opponent === 'ai' && (
             <div className="mb-6">
-              <Label className="mb-2 block">AI Difficulty</Label>
+              {isLLMTurnResolverEnabled() && (
+                <>
+                  <Label className="mb-2 block">AI Type</Label>
+                  <div className="grid grid-cols-1 gap-4 mb-6">
+                    <Card
+                      className={`p-4 border ${
+                        aiType === 'basic' ? 'border-primary bg-primary/5' : 'border-border'
+                      }`}
+                      onClick={() => setAiType('basic')}
+                    >
+                      <h3 className="font-bold">Basic AI</h3>
+                      <p className="text-sm text-text-secondary">
+                        Deterministic plays with simple strategy
+                      </p>
+                    </Card>
+                    
+                    <Card
+                      className={`p-4 border ${
+                        aiType === 'advanced' ? 'border-primary bg-primary/5' : 'border-border'
+                      }`}
+                      onClick={() => setAiType('advanced')}
+                    >
+                      <h3 className="font-bold">Advanced AI (LLM)</h3>
+                      <p className="text-sm text-text-secondary">
+                        LLM-powered strategic decision making
+                      </p>
+                    </Card>
+                  </div>
+                </>
+              )}
+              
+              {isLLMTurnResolverEnabled() && (
+                <div className="mb-4">
+                  <Button
+                    onClick={handleTestLLM}
+                    variant="outline"
+                    disabled={isTestButtonDisabled}
+                    className="w-full flex items-center justify-center"
+                  >
+                    <TestTube className="w-4 h-4 mr-2" />
+                    Test LLM Connection
+                    {testCooldown > 0 && (
+                      <span className="ml-2 text-xs">({testCooldown}s)</span>
+                    )}
+                  </Button>
+                  {testResult && (
+                    <div className={`mt-2 p-2 rounded text-sm ${
+                      testResult.success ? 'bg-success/20 text-success' : 'bg-error/20 text-error'
+                    }`}>
+                      {testResult.message}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <Label className="mb-2 block">AI Difficulty Level</Label>
               <div className="grid grid-cols-1 gap-4">
                 {['easy', 'medium', 'hard'].map((level) => (
                   <Card

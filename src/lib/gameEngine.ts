@@ -1,3 +1,4 @@
+
 import { 
   PlayerState, 
   MatchState, 
@@ -7,25 +8,25 @@ import {
 } from '../types/game'
 
 // Constants from .env (would be loaded from environment in real app)
-const GAME_DECK_SIZE = 30
-const GAME_STARTING_HAND = 3
-const GAME_HAND_LIMIT = 4
-const GAME_CHAMPION_SLOTS = 3
-const GAME_BASE_HP = 24
-const GAME_BASE_MP = 6
-const GAME_HP_STR_KEY = 8
-const GAME_HP_NONKEY = 2
-const GAME_MP_INT_KEY = 6
-const GAME_MP_NONKEY = 2
-const GAME_HP_DEFENSIVE = 4
-const GAME_HP_BALANCED = 2
-const GAME_HP_AGGRESSIVE = 0
-const GAME_MP_DEFENSIVE = 0
-const GAME_MP_BALANCED = 2
-const GAME_MP_AGGRESSIVE = 4
-const GAME_MP_REGEN_DEFENSIVE = 2
-const GAME_MP_REGEN_BALANCED = 3
-const GAME_MP_REGEN_AGGRESSIVE = 4
+const GAME_DECK_SIZE = parseInt(import.meta.env.VITE_GAME_DECK_SIZE || "30")
+const GAME_STARTING_HAND = parseInt(import.meta.env.VITE_GAME_STARTING_HAND || "3")
+const GAME_HAND_LIMIT = parseInt(import.meta.env.VITE_GAME_HAND_LIMIT || "4")
+const GAME_CHAMPION_SLOTS = parseInt(import.meta.env.VITE_GAME_CHAMPION_SLOTS || "3")
+const GAME_BASE_HP = parseInt(import.meta.env.VITE_GAME_BASE_HP || "24")
+const GAME_BASE_MP = parseInt(import.meta.env.VITE_GAME_BASE_MP || "6")
+const GAME_HP_STR_KEY = parseInt(import.meta.env.VITE_GAME_HP_STR_KEY || "8")
+const GAME_HP_NONKEY = parseInt(import.meta.env.VITE_GAME_HP_NONKEY || "2")
+const GAME_MP_INT_KEY = parseInt(import.meta.env.VITE_GAME_MP_INT_KEY || "6")
+const GAME_MP_NONKEY = parseInt(import.meta.env.VITE_GAME_MP_NONKEY || "2")
+const GAME_HP_DEFENSIVE = parseInt(import.meta.env.VITE_GAME_HP_DEFENSIVE || "4")
+const GAME_HP_BALANCED = parseInt(import.meta.env.VITE_GAME_HP_BALANCED || "2")
+const GAME_HP_AGGRESSIVE = parseInt(import.meta.env.VITE_GAME_HP_AGGRESSIVE || "0")
+const GAME_MP_DEFENSIVE = parseInt(import.meta.env.VITE_GAME_MP_DEFENSIVE || "0")
+const GAME_MP_BALANCED = parseInt(import.meta.env.VITE_GAME_MP_BALANCED || "2")
+const GAME_MP_AGGRESSIVE = parseInt(import.meta.env.VITE_GAME_MP_AGGRESSIVE || "4")
+const GAME_MP_REGEN_DEFENSIVE = parseInt(import.meta.env.VITE_GAME_MP_REGEN_DEFENSIVE || "2")
+const GAME_MP_REGEN_BALANCED = parseInt(import.meta.env.VITE_GAME_MP_REGEN_BALANCED || "3")
+const GAME_MP_REGEN_AGGRESSIVE = parseInt(import.meta.env.VITE_GAME_MP_REGEN_AGGRESSIVE || "4")
 
 export function calculatePlayerStats(
   strategy: 'aggressive' | 'balanced' | 'defensive',
@@ -677,9 +678,59 @@ export function dealDamage(
   }
 }
 
-export function resolveEffects(): void {
-  // In real implementation, would call LLM API here
-  // For MVP, we'll just move to end phase
+import { isLLMTurnResolverEnabled, getLLMBaseConfig } from './llmConfig';
+import { resolveEffectsWithLLM, getOpponentStrategy } from './llmClient';
+
+export async function resolveEffects(
+  matchState: MatchState,
+  playerState: PlayerState,
+  opponentState: PlayerState,
+  collections: any[]
+): Promise<{
+  matchState: MatchState;
+  playerState: PlayerState;
+  opponentState: PlayerState;
+}> {
+  // Create deep copies to avoid direct mutations
+  const newMatchState: MatchState = JSON.parse(JSON.stringify(matchState));
+  const newPlayerState: PlayerState = JSON.parse(JSON.stringify(playerState));
+  const newOpponentState: PlayerState = JSON.parse(JSON.stringify(opponentState));
+
+  if (isLLMTurnResolverEnabled()) {
+    // Use LLM for effect resolution
+    console.log('LLM Turn Resolver Enabled - Calling resolveEffectsWithLLM');
+    try {
+      const llmResponse = await resolveEffectsWithLLM(newMatchState, newPlayerState, newOpponentState);
+      
+      // Apply deltas to player state
+      if (llmResponse.playerDelta.hp) newPlayerState.hp += llmResponse.playerDelta.hp;
+      if (llmResponse.playerDelta.mp) newPlayerState.mp += llmResponse.playerDelta.mp;
+      if (llmResponse.playerDelta.fatigue) newPlayerState.fatigue += llmResponse.playerDelta.fatigue;
+      
+      // Apply deltas to opponent state
+      if (llmResponse.opponentDelta.hp) newOpponentState.hp += llmResponse.opponentDelta.hp;
+      if (llmResponse.opponentDelta.mp) newOpponentState.mp += llmResponse.opponentDelta.mp;
+      if (llmResponse.opponentDelta.fatigue) newOpponentState.fatigue += llmResponse.opponentDelta.fatigue;
+      
+      // Add log entries
+      llmResponse.logEntries.forEach(entry => {
+        newMatchState.log.push({ message: entry, turn: newMatchState.turn });
+      });
+    } catch (error) {
+      console.error('LLM effect resolution failed:', error);
+      // Fallback to basic resolution
+      newMatchState.log.push({ message: 'LLM resolution failed, using basic resolution', turn: newMatchState.turn });
+    }
+  } else {
+    // Use basic deterministic resolution (existing logic)
+    newMatchState.log.push({ message: 'Effects resolved deterministically', turn: newMatchState.turn });
+  }
+  
+  return {
+    matchState: newMatchState,
+    playerState: newPlayerState,
+    opponentState: newOpponentState
+  };
 }
 
 export function endTurn(
@@ -1431,7 +1482,84 @@ function sortCreaturesByCost(creatures: string[], collections: any[]): string[] 
   });
 }
 
-export function playOpponentAI(
+export async function playOpponentAI(
+  matchState: MatchState,
+  playerState: PlayerState,
+  opponentState: PlayerState,
+  collections: any[]
+): Promise<{
+  matchState: MatchState
+  playerState: PlayerState
+  opponentState: PlayerState
+}> {
+  console.log('playOpponentAI called', {
+    activePlayer: matchState.activePlayer,
+    turn: matchState.turn,
+    opponentHand: opponentState.hand.length,
+    extraPlays: opponentState.extraPlaysRemaining
+  });
+  
+  // Use LLM strategy if enabled
+  if (isLLMTurnResolverEnabled()) {
+    try {
+      console.log('LLM Turn Resolver Enabled - Calling getOpponentStrategy');
+      const llmResponse = await getOpponentStrategy(matchState, playerState, opponentState);
+      
+      console.log('LLM Strategy Response:', llmResponse);
+      
+      // Play cards suggested by LLM
+      for (const play of llmResponse.plays) {
+        // Verify the card is in opponent's hand and can be played
+        if (opponentState.hand.includes(play.cardId) && opponentState.extraPlaysRemaining > 0) {
+          const card = getCardFromCollections(play.cardId, collections);
+          if (card) {
+            console.log('LLM Opponent playing card:', card.title, 'Reason:', play.reason);
+            const result = playCard(matchState, playerState, opponentState, play.cardId, collections);
+            if (result.success) {
+              console.log('LLM Opponent card played successfully');
+              // Update states for next iteration
+              matchState = result.matchState;
+              playerState = result.playerState;
+              opponentState = result.opponentState;
+            } else {
+              console.log('LLM Opponent failed to play card:', card.title);
+              matchState.log.push({ message: `LLM Opponent failed to play ${card.title}`, turn: matchState.turn });
+            }
+          }
+        }
+      }
+      
+      // Add LLM decision to log
+      if (llmResponse.plays.length > 0) {
+        matchState.log.push({ message: `LLM Opponent played ${llmResponse.plays.length} card(s)`, turn: matchState.turn });
+      } else {
+        matchState.log.push({ message: `LLM Opponent chose not to play any cards`, turn: matchState.turn });
+      }
+      
+    } catch (error) {
+      console.error('LLM strategy failed, falling back to basic AI:', error);
+      matchState.log.push({ message: 'LLM strategy failed, using basic AI', turn: matchState.turn });
+      // Fall back to basic AI logic
+      return playBasicOpponentAI(matchState, playerState, opponentState, collections);
+    }
+  } else {
+    // Use basic AI logic
+    return playBasicOpponentAI(matchState, playerState, opponentState, collections);
+  }
+  
+  // End the turn
+  matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
+  console.log('Opponent ended their turn');
+  // Return the current state - let the calling function handle turn ending
+  return {
+    matchState,
+    playerState,
+    opponentState
+  };
+}
+
+// Basic opponent AI logic (fallback when LLM is disabled or fails)
+function playBasicOpponentAI(
   matchState: MatchState,
   playerState: PlayerState,
   opponentState: PlayerState,
@@ -1441,13 +1569,6 @@ export function playOpponentAI(
   playerState: PlayerState
   opponentState: PlayerState
 } {
-  console.log('playOpponentAI called', {
-    activePlayer: matchState.activePlayer,
-    turn: matchState.turn,
-    opponentHand: opponentState.hand.length,
-    extraPlays: opponentState.extraPlaysRemaining
-  });
-  
   // Keep track of cards we've already tried to avoid infinite loops
   const triedCards = new Set<string>();
   
@@ -1549,10 +1670,6 @@ export function playOpponentAI(
     }
   }
   
-  // End the turn
-  matchState.log.push({ message: `Opponent ended their turn`, turn: matchState.turn });
-  console.log('Opponent ended their turn');
-  // Return the current state - let the calling function handle turn ending
   return {
     matchState,
     playerState,

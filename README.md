@@ -10,6 +10,7 @@ RocketCards combines classic card game strategy with cutting-edge AI to create d
 
 - Multiple themed card collections with unique mechanics
 - Deep customization through player profiles and deck building
+- Configurable AI opponents (Basic deterministic or Advanced LLM-powered)
 - AI-powered effect resolution for dynamic gameplay
 - Beautiful, responsive UI with immersive animations
 - Local persistence for profiles, decks, and matches
@@ -50,9 +51,107 @@ All game parameters and LLM configuration are controlled through environment var
 
 Key configuration options:
 
-- `LLM_API_*`: Configure your LLM provider (OpenAI-compatible API)
+- `VITE_LLM_*`: Configure your LLM provider (OpenAI-compatible API)
+- `VITE_ENABLE_LLM_TURN_RESOLVER`: Enable LLM-based opponent AI and effect resolution
 - `GAME_*`: Tune game mechanics like deck size, starting resources, etc.
-- `ENABLE_*`: Toggle features like timed matches and AI opponents
+- `VITE_ENABLE_*`: Toggle features like timed matches and AI opponents
+
+### AI Configuration
+
+When `VITE_ENABLE_LLM_TURN_RESOLVER=true`, the Play Lobby will show both "Basic AI" (deterministic algorithm) and "Advanced AI" (LLM-powered) options. By default, "Advanced AI" is selected when LLM is enabled, but you can switch to "Basic AI" for deterministic gameplay.
+
+### LLM Configuration
+
+RocketCards supports any OpenAI-compatible API for LLM integration, including local LLMs via Ollama. The LLM is used for:
+
+- **Opponent AI Strategy**: Advanced decision-making for AI opponents (when Advanced AI is selected in Play Lobby)
+- **Effect Resolution**: Deterministic resolution of complex card interactions
+
+To enable LLM features:
+
+1. Set `VITE_ENABLE_LLM_TURN_RESOLVER=true` in your `.env` file
+2. Configure your LLM provider:
+   - `VITE_LLM_API_ENDPOINT`: Your LLM API endpoint (e.g., "https://api.openai.com/v1/completions" or "http://localhost:11434" for Ollama)
+   - `VITE_LLM_API_KEY`: Your API key (use "ollama" for Ollama)
+   - `VITE_LLM_MODEL_NAME`: Model to use (e.g., "gpt-3.5-turbo-instruct" or "llama3")
+
+### Local LLM Setup with Ollama
+
+For local development, you can use Ollama with models like Llama 3. This is recommended for testing and development:
+
+1. Install Ollama from [https://ollama.com/](https://ollama.com/)
+2. Pull a compatible model (Llama 3 is recommended):
+   ```bash
+   ollama pull llama3
+   ```
+   Or try other models like:
+   ```bash
+   ollama pull qwen2.5:14b  # 14B parameter model
+   ollama pull qwen2.5:7b   # 7B parameter model (faster)
+   ```
+3. Start the Ollama service (usually starts automatically after installation):
+   ```bash
+   ollama serve
+   ```
+4. Configure your `.env` file for Ollama:
+   ```env
+   VITE_ENABLE_LLM_TURN_RESOLVER=true
+   VITE_LLM_API_ENDPOINT="http://localhost:11434"
+   VITE_LLM_API_KEY="ollama"  # Ollama doesn't require a real key
+   VITE_LLM_MODEL_NAME="llama3"
+   VITE_LLM_MAX_TOKENS=2000
+   VITE_LLM_TEMPERATURE=0.7
+   ```
+
+**Note**: When using Ollama locally, make sure the Ollama service is running before starting the game. The service typically runs on port 11434.
+
+### Testing LLM Connection
+
+When LLM is enabled (`VITE_ENABLE_LLM_TURN_RESOLVER=true`), you can test your LLM connection from the Play Lobby page by clicking the "Test LLM Connection" button. This button is now visible whenever LLM is enabled, not just when Advanced AI is selected. The test sends a dummy prompt to verify that your LLM configuration is working correctly before starting a match.
+
+To prevent abuse, the test button is disabled for 1 minute after each click.
+
+### Cloud LLM Providers
+
+#### OpenAI
+```env
+VITE_ENABLE_LLM_TURN_RESOLVER=true
+VITE_LLM_API_ENDPOINT="https://api.openai.com/v1/completions"
+VITE_LLM_API_KEY="your_openai_api_key"
+VITE_LLM_MODEL_NAME="gpt-3.5-turbo-instruct"
+VITE_LLM_MAX_TOKENS=2000
+VITE_LLM_TEMPERATURE=0.7
+```
+
+#### Anthropic Claude
+```env
+VITE_ENABLE_LLM_TURN_RESOLVER=true
+VITE_LLM_API_ENDPOINT="https://api.anthropic.com/v1/completions"
+VITE_LLM_API_KEY="your_anthropic_api_key"
+VITE_LLM_MODEL_NAME="claude-2"
+VITE_LLM_MAX_TOKENS=2000
+VITE_LLM_TEMPERATURE=0.7
+```
+
+#### Google Gemini
+```env
+VITE_ENABLE_LLM_TURN_RESOLVER=true
+VITE_LLM_API_ENDPOINT="https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+VITE_LLM_API_KEY="your_google_api_key"
+VITE_LLM_MODEL_NAME="gemini-pro"
+VITE_LLM_MAX_TOKENS=2000
+VITE_LLM_TEMPERATURE=0.7
+```
+
+#### OpenRouter (Recommended free option)
+```env
+VITE_ENABLE_LLM_TURN_RESOLVER=true
+VITE_LLM_API_ENDPOINT="https://openrouter.ai/api/v1/chat/completions"
+VITE_LLM_API_KEY="your_openrouter_api_key"
+VITE_LLM_MODEL_NAME="qwen/qwen3-14b:free"  # Free model
+VITE_LLM_MAX_TOKENS=2000
+VITE_LLM_TEMPERATURE=0.7
+```
 
 ### Card Collections
 
@@ -105,8 +204,9 @@ Players choose a strategy (Aggressive, Balanced, Defensive) and key stat (Streng
 1. **Start phase**: Draw card, handle reshuffle penalties
 2. **Main phase**: Play cards (1 per turn by default)
 3. **Battle phase**: Champion actions and skill activations
-4. **LLM resolution phase**: Resolve effects with LLM
-5. **End phase**: Cleanup and discard down to hand limit
+4. **End phase**: Cleanup and discard down to hand limit
+
+**Note**: When LLM is enabled, card effect resolution happens automatically after each card play, and opponent AI decisions are made using LLM when Advanced AI is selected.
 
 ### Deck Building
 
