@@ -43,6 +43,104 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
+### Mobile App Development (Capacitor)
+
+This application can be built as a native mobile app for both iOS and Android using Capacitor.
+
+#### Prerequisites for Mobile Development
+
+**For iOS:**
+- Xcode 12 or higher
+- Xcode Command Line Tools
+- CocoaPods (for iOS dependencies)
+
+**For Android:**
+- Android Studio
+- Android SDK
+- Java Development Kit (JDK)
+
+#### Installing Mobile Dependencies
+
+The Capacitor dependencies are already included in the project. If you need to reinstall them:
+
+```bash
+npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
+```
+
+#### Building for Mobile
+
+1. **Build and sync for both platforms:**
+```bash
+npm run capacitor:build
+```
+
+2. **Build and open iOS project:**
+```bash
+npm run capacitor:ios
+```
+
+3. **Build and open Android project:**
+```bash
+npm run capacitor:android
+```
+
+#### iOS Development
+
+To run on iOS simulator or device:
+
+1. Run `npm run capacitor:ios` to build and open Xcode
+2. In Xcode, select your target device/simulator
+3. Click "Run" to build and deploy to the simulator/device
+
+**Note:** If you encounter Xcode issues, make sure Xcode Command Line Tools are properly installed:
+```bash
+xcode-select --install
+```
+
+#### Android Development
+
+To run on Android emulator or device:
+
+1. Run `npm run capacitor:android` to build and open Android Studio
+2. In Android Studio, select your target device/emulator
+3. Click "Run" to build and deploy to the device/emulator
+
+**Alternative Android build from command line:**
+```bash
+npm run build
+npx cap sync android
+npx cap run android
+```
+
+#### Publishing to App Stores
+
+**For iOS App Store:**
+1. Archive the app in Xcode (Product → Archive)
+2. Follow Apple's App Store submission process
+3. Ensure proper app icons and splash screens are configured
+
+**For Google Play Store:**
+1. Generate a signed APK or App Bundle in Android Studio
+2. Follow Google Play Console submission process
+3. Ensure proper app icons and feature graphics are provided
+
+#### Capacitor Project Structure
+
+- `capacitor.config.ts` - Capacitor configuration file
+- `ios/` - iOS native project files
+- `android/` - Android native project files
+- `dist/` - Web build output (automatically synced to mobile projects)
+
+#### Troubleshooting
+
+**Common iOS Issues:**
+- If CocoaPods is not installed: `sudo gem install cocoapods`
+- If pod install fails: `cd ios/App && pod install --repo-update`
+
+**Common Android Issues:**
+- Ensure Android Studio is properly installed and configured
+- Check that ANDROID_HOME environment variable is set correctly
+
 ## Configuration
 
 ### Environment Variables
